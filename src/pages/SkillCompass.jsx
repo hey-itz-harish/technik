@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, RefreshCw, ArrowRight, Award, Brain, CheckCircle2, HelpCircle, BookOpen, Target, Sparkles, Zap, Check, X } from 'lucide-react';
+import { Compass, RefreshCw, ArrowRight, Award, Brain, CheckCircle2, Zap, Check, X, ShieldAlert, ChevronRight, Lock, Sparkles } from 'lucide-react';
 
 export default function SkillCompass({ onSelectTrack }) {
   const navigate = useNavigate();
@@ -8,7 +8,7 @@ export default function SkillCompass({ onSelectTrack }) {
   // Main sub-tab state: 'quiz' vs 'practice'
   const [activeSubTab, setActiveSubTab] = useState('quiz');
 
-  // --- QUIZ STATE ---
+  // ================= QUIZ STATE =================
   const questions = [
     {
       id: 1,
@@ -131,72 +131,152 @@ export default function SkillCompass({ onSelectTrack }) {
     "Public Speaking & Debate": "You have excellent verbal persuasive power, structure, and impromptu quick-thinking. The Public Speaking arena will sharpen your voice modulation and panel argument logic."
   };
 
-  // --- PRACTICE HUB STATE ---
+  // ================= 50-LEVEL PRACTICE HUB STATE =================
   const [practiceTrack, setPracticeTrack] = useState("Coding & Algorithms");
-  const [selectedPracticeAnswers, setSelectedPracticeAnswers] = useState({});
-  const [submittedPractice, setSubmittedPractice] = useState({});
+  const [activeLevel, setActiveLevel] = useState(1);
+  const [completedLevels, setCompletedLevels] = useState([1]); // Levels completed tracking
+  const [selectedOpt, setSelectedOpt] = useState(null);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const practiceQuestions = {
-    "Coding & Algorithms": [
-      {
-        id: "c1",
-        question: "What is the output of `[1, 2, 3].map(x => x * 2).filter(x => x > 3)`?",
-        options: ["[2, 4, 6]", "[4, 6]", "[2, 4]", "[6]"],
+  // Helper to get difficulty tier badge
+  const getTierInfo = (level) => {
+    if (level <= 10) return { label: "Beginner Foundation", badgeStyle: "badge-indigo", range: "Levels 1–10" };
+    if (level <= 25) return { label: "Intermediate Mastery", badgeStyle: "badge-purple", range: "Levels 11–25" };
+    if (level <= 40) return { label: "Advanced Challenger", badgeStyle: "badge-cyan", range: "Levels 26–40" };
+    return { label: "National Grandmaster", badgeStyle: "badge-gold", range: "Levels 41–50" };
+  };
+
+  // Scaled question generator for Levels 1 to 50
+  const getQuestionForLevel = (track, lvl) => {
+    const tier = getTierInfo(lvl);
+
+    if (track === "Coding & Algorithms") {
+      if (lvl === 1) return {
+        q: "Level 1: What is the correct syntax to define a constant in JavaScript?",
+        options: ["var x = 10", "let x = 10", "const x = 10", "constant x = 10"],
+        correct: 2,
+        explanation: "`const` is used in ES6+ JavaScript to declare read-only constant variables."
+      };
+      if (lvl === 5) return {
+        q: "Level 5: What will `typeof NaN` evaluate to in JavaScript?",
+        options: ["'number'", "'nan'", "'undefined'", "'object'"],
+        correct: 0,
+        explanation: "Despite representing 'Not-a-Number', the `typeof NaN` in JS is technically `'number'."
+      };
+      if (lvl === 15) return {
+        q: "Level 15: Which algorithm achieves O(n log n) average time complexity for sorting arrays?",
+        options: ["Bubble Sort", "Quick Sort", "Insertion Sort", "Selection Sort"],
         correct: 1,
-        explanation: "`map` produces [2, 4, 6]. Then `filter(x => x > 3)` keeps numbers strictly greater than 3, leaving [4, 6]."
-      },
-      {
-        id: "c2",
-        question: "Which data structure operates under First-In, First-Out (FIFO) logic?",
-        options: ["Stack", "Queue", "Binary Tree", "Graph"],
+        explanation: "Quick Sort & Merge Sort achieve O(n log n) average time complexity, outperforming O(n²) Bubble Sort."
+      };
+      if (lvl === 30) return {
+        q: "Level 30: What is the time complexity of searching a target key in a balanced Binary Search Tree (BST)?",
+        options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
+        correct: 2,
+        explanation: "A balanced BST halves the search space at each step, yielding logarithmic O(log n) performance."
+      };
+      if (lvl === 50) return {
+        q: "Level 50 (Grandmaster Final): In Dynamic Programming, what does the 'Optimal Substructure' property imply?",
+        options: [
+          "An optimal solution contains optimal solutions to its subproblems.",
+          "The algorithm uses O(1) auxiliary space at all recursion levels.",
+          "Subproblems overlap and can be executed strictly in parallel.",
+          "The graph contains no directed cycles or negative weights."
+        ],
+        correct: 0,
+        explanation: "Optimal Substructure means an optimal solution to a problem is constructed from optimal solutions to subproblems."
+      };
+      return {
+        q: `Level ${lvl}: In ${track}, what is the expected result of algorithmic scaling for benchmark #${lvl}?`,
+        options: [
+          `Optimized execution complexity of O(log n)`,
+          `Sequential pipeline loop with ${lvl * 2} iterations`,
+          `Constant memory allocation space O(1)`,
+          `Dynamic programming memoization cache`
+        ],
+        correct: 0,
+        explanation: `Level ${lvl} tests foundational computational speed and algorithmic structure in ${track}.`
+      };
+    }
+
+    if (track === "Mental Math Arena" || track === "Abacus Championship") {
+      if (lvl === 1) return {
+        q: "Level 1: Calculate 45 + 55 in your head.",
+        options: ["90", "100", "105", "110"],
         correct: 1,
-        explanation: "A Queue operates on FIFO logic, whereas a Stack operates on Last-In, First-Out (LIFO)."
-      }
-    ],
-    "Mental Math Arena": [
-      {
-        id: "m1",
-        question: "Calculate 105 × 105 in your head using Vedic algebra shortcuts.",
+        explanation: "45 + 55 = 100."
+      };
+      if (lvl === 10) return {
+        q: "Level 10: Calculate 105 × 105 mentally using the Nikhilam square rule.",
         options: ["10,525", "11,025", "11,225", "10,025"],
         correct: 1,
-        explanation: "Rule for numbers ending in 5: Multiply 10 by 11 = 110, then append 25 -> 11,025."
-      },
-      {
-        id: "m2",
-        question: "What is 15% of 480?",
-        options: ["64", "72", "78", "82"],
+        explanation: "Multiply 10 by 11 = 110, then append 25 -> 11,025."
+      };
+      if (lvl === 25) return {
+        q: "Level 25: What is 25% of 640?",
+        options: ["140", "160", "180", "200"],
         correct: 1,
-        explanation: "10% of 480 is 48. 5% is half of 48 = 24. 48 + 24 = 72."
-      }
-    ],
-    "AI & Machine Learning": [
-      {
-        id: "a1",
-        question: "Which algorithm type is used when data contains input-output labelled training pairs?",
-        options: ["Supervised Learning", "Unsupervised Learning", "Reinforcement Learning", "Clustering"],
+        explanation: "25% is 1/4th. 640 / 4 = 160."
+      };
+      if (lvl === 50) return {
+        q: "Level 50 (Grandmaster Final): What is the square root of 50,625?",
+        options: ["215", "225", "235", "245"],
+        correct: 1,
+        explanation: "225 × 225 = 50,625."
+      };
+      return {
+        q: `Level ${lvl}: Calculate ${lvl * 12} + ${lvl * 15} mentally.`,
+        options: [`${lvl * 27}`, `${lvl * 25}`, `${lvl * 30}`, `${lvl * 20}`],
         correct: 0,
-        explanation: "Supervised Learning models learn from labelled training pairs (inputs and expected outputs)."
-      }
-    ],
-    "Robotics & Hardware": [
-      {
-        id: "r1",
-        question: "Which component is primarily used to control motor speeds via Pulse-Width Modulation (PWM)?",
-        options: ["H-Bridge Motor Driver", "Resistor", "Capacitor", "Step-down Transformer"],
-        correct: 0,
-        explanation: "H-Bridge motor drivers (like L298N) modulate voltage pulses via PWM signals to adjust speed."
-      }
-    ]
+        explanation: `${lvl * 12} + ${lvl * 15} = ${lvl * 27}.`
+      };
+    }
+
+    // Default fallback generator for AI, Robotics, Art, English, Public Speaking
+    return {
+      q: `Level ${lvl}: Evaluate the core principle of ${track} for level ${lvl} qualification.`,
+      options: [
+        `Systematic evaluation rule #${lvl} with high accuracy`,
+        `Alternative exploratory option B`,
+        `Baseline theoretical standard C`,
+        `Custom secondary hypothesis D`
+      ],
+      correct: 0,
+      explanation: `Level ${lvl} focuses on ${tier.label} concepts tailored for ${track}.`
+    };
   };
 
-  const currentPracticeList = practiceQuestions[practiceTrack] || practiceQuestions["Coding & Algorithms"];
+  const currentLevelQ = getQuestionForLevel(practiceTrack, activeLevel);
+  const currentTier = getTierInfo(activeLevel);
 
-  const handleSelectPracticeOption = (qId, optionIdx) => {
-    setSelectedPracticeAnswers({ ...selectedPracticeAnswers, [qId]: optionIdx });
+  const handleSelectOption = (idx) => {
+    if (!isSubmitted) {
+      setSelectedOpt(idx);
+    }
   };
 
-  const handleCheckPracticeAnswer = (qId) => {
-    setSubmittedPractice({ ...submittedPractice, [qId]: true });
+  const handleCheckAnswer = () => {
+    if (selectedOpt === null) return;
+    setIsSubmitted(true);
+    if (selectedOpt === currentLevelQ.correct) {
+      if (!completedLevels.includes(activeLevel)) {
+        setCompletedLevels([...completedLevels, activeLevel]);
+      }
+    }
+  };
+
+  const handleNextLevel = () => {
+    if (activeLevel < 50) {
+      setActiveLevel(activeLevel + 1);
+      setSelectedOpt(null);
+      setIsSubmitted(false);
+    }
+  };
+
+  const handleSelectLevelFromGrid = (lvlNum) => {
+    setActiveLevel(lvlNum);
+    setSelectedOpt(null);
+    setIsSubmitted(false);
   };
 
   return (
@@ -208,7 +288,7 @@ export default function SkillCompass({ onSelectTrack }) {
           <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>SKILL COMPASS HUB</span>
           <h1 style={styles.introTitle}>Discover & <span className="text-gradient">Enhance Your Skills</span></h1>
           <p style={styles.introDesc}>
-            Take our diagnostic quiz to discover your ideal track, or access interactive practice drills and daily preparation routines.
+            Take our diagnostic compass to discover your ideal track, or climb through our 50-level gamified preparation ladder.
           </p>
 
           {/* Sub-Tab Navigation Bar */}
@@ -236,7 +316,7 @@ export default function SkillCompass({ onSelectTrack }) {
               }}
             >
               <Brain size={16} />
-              Practice & Preparation Hub
+              50-Level Practice Hub
             </button>
           </div>
         </header>
@@ -321,145 +401,158 @@ export default function SkillCompass({ onSelectTrack }) {
           </>
         )}
 
-        {/* ================= SUB-TAB 2: PRACTICE & PREPARATION ================= */}
+        {/* ================= SUB-TAB 2: 50-LEVEL PRACTICE HUB ================= */}
         {activeSubTab === 'practice' && (
           <div style={styles.practiceContainer}>
             
-            {/* Practice Track Filter */}
+            {/* Practice Track & Tier Bar */}
             <div className="glass-card" style={styles.practiceHeaderCard}>
               <div style={styles.practiceHeaderFlex}>
                 <div>
-                  <h3 style={styles.practiceHeaderTitle}>Interactive Speed & Sample Drills</h3>
-                  <p style={styles.practiceHeaderSub}>Select a competition track to test your knowledge with instant answer evaluation.</p>
+                  <span className={`badge ${currentTier.badgeStyle}`} style={{ marginBottom: '0.4rem' }}>
+                    {currentTier.label} ({currentTier.range})
+                  </span>
+                  <h3 style={styles.practiceHeaderTitle}>Level {activeLevel} of 50</h3>
                 </div>
                 
                 <select 
                   className="form-control" 
                   value={practiceTrack} 
-                  onChange={(e) => setPracticeTrack(e.target.value)}
+                  onChange={(e) => {
+                    setPracticeTrack(e.target.value);
+                    setSelectedOpt(null);
+                    setIsSubmitted(false);
+                  }}
                   style={styles.trackSelect}
                 >
                   <option value="Coding & Algorithms">Coding & Algorithms</option>
                   <option value="Mental Math Arena">Mental Math Arena</option>
+                  <option value="Abacus Championship">Abacus Championship</option>
                   <option value="AI & Machine Learning">AI & Machine Learning</option>
                   <option value="Robotics & Hardware">Robotics & Hardware</option>
+                  <option value="English & Creative Writing">English & Creative Writing</option>
+                  <option value="Digital & Classical Art">Digital & Classical Art</option>
+                  <option value="Public Speaking & Debate">Public Speaking & Debate</option>
                 </select>
               </div>
-            </div>
 
-            {/* Questions Drills List */}
-            <div style={styles.drillsList}>
-              {currentPracticeList.map((q, idx) => {
-                const selectedOpt = selectedPracticeAnswers[q.id];
-                const isSubmitted = submittedPractice[q.id];
-                const isCorrect = selectedOpt === q.correct;
+              {/* 50-Level Selector Grid */}
+              <div style={styles.levelSelectorWrapper}>
+                <div style={styles.levelSelectorHeader}>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>50-Level Preparation Ladder:</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{completedLevels.length} of 50 Passed</span>
+                </div>
+                
+                <div style={styles.levelGrid}>
+                  {Array.from({ length: 50 }, (_, i) => i + 1).map((lvlNum) => {
+                    const isCurrent = activeLevel === lvlNum;
+                    const isDone = completedLevels.includes(lvlNum);
 
-                return (
-                  <div key={q.id} className="glass-card" style={styles.drillCard}>
-                    <div style={styles.drillTop}>
-                      <span className="badge badge-indigo">Sample Question {idx + 1}</span>
-                      <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
-                    </div>
-
-                    <h4 style={styles.drillQuestion}>{q.question}</h4>
-
-                    <div style={styles.drillOptions}>
-                      {q.options.map((optText, oIdx) => {
-                        const isSelected = selectedOpt === oIdx;
-                        let optionStyle = { ...styles.drillOptionBtn };
-
-                        if (isSelected) {
-                          optionStyle.borderColor = 'var(--accent)';
-                          optionStyle.background = 'rgba(37, 99, 235, 0.06)';
-                        }
-                        if (isSubmitted) {
-                          if (oIdx === q.correct) {
-                            optionStyle.borderColor = 'var(--success)';
-                            optionStyle.background = 'rgba(5, 150, 105, 0.08)';
-                          } else if (isSelected && !isCorrect) {
-                            optionStyle.borderColor = '#dc2626';
-                            optionStyle.background = '#fef2f2';
-                          }
-                        }
-
-                        return (
-                          <button
-                            key={oIdx}
-                            onClick={() => !isSubmitted && handleSelectPracticeOption(q.id, oIdx)}
-                            style={optionStyle}
-                            disabled={isSubmitted}
-                          >
-                            <span style={styles.drillOptLetter}>{String.fromCharCode(65 + oIdx)}</span>
-                            <span>{optText}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-
-                    {/* Check Action */}
-                    {!isSubmitted ? (
+                    return (
                       <button
-                        onClick={() => selectedOpt !== undefined && handleCheckPracticeAnswer(q.id)}
-                        className="btn btn-primary btn-mini"
-                        style={{ marginTop: '1.25rem', alignSelf: 'flex-start' }}
-                        disabled={selectedOpt === undefined}
+                        key={lvlNum}
+                        onClick={() => handleSelectLevelFromGrid(lvlNum)}
+                        style={{
+                          ...styles.levelGridBtn,
+                          background: isCurrent ? 'var(--primary)' : isDone ? 'rgba(5, 150, 105, 0.1)' : '#ffffff',
+                          color: isCurrent ? '#ffffff' : isDone ? 'var(--success)' : 'var(--text-secondary)',
+                          borderColor: isCurrent ? 'var(--primary)' : isDone ? 'var(--success)' : 'var(--border-subtle)',
+                          fontWeight: isCurrent || isDone ? 700 : 500,
+                        }}
+                        title={`Jump to Level ${lvlNum}`}
                       >
-                        Check Answer
+                        {lvlNum}
                       </button>
-                    ) : (
-                      <div style={{
-                        ...styles.explanationBox,
-                        borderColor: isCorrect ? 'var(--success)' : '#dc2626',
-                        background: isCorrect ? 'rgba(5, 150, 105, 0.05)' : '#fef2f2'
-                      }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                          {isCorrect ? <Check size={16} color="var(--success)" /> : <X size={16} color="#dc2626" />}
-                          <strong style={{ color: isCorrect ? 'var(--success)' : '#dc2626', fontSize: '0.9rem' }}>
-                            {isCorrect ? "Correct Solution!" : "Incorrect Answer"}
-                          </strong>
-                        </div>
-                        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                          {q.explanation}
-                        </p>
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+                    );
+                  })}
+                </div>
+              </div>
             </div>
 
-            {/* Daily Prep Strategy Section */}
-            <div className="glass-card" style={styles.routineCard}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-                <Zap size={20} color="var(--secondary)" />
-                <h4 style={{ fontSize: '1.2rem', fontWeight: 700 }}>Daily Skill Enhancement Blueprint</h4>
+            {/* Current Level Question Card */}
+            <div className="glass-card" style={styles.drillCard}>
+              <div style={styles.drillTop}>
+                <span className="badge badge-indigo">Level {activeLevel} Question</span>
+                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
               </div>
 
-              <div style={styles.routineGrid} className="skill-routine-grid">
-                <div style={styles.routineStep}>
-                  <div style={styles.stepNum}>1</div>
-                  <div>
-                    <h5 style={styles.stepTitle}>15 Mins Speed Drills</h5>
-                    <p style={styles.stepDesc}>Practice rapid pattern recognition and formula calculations daily.</p>
-                  </div>
-                </div>
+              <h4 style={styles.drillQuestion}>{currentLevelQ.q}</h4>
 
-                <div style={styles.routineStep}>
-                  <div style={styles.stepNum}>2</div>
-                  <div>
-                    <h5 style={styles.stepTitle}>20 Mins Syllabus Study</h5>
-                    <p style={styles.stepDesc}>Review module notes and practice algorithmic concepts in your dashboard.</p>
-                  </div>
-                </div>
+              <div style={styles.drillOptions}>
+                {currentLevelQ.options.map((optText, oIdx) => {
+                  const isSelected = selectedOpt === oIdx;
+                  const isCorrectOpt = oIdx === currentLevelQ.correct;
 
-                <div style={styles.routineStep}>
-                  <div style={styles.stepNum}>3</div>
-                  <div>
-                    <h5 style={styles.stepTitle}>Weekly Mock Test</h5>
-                    <p style={styles.stepDesc}>Complete 1 timed mock test under proctored exam conditions.</p>
-                  </div>
-                </div>
+                  let optionStyle = { ...styles.drillOptionBtn };
+
+                  if (isSelected) {
+                    optionStyle.borderColor = 'var(--accent)';
+                    optionStyle.background = 'rgba(37, 99, 235, 0.06)';
+                  }
+                  if (isSubmitted) {
+                    if (isCorrectOpt) {
+                      optionStyle.borderColor = 'var(--success)';
+                      optionStyle.background = 'rgba(5, 150, 105, 0.08)';
+                    } else if (isSelected && !isCorrectOpt) {
+                      optionStyle.borderColor = '#dc2626';
+                      optionStyle.background = '#fef2f2';
+                    }
+                  }
+
+                  return (
+                    <button
+                      key={oIdx}
+                      onClick={() => handleSelectOption(oIdx)}
+                      style={optionStyle}
+                      disabled={isSubmitted}
+                    >
+                      <span style={styles.drillOptLetter}>{String.fromCharCode(65 + oIdx)}</span>
+                      <span>{optText}</span>
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Action Buttons */}
+              {!isSubmitted ? (
+                <button
+                  onClick={handleCheckAnswer}
+                  className="btn btn-primary"
+                  style={{ marginTop: '1.5rem', alignSelf: 'flex-start' }}
+                  disabled={selectedOpt === null}
+                >
+                  Verify Level {activeLevel} Answer
+                </button>
+              ) : (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+                  <div style={{
+                    ...styles.explanationBox,
+                    borderColor: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626',
+                    background: selectedOpt === currentLevelQ.correct ? 'rgba(5, 150, 105, 0.05)' : '#fef2f2'
+                  }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                      {selectedOpt === currentLevelQ.correct ? <Check size={16} color="var(--success)" /> : <X size={16} color="#dc2626" />}
+                      <strong style={{ color: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626', fontSize: '0.9rem' }}>
+                        {selectedOpt === currentLevelQ.correct ? `Level ${activeLevel} Passed!` : "Incorrect Solution"}
+                      </strong>
+                    </div>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                      {currentLevelQ.explanation}
+                    </p>
+                  </div>
+
+                  {activeLevel < 50 && (
+                    <button
+                      onClick={handleNextLevel}
+                      className="btn btn-orange"
+                      style={{ alignSelf: 'flex-start' }}
+                    >
+                      Proceed to Level {activeLevel + 1}
+                      <ArrowRight size={16} />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
           </div>
@@ -476,7 +569,7 @@ const styles = {
     minHeight: '80vh',
   },
   container: {
-    maxWidth: '750px',
+    maxWidth: '780px',
     width: '100%',
   },
   intro: {
@@ -550,6 +643,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.75rem',
+    textAlign: 'left',
   },
   questionText: {
     fontSize: '1.4rem',
@@ -655,16 +749,17 @@ const styles = {
     padding: '0.9rem',
   },
 
-  /* Practice Hub Styles */
+  /* 50-Level Practice Hub Styles */
   practiceContainer: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1.5rem',
   },
   practiceHeaderCard: {
-    padding: '1.75rem 2rem',
+    padding: '2rem',
     background: '#ffffff',
     border: '1px solid var(--border-subtle)',
+    textAlign: 'left',
   },
   practiceHeaderFlex: {
     display: 'flex',
@@ -672,27 +767,46 @@ const styles = {
     alignItems: 'center',
     flexWrap: 'wrap',
     gap: '1rem',
-    textAlign: 'left',
   },
   practiceHeaderTitle: {
-    fontSize: '1.25rem',
-    fontWeight: 700,
-  },
-  practiceHeaderSub: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    marginTop: '0.2rem',
+    fontSize: '1.5rem',
+    fontWeight: 800,
   },
   trackSelect: {
-    minWidth: '220px',
+    minWidth: '240px',
   },
-  drillsList: {
+  levelSelectorWrapper: {
+    marginTop: '1.5rem',
+    paddingTop: '1.25rem',
+    borderTop: '1px solid var(--border-subtle)',
+  },
+  levelSelectorHeader: {
     display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '0.75rem',
+  },
+  levelGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(10, 1fr)',
+    gap: '0.35rem',
+    maxHeight: '130px',
+    overflowY: 'auto',
+    paddingRight: '0.25rem',
+  },
+  levelGridBtn: {
+    height: '32px',
+    borderRadius: '6px',
+    border: '1px solid',
+    fontSize: '0.75rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all var(--transition-fast)',
   },
   drillCard: {
-    padding: '2rem',
+    padding: '2.25rem',
     background: '#ffffff',
     border: '1px solid var(--border-subtle)',
     textAlign: 'left',
@@ -706,10 +820,10 @@ const styles = {
     marginBottom: '1rem',
   },
   drillQuestion: {
-    fontSize: '1.15rem',
+    fontSize: '1.2rem',
     fontWeight: 700,
-    marginBottom: '1.25rem',
-    lineHeight: '1.4',
+    marginBottom: '1.5rem',
+    lineHeight: '1.45',
   },
   drillOptions: {
     display: 'flex',
@@ -720,7 +834,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
-    padding: '0.85rem 1.25rem',
+    padding: '0.9rem 1.25rem',
     borderRadius: '10px',
     border: '1px solid var(--border-subtle)',
     background: '#ffffff',
@@ -742,60 +856,18 @@ const styles = {
     color: '#475569',
   },
   explanationBox: {
-    marginTop: '1.25rem',
     padding: '1rem 1.25rem',
     borderRadius: '10px',
     border: '1px solid',
-  },
-  routineCard: {
-    padding: '2rem',
-    background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    textAlign: 'left',
-  },
-  routineGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '1.5rem',
-    marginTop: '1rem',
-  },
-  routineStep: {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'flex-start',
-  },
-  stepNum: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    background: 'rgba(249, 115, 22, 0.1)',
-    color: 'var(--secondary)',
-    border: '1px solid rgba(249, 115, 22, 0.3)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    fontWeight: 800,
-    fontSize: '0.9rem',
-    flexShrink: 0,
-  },
-  stepTitle: {
-    fontSize: '0.95rem',
-    fontWeight: 700,
-    marginBottom: '0.2rem',
-  },
-  stepDesc: {
-    fontSize: '0.8rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.4',
   }
 };
 
-// Add responsive styling for routine grid
+// Add responsive grid styles for level grid
 const styleSheet = document.createElement("style");
 styleSheet.innerText += `
-  @media (min-width: 640px) {
-    .skill-routine-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
+  @media (max-width: 640px) {
+    .levelGrid {
+      grid-template-columns: repeat(5, 1fr) !important;
     }
   }
 `;
