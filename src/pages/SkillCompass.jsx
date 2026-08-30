@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, RefreshCw, ArrowRight, Award, Brain, CheckCircle2, Zap, Check, X, ShieldAlert, ChevronRight, Lock, Sparkles } from 'lucide-react';
+import { Compass, RefreshCw, ArrowRight, Award, Brain, CheckCircle2, Zap, Check, X, ShieldAlert, ChevronRight, Lock, Sparkles, Layers } from 'lucide-react';
 
 export default function SkillCompass({ onSelectTrack }) {
   const navigate = useNavigate();
@@ -131,12 +131,13 @@ export default function SkillCompass({ onSelectTrack }) {
     "Public Speaking & Debate": "You have excellent verbal persuasive power, structure, and impromptu quick-thinking. The Public Speaking arena will sharpen your voice modulation and panel argument logic."
   };
 
-  // ================= 50-LEVEL PRACTICE HUB STATE =================
+  // ================= 50-LEVEL STACKED CARD DECK STATE =================
   const [practiceTrack, setPracticeTrack] = useState("Coding & Algorithms");
   const [activeLevel, setActiveLevel] = useState(1);
-  const [completedLevels, setCompletedLevels] = useState([1]); // Levels completed tracking
+  const [completedLevels, setCompletedLevels] = useState([1]);
   const [selectedOpt, setSelectedOpt] = useState(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isAnimatingNext, setIsAnimatingNext] = useState(false);
 
   // Helper to get difficulty tier badge
   const getTierInfo = (level) => {
@@ -157,11 +158,17 @@ export default function SkillCompass({ onSelectTrack }) {
         correct: 2,
         explanation: "`const` is used in ES6+ JavaScript to declare read-only constant variables."
       };
+      if (lvl === 2) return {
+        q: "Level 2: What is the result of `3 + '3'` in JavaScript coercion?",
+        options: ["'33'", "6", "NaN", "TypeError"],
+        correct: 0,
+        explanation: "The `+` operator with a string triggers string concatenation, producing `'33'`."
+      };
       if (lvl === 5) return {
         q: "Level 5: What will `typeof NaN` evaluate to in JavaScript?",
         options: ["'number'", "'nan'", "'undefined'", "'object'"],
         correct: 0,
-        explanation: "Despite representing 'Not-a-Number', the `typeof NaN` in JS is technically `'number'."
+        explanation: "Despite representing 'Not-a-Number', `typeof NaN` in JS is technically `'number'."
       };
       if (lvl === 15) return {
         q: "Level 15: Which algorithm achieves O(n log n) average time complexity for sorting arrays?",
@@ -206,6 +213,12 @@ export default function SkillCompass({ onSelectTrack }) {
         correct: 1,
         explanation: "45 + 55 = 100."
       };
+      if (lvl === 2) return {
+        q: "Level 2: Calculate 12 × 12 in your head.",
+        options: ["124", "134", "144", "154"],
+        correct: 2,
+        explanation: "12 × 12 = 144."
+      };
       if (lvl === 10) return {
         q: "Level 10: Calculate 105 × 105 mentally using the Nikhilam square rule.",
         options: ["10,525", "11,025", "11,225", "10,025"],
@@ -232,7 +245,6 @@ export default function SkillCompass({ onSelectTrack }) {
       };
     }
 
-    // Default fallback generator for AI, Robotics, Art, English, Public Speaking
     return {
       q: `Level ${lvl}: Evaluate the core principle of ${track} for level ${lvl} qualification.`,
       options: [
@@ -247,16 +259,18 @@ export default function SkillCompass({ onSelectTrack }) {
   };
 
   const currentLevelQ = getQuestionForLevel(practiceTrack, activeLevel);
+  const nextLevelQ = getQuestionForLevel(practiceTrack, Math.min(50, activeLevel + 1));
+  const nextNextLevelQ = getQuestionForLevel(practiceTrack, Math.min(50, activeLevel + 2));
   const currentTier = getTierInfo(activeLevel);
 
   const handleSelectOption = (idx) => {
-    if (!isSubmitted) {
+    if (!isSubmitted && !isAnimatingNext) {
       setSelectedOpt(idx);
     }
   };
 
   const handleCheckAnswer = () => {
-    if (selectedOpt === null) return;
+    if (selectedOpt === null || isSubmitted) return;
     setIsSubmitted(true);
     if (selectedOpt === currentLevelQ.correct) {
       if (!completedLevels.includes(activeLevel)) {
@@ -265,18 +279,27 @@ export default function SkillCompass({ onSelectTrack }) {
     }
   };
 
-  const handleNextLevel = () => {
-    if (activeLevel < 50) {
-      setActiveLevel(activeLevel + 1);
-      setSelectedOpt(null);
-      setIsSubmitted(false);
+  // Stack Card Transition Action: Top Card Slides Out
+  const handleProceedNextCard = () => {
+    if (activeLevel < 50 && !isAnimatingNext) {
+      setIsAnimatingNext(true);
+
+      // Trigger card swipe transition delay
+      setTimeout(() => {
+        setActiveLevel(prev => prev + 1);
+        setSelectedOpt(null);
+        setIsSubmitted(false);
+        setIsAnimatingNext(false);
+      }, 380);
     }
   };
 
   const handleSelectLevelFromGrid = (lvlNum) => {
-    setActiveLevel(lvlNum);
-    setSelectedOpt(null);
-    setIsSubmitted(false);
+    if (!isAnimatingNext) {
+      setActiveLevel(lvlNum);
+      setSelectedOpt(null);
+      setIsSubmitted(false);
+    }
   };
 
   return (
@@ -288,7 +311,7 @@ export default function SkillCompass({ onSelectTrack }) {
           <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>SKILL COMPASS HUB</span>
           <h1 style={styles.introTitle}>Discover & <span className="text-gradient">Enhance Your Skills</span></h1>
           <p style={styles.introDesc}>
-            Take our diagnostic compass to discover your ideal track, or climb through our 50-level gamified preparation ladder.
+            Take our diagnostic compass to discover your ideal track, or climb through our 3D stacked card deck (Levels 1 to 50).
           </p>
 
           {/* Sub-Tab Navigation Bar */}
@@ -315,8 +338,8 @@ export default function SkillCompass({ onSelectTrack }) {
                 borderColor: activeSubTab === 'practice' ? 'var(--primary)' : 'var(--border-subtle)',
               }}
             >
-              <Brain size={16} />
-              50-Level Practice Hub
+              <Layers size={16} />
+              50-Level Card Deck Hub
             </button>
           </div>
         </header>
@@ -401,7 +424,7 @@ export default function SkillCompass({ onSelectTrack }) {
           </>
         )}
 
-        {/* ================= SUB-TAB 2: 50-LEVEL PRACTICE HUB ================= */}
+        {/* ================= SUB-TAB 2: 50-LEVEL STACKED CARD DECK ================= */}
         {activeSubTab === 'practice' && (
           <div style={styles.practiceContainer}>
             
@@ -412,7 +435,7 @@ export default function SkillCompass({ onSelectTrack }) {
                   <span className={`badge ${currentTier.badgeStyle}`} style={{ marginBottom: '0.4rem' }}>
                     {currentTier.label} ({currentTier.range})
                   </span>
-                  <h3 style={styles.practiceHeaderTitle}>Level {activeLevel} of 50</h3>
+                  <h3 style={styles.practiceHeaderTitle}>Level {activeLevel} of 50 Card Deck</h3>
                 </div>
                 
                 <select 
@@ -439,7 +462,7 @@ export default function SkillCompass({ onSelectTrack }) {
               {/* 50-Level Selector Grid */}
               <div style={styles.levelSelectorWrapper}>
                 <div style={styles.levelSelectorHeader}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>50-Level Preparation Ladder:</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>50-Level Deck Grid:</span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{completedLevels.length} of 50 Passed</span>
                 </div>
                 
@@ -469,90 +492,122 @@ export default function SkillCompass({ onSelectTrack }) {
               </div>
             </div>
 
-            {/* Current Level Question Card */}
-            <div className="glass-card" style={styles.drillCard}>
-              <div style={styles.drillTop}>
-                <span className="badge badge-indigo">Level {activeLevel} Question</span>
-                <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
-              </div>
-
-              <h4 style={styles.drillQuestion}>{currentLevelQ.q}</h4>
-
-              <div style={styles.drillOptions}>
-                {currentLevelQ.options.map((optText, oIdx) => {
-                  const isSelected = selectedOpt === oIdx;
-                  const isCorrectOpt = oIdx === currentLevelQ.correct;
-
-                  let optionStyle = { ...styles.drillOptionBtn };
-
-                  if (isSelected) {
-                    optionStyle.borderColor = 'var(--accent)';
-                    optionStyle.background = 'rgba(37, 99, 235, 0.06)';
-                  }
-                  if (isSubmitted) {
-                    if (isCorrectOpt) {
-                      optionStyle.borderColor = 'var(--success)';
-                      optionStyle.background = 'rgba(5, 150, 105, 0.08)';
-                    } else if (isSelected && !isCorrectOpt) {
-                      optionStyle.borderColor = '#dc2626';
-                      optionStyle.background = '#fef2f2';
-                    }
-                  }
-
-                  return (
-                    <button
-                      key={oIdx}
-                      onClick={() => handleSelectOption(oIdx)}
-                      style={optionStyle}
-                      disabled={isSubmitted}
-                    >
-                      <span style={styles.drillOptLetter}>{String.fromCharCode(65 + oIdx)}</span>
-                      <span>{optText}</span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Action Buttons */}
-              {!isSubmitted ? (
-                <button
-                  onClick={handleCheckAnswer}
-                  className="btn btn-primary"
-                  style={{ marginTop: '1.5rem', alignSelf: 'flex-start' }}
-                  disabled={selectedOpt === null}
-                >
-                  Verify Level {activeLevel} Answer
-                </button>
-              ) : (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
-                  <div style={{
-                    ...styles.explanationBox,
-                    borderColor: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626',
-                    background: selectedOpt === currentLevelQ.correct ? 'rgba(5, 150, 105, 0.05)' : '#fef2f2'
-                  }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
-                      {selectedOpt === currentLevelQ.correct ? <Check size={16} color="var(--success)" /> : <X size={16} color="#dc2626" />}
-                      <strong style={{ color: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626', fontSize: '0.9rem' }}>
-                        {selectedOpt === currentLevelQ.correct ? `Level ${activeLevel} Passed!` : "Incorrect Solution"}
-                      </strong>
-                    </div>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
-                      {currentLevelQ.explanation}
-                    </p>
-                  </div>
-
-                  {activeLevel < 50 && (
-                    <button
-                      onClick={handleNextLevel}
-                      className="btn btn-orange"
-                      style={{ alignSelf: 'flex-start' }}
-                    >
-                      Proceed to Level {activeLevel + 1}
-                      <ArrowRight size={16} />
-                    </button>
-                  )}
+            {/* 3D STACKED CARD DECK CONTAINER */}
+            <div style={styles.deckStackContainer}>
+              
+              {/* Back Card Layer 3 (Level N+2) */}
+              {activeLevel < 49 && (
+                <div style={styles.backCard3}>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Level {activeLevel + 2} Card Stack</span>
                 </div>
               )}
+
+              {/* Middle Card Layer 2 (Level N+1) */}
+              {activeLevel < 50 && (
+                <div style={styles.backCard2}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', opacity: 0.7 }}>
+                    <span className="badge badge-indigo" style={{ fontSize: '0.7rem' }}>Level {activeLevel + 1} Preview</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
+                  </div>
+                  <h4 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{nextLevelQ.q}</h4>
+                </div>
+              )}
+
+              {/* Front Active Card Layer 1 (Level N) */}
+              <div 
+                className="glass-card"
+                style={{
+                  ...styles.frontActiveCard,
+                  transform: isAnimatingNext 
+                    ? 'translateY(-90px) rotate(-4deg) scale(0.96)' 
+                    : 'translateY(0) scale(1)',
+                  opacity: isAnimatingNext ? 0 : 1,
+                }}
+              >
+                <div style={styles.drillTop}>
+                  <span className="badge badge-indigo">Level {activeLevel} Card</span>
+                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
+                </div>
+
+                <h4 style={styles.drillQuestion}>{currentLevelQ.q}</h4>
+
+                <div style={styles.drillOptions}>
+                  {currentLevelQ.options.map((optText, oIdx) => {
+                    const isSelected = selectedOpt === oIdx;
+                    const isCorrectOpt = oIdx === currentLevelQ.correct;
+
+                    let optionStyle = { ...styles.drillOptionBtn };
+
+                    if (isSelected) {
+                      optionStyle.borderColor = 'var(--accent)';
+                      optionStyle.background = 'rgba(37, 99, 235, 0.06)';
+                    }
+                    if (isSubmitted) {
+                      if (isCorrectOpt) {
+                        optionStyle.borderColor = 'var(--success)';
+                        optionStyle.background = 'rgba(5, 150, 105, 0.08)';
+                      } else if (isSelected && !isCorrectOpt) {
+                        optionStyle.borderColor = '#dc2626';
+                        optionStyle.background = '#fef2f2';
+                      }
+                    }
+
+                    return (
+                      <button
+                        key={oIdx}
+                        onClick={() => handleSelectOption(oIdx)}
+                        style={optionStyle}
+                        disabled={isSubmitted}
+                      >
+                        <span style={styles.drillOptLetter}>{String.fromCharCode(65 + oIdx)}</span>
+                        <span>{optText}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Card Action Area */}
+                {!isSubmitted ? (
+                  <button
+                    onClick={handleCheckAnswer}
+                    className="btn btn-primary"
+                    style={{ marginTop: '1.5rem', alignSelf: 'flex-start' }}
+                    disabled={selectedOpt === null}
+                  >
+                    Check Answer
+                  </button>
+                ) : (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1.5rem' }}>
+                    <div style={{
+                      ...styles.explanationBox,
+                      borderColor: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626',
+                      background: selectedOpt === currentLevelQ.correct ? 'rgba(5, 150, 105, 0.05)' : '#fef2f2'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
+                        {selectedOpt === currentLevelQ.correct ? <Check size={16} color="var(--success)" /> : <X size={16} color="#dc2626" />}
+                        <strong style={{ color: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626', fontSize: '0.9rem' }}>
+                          {selectedOpt === currentLevelQ.correct ? `Level ${activeLevel} Passed!` : "Incorrect Solution"}
+                        </strong>
+                      </div>
+                      <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
+                        {currentLevelQ.explanation}
+                      </p>
+                    </div>
+
+                    {activeLevel < 50 && (
+                      <button
+                        onClick={handleProceedNextCard}
+                        className="btn btn-orange"
+                        style={{ alignSelf: 'flex-start' }}
+                      >
+                        Proceed to Level {activeLevel + 1} (Slide Card →)
+                        <ArrowRight size={16} />
+                      </button>
+                    )}
+                  </div>
+                )}
+              </div>
+
             </div>
 
           </div>
@@ -749,7 +804,7 @@ const styles = {
     padding: '0.9rem',
   },
 
-  /* 50-Level Practice Hub Styles */
+  /* 3D Stacked Card Deck Styles */
   practiceContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -805,13 +860,58 @@ const styles = {
     justifyContent: 'center',
     transition: 'all var(--transition-fast)',
   },
-  drillCard: {
-    padding: '2.25rem',
+
+  /* Stacked Cards Deck Wrapper */
+  deckStackContainer: {
+    position: 'relative',
+    margin: '1rem 0 2rem 0',
+    minHeight: '450px',
+  },
+  backCard3: {
+    position: 'absolute',
+    top: '24px',
+    left: '20px',
+    right: '20px',
+    height: '100%',
     background: '#ffffff',
     border: '1px solid var(--border-subtle)',
+    borderRadius: '20px',
+    transform: 'scale(0.93)',
+    opacity: 0.4,
+    zIndex: 1,
+    padding: '1.5rem',
+    pointerEvents: 'none',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
+  },
+  backCard2: {
+    position: 'absolute',
+    top: '12px',
+    left: '10px',
+    right: '10px',
+    height: '100%',
+    background: '#ffffff',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: '20px',
+    transform: 'scale(0.97)',
+    opacity: 0.75,
+    zIndex: 2,
+    padding: '1.5rem',
+    textAlign: 'left',
+    pointerEvents: 'none',
+    boxShadow: '0 8px 20px rgba(0,0,0,0.04)',
+  },
+  frontActiveCard: {
+    position: 'relative',
+    zIndex: 3,
+    padding: '2.5rem',
+    background: '#ffffff',
+    border: '1px solid var(--border-subtle)',
+    borderRadius: '20px',
     textAlign: 'left',
     display: 'flex',
     flexDirection: 'column',
+    boxShadow: '0 20px 40px -15px rgba(15, 23, 42, 0.08)',
+    transition: 'all 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
   },
   drillTop: {
     display: 'flex',
@@ -820,7 +920,7 @@ const styles = {
     marginBottom: '1rem',
   },
   drillQuestion: {
-    fontSize: '1.2rem',
+    fontSize: '1.25rem',
     fontWeight: 700,
     marginBottom: '1.5rem',
     lineHeight: '1.45',
@@ -861,14 +961,3 @@ const styles = {
     border: '1px solid',
   }
 };
-
-// Add responsive grid styles for level grid
-const styleSheet = document.createElement("style");
-styleSheet.innerText += `
-  @media (max-width: 640px) {
-    .levelGrid {
-      grid-template-columns: repeat(5, 1fr) !important;
-    }
-  }
-`;
-document.head.appendChild(styleSheet);
