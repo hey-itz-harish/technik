@@ -131,7 +131,7 @@ export default function SkillCompass({ onSelectTrack }) {
     "Public Speaking & Debate": "You have excellent verbal persuasive power, structure, and impromptu quick-thinking. The Public Speaking arena will sharpen your voice modulation and panel argument logic."
   };
 
-  // ================= 50-LEVEL STACKED CARD DECK STATE =================
+  // ================= 50-LEVEL ROTATED FLASHCARD DECK STATE =================
   const [practiceTrack, setPracticeTrack] = useState("Coding & Algorithms");
   const [activeLevel, setActiveLevel] = useState(1);
   const [completedLevels, setCompletedLevels] = useState([1]);
@@ -153,37 +153,37 @@ export default function SkillCompass({ onSelectTrack }) {
 
     if (track === "Coding & Algorithms") {
       if (lvl === 1) return {
-        q: "Level 1: What is the correct syntax to define a constant in JavaScript?",
+        q: "What is the correct syntax to define a constant in JavaScript?",
         options: ["var x = 10", "let x = 10", "const x = 10", "constant x = 10"],
         correct: 2,
         explanation: "`const` is used in ES6+ JavaScript to declare read-only constant variables."
       };
       if (lvl === 2) return {
-        q: "Level 2: What is the result of `3 + '3'` in JavaScript coercion?",
+        q: "What is the result of `3 + '3'` in JavaScript coercion?",
         options: ["'33'", "6", "NaN", "TypeError"],
         correct: 0,
         explanation: "The `+` operator with a string triggers string concatenation, producing `'33'`."
       };
       if (lvl === 5) return {
-        q: "Level 5: What will `typeof NaN` evaluate to in JavaScript?",
+        q: "What will `typeof NaN` evaluate to in JavaScript?",
         options: ["'number'", "'nan'", "'undefined'", "'object'"],
         correct: 0,
         explanation: "Despite representing 'Not-a-Number', `typeof NaN` in JS is technically `'number'."
       };
       if (lvl === 15) return {
-        q: "Level 15: Which algorithm achieves O(n log n) average time complexity for sorting arrays?",
+        q: "Which algorithm achieves O(n log n) average time complexity for sorting arrays?",
         options: ["Bubble Sort", "Quick Sort", "Insertion Sort", "Selection Sort"],
         correct: 1,
         explanation: "Quick Sort & Merge Sort achieve O(n log n) average time complexity, outperforming O(n²) Bubble Sort."
       };
       if (lvl === 30) return {
-        q: "Level 30: What is the time complexity of searching a target key in a balanced Binary Search Tree (BST)?",
+        q: "What is the time complexity of searching a target key in a balanced Binary Search Tree (BST)?",
         options: ["O(1)", "O(n)", "O(log n)", "O(n²)"],
         correct: 2,
         explanation: "A balanced BST halves the search space at each step, yielding logarithmic O(log n) performance."
       };
       if (lvl === 50) return {
-        q: "Level 50 (Grandmaster Final): In Dynamic Programming, what does the 'Optimal Substructure' property imply?",
+        q: "In Dynamic Programming, what does the 'Optimal Substructure' property imply?",
         options: [
           "An optimal solution contains optimal solutions to its subproblems.",
           "The algorithm uses O(1) auxiliary space at all recursion levels.",
@@ -194,7 +194,7 @@ export default function SkillCompass({ onSelectTrack }) {
         explanation: "Optimal Substructure means an optimal solution to a problem is constructed from optimal solutions to subproblems."
       };
       return {
-        q: `Level ${lvl}: In ${track}, what is the expected result of algorithmic scaling for benchmark #${lvl}?`,
+        q: `In ${track}, what is the expected result of algorithmic scaling for benchmark #${lvl}?`,
         options: [
           `Optimized execution complexity of O(log n)`,
           `Sequential pipeline loop with ${lvl * 2} iterations`,
@@ -208,37 +208,37 @@ export default function SkillCompass({ onSelectTrack }) {
 
     if (track === "Mental Math Arena" || track === "Abacus Championship") {
       if (lvl === 1) return {
-        q: "Level 1: Calculate 45 + 55 in your head.",
+        q: "Calculate 45 + 55 in your head.",
         options: ["90", "100", "105", "110"],
         correct: 1,
         explanation: "45 + 55 = 100."
       };
       if (lvl === 2) return {
-        q: "Level 2: Calculate 12 × 12 in your head.",
+        q: "Calculate 12 × 12 in your head.",
         options: ["124", "134", "144", "154"],
         correct: 2,
         explanation: "12 × 12 = 144."
       };
       if (lvl === 10) return {
-        q: "Level 10: Calculate 105 × 105 mentally using the Nikhilam square rule.",
+        q: "Calculate 105 × 105 mentally using the Nikhilam square rule.",
         options: ["10,525", "11,025", "11,225", "10,025"],
         correct: 1,
         explanation: "Multiply 10 by 11 = 110, then append 25 -> 11,025."
       };
       if (lvl === 25) return {
-        q: "Level 25: What is 25% of 640?",
+        q: "What is 25% of 640?",
         options: ["140", "160", "180", "200"],
         correct: 1,
         explanation: "25% is 1/4th. 640 / 4 = 160."
       };
       if (lvl === 50) return {
-        q: "Level 50 (Grandmaster Final): What is the square root of 50,625?",
+        q: "What is the square root of 50,625?",
         options: ["215", "225", "235", "245"],
         correct: 1,
         explanation: "225 × 225 = 50,625."
       };
       return {
-        q: `Level ${lvl}: Calculate ${lvl * 12} + ${lvl * 15} mentally.`,
+        q: `Calculate ${lvl * 12} + ${lvl * 15} mentally.`,
         options: [`${lvl * 27}`, `${lvl * 25}`, `${lvl * 30}`, `${lvl * 20}`],
         correct: 0,
         explanation: `${lvl * 12} + ${lvl * 15} = ${lvl * 27}.`
@@ -246,7 +246,7 @@ export default function SkillCompass({ onSelectTrack }) {
     }
 
     return {
-      q: `Level ${lvl}: Evaluate the core principle of ${track} for level ${lvl} qualification.`,
+      q: `Evaluate the core principle of ${track} for level ${lvl} qualification.`,
       options: [
         `Systematic evaluation rule #${lvl} with high accuracy`,
         `Alternative exploratory option B`,
@@ -260,7 +260,6 @@ export default function SkillCompass({ onSelectTrack }) {
 
   const currentLevelQ = getQuestionForLevel(practiceTrack, activeLevel);
   const nextLevelQ = getQuestionForLevel(practiceTrack, Math.min(50, activeLevel + 1));
-  const nextNextLevelQ = getQuestionForLevel(practiceTrack, Math.min(50, activeLevel + 2));
   const currentTier = getTierInfo(activeLevel);
 
   const handleSelectOption = (idx) => {
@@ -279,12 +278,11 @@ export default function SkillCompass({ onSelectTrack }) {
     }
   };
 
-  // Stack Card Transition Action: Top Card Slides Out
+  // Stack Flashcard Swipe Action: Top Card Flips Out
   const handleProceedNextCard = () => {
     if (activeLevel < 50 && !isAnimatingNext) {
       setIsAnimatingNext(true);
 
-      // Trigger card swipe transition delay
       setTimeout(() => {
         setActiveLevel(prev => prev + 1);
         setSelectedOpt(null);
@@ -310,8 +308,10 @@ export default function SkillCompass({ onSelectTrack }) {
         <header style={styles.intro}>
           <span className="badge badge-purple" style={{ marginBottom: '1rem' }}>SKILL COMPASS HUB</span>
           <h1 style={styles.introTitle}>Discover & <span className="text-gradient">Enhance Your Skills</span></h1>
+          
+          {/* Catchy Subtitle Tagline */}
           <p style={styles.introDesc}>
-            Take our diagnostic compass to discover your ideal track, or climb through our 3D stacked card deck (Levels 1 to 50).
+            Pinpoint your true cognitive superpowers, master 50 levels of high-octane practice flashcards, and accelerate your path to Olympiad victory.
           </p>
 
           {/* Sub-Tab Navigation Bar */}
@@ -339,7 +339,7 @@ export default function SkillCompass({ onSelectTrack }) {
               }}
             >
               <Layers size={16} />
-              50-Level Card Deck Hub
+              50-Level Flashcard Deck
             </button>
           </div>
         </header>
@@ -349,7 +349,6 @@ export default function SkillCompass({ onSelectTrack }) {
           <>
             {!showResult ? (
               <div className="glass-card" style={styles.quizCard}>
-                {/* Progress Bar & Pips */}
                 <div style={styles.progressHeader}>
                   <span style={styles.progressText}>Question {currentQuestion + 1} of {questions.length}</span>
                   <div style={styles.pips}>
@@ -366,7 +365,6 @@ export default function SkillCompass({ onSelectTrack }) {
                   </div>
                 </div>
 
-                {/* Question Content */}
                 <div style={styles.questionSection}>
                   <h2 style={styles.questionText}>{questions[currentQuestion].text}</h2>
                   <div style={styles.optionsGrid}>
@@ -424,18 +422,18 @@ export default function SkillCompass({ onSelectTrack }) {
           </>
         )}
 
-        {/* ================= SUB-TAB 2: 50-LEVEL STACKED CARD DECK ================= */}
+        {/* ================= SUB-TAB 2: 50-LEVEL ROTATED FLASHCARD DECK ================= */}
         {activeSubTab === 'practice' && (
           <div style={styles.practiceContainer}>
             
-            {/* Practice Track & Tier Bar */}
+            {/* Practice Track & Level Bar */}
             <div className="glass-card" style={styles.practiceHeaderCard}>
               <div style={styles.practiceHeaderFlex}>
                 <div>
                   <span className={`badge ${currentTier.badgeStyle}`} style={{ marginBottom: '0.4rem' }}>
                     {currentTier.label} ({currentTier.range})
                   </span>
-                  <h3 style={styles.practiceHeaderTitle}>Level {activeLevel} of 50 Card Deck</h3>
+                  <h3 style={styles.practiceHeaderTitle}>Flashcard Level {activeLevel} of 50</h3>
                 </div>
                 
                 <select 
@@ -462,7 +460,7 @@ export default function SkillCompass({ onSelectTrack }) {
               {/* 50-Level Selector Grid */}
               <div style={styles.levelSelectorWrapper}>
                 <div style={styles.levelSelectorHeader}>
-                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>50-Level Deck Grid:</span>
+                  <span style={{ fontSize: '0.85rem', fontWeight: 700, color: 'var(--text-secondary)' }}>50 Flashcard Deck Selector:</span>
                   <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{completedLevels.length} of 50 Passed</span>
                 </div>
                 
@@ -482,7 +480,7 @@ export default function SkillCompass({ onSelectTrack }) {
                           borderColor: isCurrent ? 'var(--primary)' : isDone ? 'var(--success)' : 'var(--border-subtle)',
                           fontWeight: isCurrent || isDone ? 700 : 500,
                         }}
-                        title={`Jump to Level ${lvlNum}`}
+                        title={`Jump to Flashcard ${lvlNum}`}
                       >
                         {lvlNum}
                       </button>
@@ -492,44 +490,47 @@ export default function SkillCompass({ onSelectTrack }) {
               </div>
             </div>
 
-            {/* 3D STACKED CARD DECK CONTAINER */}
-            <div style={styles.deckStackContainer}>
+            {/* ROTATED FAN-OUT FLASHCARD DECK STACK */}
+            <div style={styles.deckStackContainer} className="flashcard-deck-stack-container">
               
-              {/* Back Card Layer 3 (Level N+2) */}
+              {/* Back Flashcard Layer 3 (Tilted 5.5° to the right - Blue Accent Line) */}
               {activeLevel < 49 && (
-                <div style={styles.backCard3}>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600 }}>Level {activeLevel + 2} Card Stack</span>
-                </div>
-              )}
-
-              {/* Middle Card Layer 2 (Level N+1) */}
-              {activeLevel < 50 && (
-                <div style={styles.backCard2}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', opacity: 0.7 }}>
-                    <span className="badge badge-indigo" style={{ fontSize: '0.7rem' }}>Level {activeLevel + 1} Preview</span>
+                <div style={styles.backFlashcard3}>
+                  <div style={styles.cardHeaderFlex}>
+                    <span className="badge badge-indigo" style={{ fontSize: '0.65rem' }}>FLASHCARD #{activeLevel + 2} IN DECK</span>
                     <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
                   </div>
-                  <h4 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginTop: '0.5rem' }}>{nextLevelQ.q}</h4>
                 </div>
               )}
 
-              {/* Front Active Card Layer 1 (Level N) */}
+              {/* Middle Flashcard Layer 2 (Tilted 2.8° to the right - Orange Accent Line) */}
+              {activeLevel < 50 && (
+                <div style={styles.backFlashcard2}>
+                  <div style={styles.cardHeaderFlex}>
+                    <span className="badge badge-gold" style={{ fontSize: '0.65rem' }}>FLASHCARD #{activeLevel + 1} PREVIEW</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
+                  </div>
+                  <h4 style={{ fontSize: '1rem', color: 'var(--text-secondary)', marginTop: '0.75rem', lineHeight: '1.4' }}>{nextLevelQ.q}</h4>
+                </div>
+              )}
+
+              {/* Top Active Flashcard Layer 1 (Level N - Straight) */}
               <div 
                 className="glass-card"
                 style={{
-                  ...styles.frontActiveCard,
+                  ...styles.frontActiveFlashcard,
                   transform: isAnimatingNext 
-                    ? 'translateY(-90px) rotate(-4deg) scale(0.96)' 
-                    : 'translateY(0) scale(1)',
+                    ? 'translateX(110%) rotate(12deg)' 
+                    : 'translateX(0) rotate(0deg)',
                   opacity: isAnimatingNext ? 0 : 1,
                 }}
               >
-                <div style={styles.drillTop}>
-                  <span className="badge badge-indigo">Level {activeLevel} Card</span>
-                  <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>{practiceTrack}</span>
+                <div style={styles.cardHeaderFlex}>
+                  <span className="badge badge-indigo">FLASHCARD #{activeLevel} OF 50</span>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>{practiceTrack}</span>
                 </div>
 
-                <h4 style={styles.drillQuestion}>{currentLevelQ.q}</h4>
+                <h3 style={styles.flashcardQuestion}>{currentLevelQ.q}</h3>
 
                 <div style={styles.drillOptions}>
                   {currentLevelQ.options.map((optText, oIdx) => {
@@ -586,7 +587,7 @@ export default function SkillCompass({ onSelectTrack }) {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.35rem' }}>
                         {selectedOpt === currentLevelQ.correct ? <Check size={16} color="var(--success)" /> : <X size={16} color="#dc2626" />}
                         <strong style={{ color: selectedOpt === currentLevelQ.correct ? 'var(--success)' : '#dc2626', fontSize: '0.9rem' }}>
-                          {selectedOpt === currentLevelQ.correct ? `Level ${activeLevel} Passed!` : "Incorrect Solution"}
+                          {selectedOpt === currentLevelQ.correct ? `Flashcard #${activeLevel} Mastered!` : "Incorrect Answer"}
                         </strong>
                       </div>
                       <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.4' }}>
@@ -600,7 +601,7 @@ export default function SkillCompass({ onSelectTrack }) {
                         className="btn btn-orange"
                         style={{ alignSelf: 'flex-start' }}
                       >
-                        Proceed to Level {activeLevel + 1} (Slide Card →)
+                        Next Flashcard #{activeLevel + 1} (Slide Deck →)
                         <ArrowRight size={16} />
                       </button>
                     )}
@@ -637,10 +638,10 @@ const styles = {
   },
   introDesc: {
     color: 'var(--text-secondary)',
-    fontSize: '1rem',
-    maxWidth: '550px',
+    fontSize: '1.05rem',
+    maxWidth: '650px',
     margin: '0 auto 1.75rem auto',
-    lineHeight: '1.6',
+    lineHeight: '1.65',
   },
   subTabNav: {
     display: 'inline-flex',
@@ -804,7 +805,7 @@ const styles = {
     padding: '0.9rem',
   },
 
-  /* 3D Stacked Card Deck Styles */
+  /* Rotated Fan-Out Flashcard Deck Styles */
   practiceContainer: {
     display: 'flex',
     flexDirection: 'column',
@@ -861,103 +862,105 @@ const styles = {
     transition: 'all var(--transition-fast)',
   },
 
-  /* Stacked Cards Deck Wrapper */
+  /* Visible Rotated Card Deck Fan-Out Wrapper */
   deckStackContainer: {
     position: 'relative',
-    margin: '1rem 0 2rem 0',
-    minHeight: '450px',
+    margin: '2rem 1.5rem 3rem 0',
+    minHeight: '480px',
   },
-  backCard3: {
+  backFlashcard3: {
     position: 'absolute',
-    top: '24px',
-    left: '20px',
-    right: '20px',
+    top: '-15px',
+    right: '-18px',
+    left: '18px',
     height: '100%',
     background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '20px',
-    transform: 'scale(0.93)',
-    opacity: 0.4,
+    border: '2px solid rgba(37, 99, 235, 0.25)',
+    borderRadius: '24px',
+    transform: 'rotate(5.5deg)',
     zIndex: 1,
-    padding: '1.5rem',
+    padding: '1.5rem 2rem',
     pointerEvents: 'none',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
+    boxShadow: '0 8px 20px rgba(0,0,0,0.03)',
   },
-  backCard2: {
+  backFlashcard2: {
     position: 'absolute',
-    top: '12px',
-    left: '10px',
-    right: '10px',
+    top: '-8px',
+    right: '-9px',
+    left: '9px',
     height: '100%',
     background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '20px',
-    transform: 'scale(0.97)',
-    opacity: 0.75,
+    border: '2px solid rgba(249, 115, 22, 0.3)',
+    borderRadius: '24px',
+    transform: 'rotate(2.8deg)',
     zIndex: 2,
-    padding: '1.5rem',
+    padding: '1.5rem 2rem',
     textAlign: 'left',
     pointerEvents: 'none',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.04)',
+    boxShadow: '0 12px 25px rgba(0,0,0,0.04)',
   },
-  frontActiveCard: {
+  frontActiveFlashcard: {
     position: 'relative',
     zIndex: 3,
     padding: '2.5rem',
     background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '20px',
+    border: '2px solid rgba(15, 23, 42, 0.12)',
+    borderRadius: '24px',
     textAlign: 'left',
     display: 'flex',
     flexDirection: 'column',
-    boxShadow: '0 20px 40px -15px rgba(15, 23, 42, 0.08)',
+    boxShadow: '0 20px 50px -10px rgba(15, 23, 42, 0.1)',
     transition: 'all 0.38s cubic-bezier(0.4, 0, 0.2, 1)',
   },
-  drillTop: {
+  cardHeaderFlex: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '1rem',
+    marginBottom: '1.25rem',
   },
-  drillQuestion: {
-    fontSize: '1.25rem',
-    fontWeight: 700,
-    marginBottom: '1.5rem',
+  flashcardQuestion: {
+    fontSize: '1.35rem',
+    fontWeight: 800,
+    marginBottom: '1.75rem',
     lineHeight: '1.45',
+    color: 'var(--text-primary)',
+    fontFamily: 'var(--font-heading)',
   },
   drillOptions: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.75rem',
+    gap: '0.85rem',
   },
   drillOptionBtn: {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
-    padding: '0.9rem 1.25rem',
-    borderRadius: '10px',
+    padding: '1rem 1.25rem',
+    borderRadius: '12px',
     border: '1px solid var(--border-subtle)',
     background: '#ffffff',
-    fontSize: '0.9rem',
+    fontSize: '0.95rem',
     cursor: 'pointer',
     textAlign: 'left',
     transition: 'all var(--transition-fast)',
+    boxShadow: '0 2px 4px rgba(0,0,0,0.01)',
   },
   drillOptLetter: {
-    width: '24px',
-    height: '24px',
-    borderRadius: '4px',
+    width: '28px',
+    height: '28px',
+    borderRadius: '6px',
     background: '#f1f5f9',
+    border: '1px solid var(--border-subtle)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '0.75rem',
+    fontSize: '0.8rem',
     fontWeight: 700,
     color: '#475569',
   },
   explanationBox: {
-    padding: '1rem 1.25rem',
-    borderRadius: '10px',
+    padding: '1.1rem 1.25rem',
+    borderRadius: '12px',
     border: '1px solid',
   }
 };
