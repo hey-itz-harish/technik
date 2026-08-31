@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Trophy, Compass, BookOpen, UserPlus, LayoutDashboard, Home, ShieldCheck } from 'lucide-react';
+import { Menu, X, Trophy, Compass, BookOpen, UserPlus, LayoutDashboard, Home, Info } from 'lucide-react';
 
 export default function TopNav() {
   const location = useLocation();
@@ -8,6 +8,7 @@ export default function TopNav() {
 
   const navItems = [
     { name: 'Home', path: '/', icon: Home },
+    { name: 'About Us', path: '/about', icon: Info },
     { name: 'Olympiads', path: '/catalog', icon: BookOpen },
     { name: 'Skill Compass', path: '/skill-compass', icon: Compass },
     { name: 'Register', path: '/register', icon: UserPlus },
@@ -33,7 +34,7 @@ export default function TopNav() {
         </Link>
 
         {/* Desktop Links */}
-        <div style={styles.desktopNav}>
+        <div className="desktop-nav-menu" style={styles.desktopNav}>
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -43,17 +44,22 @@ export default function TopNav() {
                 to={item.path}
                 style={{
                   ...styles.navLink,
-                  color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                  color: active ? 'var(--accent)' : 'var(--text-secondary)',
+                  fontWeight: active ? 600 : 500,
                   borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
                   background: active ? 'rgba(37, 99, 235, 0.04)' : 'transparent',
                 }}
               >
-                <Icon size={16} />
-                {item.name}
+                <Icon size={15} style={{ flexShrink: 0 }} />
+                <span>{item.name}</span>
               </Link>
             );
           })}
-          <Link to="/register" className="btn btn-orange btn-mini" style={{ marginLeft: '1rem' }}>
+          <Link 
+            to="/register" 
+            className="btn btn-orange btn-mini" 
+            style={{ marginLeft: '0.5rem', whiteSpace: 'nowrap', flexShrink: 0 }}
+          >
             Register Now
           </Link>
         </div>
@@ -77,21 +83,21 @@ export default function TopNav() {
                   to={item.path}
                   style={{
                     ...styles.mobileNavLink,
-                    color: active ? 'var(--text-primary)' : 'var(--text-secondary)',
+                    color: active ? 'var(--accent)' : 'var(--text-secondary)',
                     backgroundColor: active ? 'rgba(37, 99, 235, 0.05)' : 'transparent',
                     borderLeft: active ? '4px solid var(--accent)' : '4px solid transparent',
                   }}
                   onClick={() => setIsOpen(false)}
                 >
-                  <Icon size={20} />
-                  {item.name}
+                  <Icon size={18} />
+                  <span>{item.name}</span>
                 </Link>
               );
             })}
             <Link
               to="/register"
               className="btn btn-orange"
-              style={{ margin: '1.5rem 1rem 0 1rem' }}
+              style={{ margin: '1.5rem 1rem 0 1rem', textAlign: 'center' }}
               onClick={() => setIsOpen(false)}
             >
               Register Now
@@ -105,7 +111,7 @@ export default function TopNav() {
 
 const styles = {
   nav: {
-    background: 'rgba(255, 255, 255, 0.85)',
+    background: 'rgba(255, 255, 255, 0.95)',
     backdropFilter: 'blur(16px)',
     borderBottom: '1px solid var(--border-subtle)',
     position: 'sticky',
@@ -129,6 +135,8 @@ const styles = {
     fontSize: '1.25rem',
     fontFamily: 'var(--font-heading)',
     letterSpacing: '-0.03em',
+    flexShrink: 0,
+    whiteSpace: 'nowrap',
   },
   logoHex: {
     width: '32px',
@@ -140,30 +148,31 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     boxShadow: '0 0 10px rgba(37, 99, 235, 0.1)',
+    flexShrink: 0,
   },
   logoText: {
     color: 'var(--text-primary)',
+    whiteSpace: 'nowrap',
   },
   desktopNav: {
     display: 'none',
     alignItems: 'center',
-    gap: '0.5rem',
+    gap: '0.2rem',
     height: '100%',
-    '@media (min-width: 768px)': {
-      display: 'flex',
-    },
   },
   navLink: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '0.9rem',
+    gap: '0.4rem',
+    fontSize: '0.86rem',
     fontFamily: 'var(--font-heading)',
     fontWeight: 500,
-    padding: '0.5rem 0.85rem',
+    padding: '0.4rem 0.65rem',
     borderRadius: '6px 6px 0 0',
     transition: 'all var(--transition-fast)',
     height: '70px',
+    whiteSpace: 'nowrap',
+    flexShrink: 0,
   },
   mobileMenuButton: {
     background: 'transparent',
@@ -173,9 +182,6 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    '@media (min-width: 768px)': {
-      display: 'none',
-    },
   },
   mobileDrawer: {
     position: 'absolute',
@@ -203,23 +209,27 @@ const styles = {
     fontFamily: 'var(--font-heading)',
     fontWeight: 500,
     transition: 'all var(--transition-fast)',
+    whiteSpace: 'nowrap',
   },
 };
 
-// Add raw CSS styling to override inline lack of media queries
+// Add responsive CSS styling
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
-  @media (min-width: 768px) {
+  @media (min-width: 900px) {
     #mobile-nav-toggle {
       display: none !important;
     }
-    nav div:nth-child(2) {
+    .desktop-nav-menu {
       display: flex !important;
     }
   }
-  @media (max-width: 767px) {
-    nav div:nth-child(2) {
+  @media (max-width: 899px) {
+    .desktop-nav-menu {
       display: none !important;
+    }
+    #mobile-nav-toggle {
+      display: flex !important;
     }
   }
 `;

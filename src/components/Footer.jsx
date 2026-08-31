@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Trophy } from 'lucide-react';
 
 export default function Footer() {
@@ -15,6 +16,15 @@ export default function Footer() {
             </span>
           </div>
           <p style={styles.tagline}>Empowering the next generation of innovators, creators, and computational thinkers.</p>
+        </div>
+
+        <div style={styles.quickLinks}>
+          <Link to="/" style={styles.footerLink}>Home</Link>
+          <Link to="/about" style={styles.footerLink}>About Us</Link>
+          <Link to="/catalog" style={styles.footerLink}>Olympiads</Link>
+          <Link to="/skill-compass" style={styles.footerLink}>Skill Compass</Link>
+          <Link to="/register" style={styles.footerLink}>Register</Link>
+          <Link to="/awards" style={styles.footerLink}>Awards</Link>
         </div>
         
         <div style={styles.linksSection}>
@@ -37,7 +47,7 @@ export default function Footer() {
               </svg>
             </a>
           </div>
-          <p style={styles.copyright}>&copy; {new Date().getFullYear()} Technik Olympiad. All rights reserved.</p>
+          <p style={styles.copyright}>&copy; {new Date().getFullYear()} Technik Olympiad Private Limited. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -96,6 +106,18 @@ const styles = {
     fontSize: '0.85rem',
     color: 'var(--text-secondary)',
     lineHeight: '1.5',
+  },
+  quickLinks: {
+    display: 'flex',
+    gap: '1.25rem',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+  },
+  footerLink: {
+    color: 'var(--text-secondary)',
+    fontSize: '0.85rem',
+    transition: 'color var(--transition-fast)',
+    textDecoration: 'none',
   },
   linksSection: {
     display: 'flex',

@@ -9,6 +9,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Awards from './pages/Awards';
 import Verification from './pages/Verification';
+import About from './pages/About';
 
 function App() {
   // State for storing registrations
@@ -107,6 +108,7 @@ function App() {
               />
             } />
             <Route path="/awards" element={<Awards registrations={registrations} />} />
+            <Route path="/about" element={<About />} />
             <Route path="/verify" element={<Verification registrations={registrations} />} />
             <Route path="/dashboard" element={
               <Dashboard 
