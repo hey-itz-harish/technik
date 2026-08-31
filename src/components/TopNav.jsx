@@ -25,7 +25,7 @@ export default function TopNav() {
     <header style={styles.headerWrapper}>
       {/* Top Utility Bar */}
       <div style={styles.topUtilityBar}>
-        <div className="container" style={styles.topUtilityContainer}>
+        <div style={styles.topUtilityContainer}>
           <div style={styles.topContacts}>
             <a href="mailto:info@technikolympiad.com" style={styles.topContactItem}>
               <Mail size={13} color="#38bdf8" />
@@ -73,7 +73,7 @@ export default function TopNav() {
 
       {/* Main Navbar */}
       <nav style={styles.nav}>
-        <div className="container" style={styles.navContainer}>
+        <div style={styles.navContainer}>
           {/* Logo */}
           <Link to="/" style={styles.logo} onClick={() => setIsOpen(false)}>
             <div style={styles.logoGearBox}>
@@ -242,6 +242,9 @@ const styles = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
+    width: '100%',
+    maxWidth: '100%',
+    padding: '0 2.5rem',
   },
   topContacts: {
     display: 'flex',
@@ -306,6 +309,8 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
+    maxWidth: '100%',
+    padding: '0 2.5rem',
   },
   logo: {
     display: 'flex',
