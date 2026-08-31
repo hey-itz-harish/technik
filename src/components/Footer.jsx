@@ -75,10 +75,10 @@ export default function Footer() {
           <div style={styles.col}>
             <h4 style={styles.colTitle}>FOR SCHOOLS</h4>
             <div style={styles.linkList}>
-              <Link to="/register" style={styles.linkItem}>Register School</Link>
+              <Link to="/schools#register-school" style={styles.linkItem}>Register School</Link>
               <Link to="/dashboard" style={styles.linkItem}>School Login</Link>
-              <Link to="/catalog" style={styles.linkItem}>Hosting Partner</Link>
-              <Link to="/about" style={styles.linkItem}>School Benefits</Link>
+              <Link to="/schools" style={styles.linkItem}>Hosting Partner</Link>
+              <Link to="/schools" style={styles.linkItem}>School Benefits</Link>
               <Link to="/dashboard" style={styles.linkItem}>Coordinator Login</Link>
             </div>
           </div>

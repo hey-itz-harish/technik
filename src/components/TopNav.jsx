@@ -156,8 +156,12 @@ export default function TopNav() {
             </Link>
 
             <Link 
-              to="/catalog" 
-              style={styles.navLink}
+              to="/schools" 
+              style={{
+                ...styles.navLink,
+                color: isActive('/schools') ? '#f97316' : '#0f172a',
+                fontWeight: isActive('/schools') ? 700 : 600,
+              }}
             >
               FOR SCHOOLS <ChevronDown size={13} />
             </Link>
@@ -214,7 +218,7 @@ export default function TopNav() {
               <Link to="/about" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>ABOUT US</Link>
               <Link to="/catalog" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>OLYMPIADS</Link>
               <Link to="/awards" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>TECHNIK PRIDE AWARD</Link>
-              <Link to="/catalog" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR SCHOOLS</Link>
+              <Link to="/schools" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR SCHOOLS</Link>
               <Link to="/skill-compass" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR STUDENTS</Link>
               <Link to="/dashboard" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>DASHBOARD</Link>
               <Link
