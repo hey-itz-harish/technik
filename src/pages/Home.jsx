@@ -21,7 +21,8 @@ import {
   CheckCircle,
   ShieldCheck,
   Star,
-  ExternalLink
+  ExternalLink,
+  Phone
 } from 'lucide-react';
 
 export default function Home() {
