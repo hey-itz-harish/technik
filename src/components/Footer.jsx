@@ -1,54 +1,92 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy } from 'lucide-react';
+import { Trophy, Globe, Mail, Share2 } from 'lucide-react';
 
 export default function Footer() {
   return (
     <footer style={styles.footer}>
       <div className="container" style={styles.container}>
-        <div style={styles.brandSection}>
-          <div style={styles.logo}>
-            <div style={styles.logoHex}>
-              <Trophy size={14} color="#06b6d4" />
-            </div>
-            <span style={styles.logoText}>
-              TECHNIK <span style={{ color: 'var(--secondary)' }}>OLYMPIAD</span>
-            </span>
+        
+        {/* Main Content Row */}
+        <div style={styles.topRow}>
+          {/* Brand Info */}
+          <div style={styles.brandGroup}>
+            <Link to="/" style={styles.logo}>
+              <div style={styles.logoHex}>
+                <Trophy size={15} color="var(--accent)" />
+              </div>
+              <span style={styles.logoText}>
+                Technik <span style={{ color: 'var(--secondary)' }}>Olympiad</span>
+              </span>
+            </Link>
+            <p style={styles.tagline}>
+              Discover. Compete. Excel. Empowering next-generation student innovators.
+            </p>
           </div>
-          <p style={styles.tagline}>Empowering the next generation of innovators, creators, and computational thinkers.</p>
+
+          {/* Quick Nav Links */}
+          <div style={styles.navLinksGroup}>
+            <Link to="/" style={styles.footerLink}>Home</Link>
+            <Link to="/about" style={styles.footerLink}>About Us</Link>
+            <Link to="/catalog" style={styles.footerLink}>Olympiads</Link>
+            <Link to="/skill-compass" style={styles.footerLink}>Skill Compass</Link>
+            <Link to="/register" style={styles.footerLink}>Register</Link>
+            <Link to="/awards" style={styles.footerLink}>Awards</Link>
+            <Link to="/dashboard" style={styles.footerLink}>Dashboard</Link>
+          </div>
         </div>
 
-        <div style={styles.quickLinks}>
-          <Link to="/" style={styles.footerLink}>Home</Link>
-          <Link to="/about" style={styles.footerLink}>About Us</Link>
-          <Link to="/catalog" style={styles.footerLink}>Olympiads</Link>
-          <Link to="/skill-compass" style={styles.footerLink}>Skill Compass</Link>
-          <Link to="/register" style={styles.footerLink}>Register</Link>
-          <Link to="/awards" style={styles.footerLink}>Awards</Link>
-        </div>
-        
-        <div style={styles.linksSection}>
+        {/* Divider */}
+        <div style={styles.divider}></div>
+
+        {/* Bottom Row */}
+        <div style={styles.bottomRow}>
+          <p style={styles.copyright}>
+            &copy; {new Date().getFullYear()} Technik Olympiad Private Limited. All rights reserved.
+          </p>
+
           <div style={styles.socials}>
-            <a href="https://github.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} aria-label="Github">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <a 
+              href="https://github.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={styles.socialBtn} 
+              aria-label="Github"
+              className="footer-social-btn"
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
               </svg>
             </a>
-            <a href="https://twitter.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} aria-label="Twitter">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <a 
+              href="https://twitter.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={styles.socialBtn} 
+              aria-label="Twitter"
+              className="footer-social-btn"
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M23 3a10.9 10.9 0 0 1-3.14 1.53 4.48 4.48 0 0 0-7.86 3v1A10.66 10.66 0 0 1 3 4s-4 9 5 13a11.64 11.64 0 0 1-7 2c9 5 20 0 20-11.5a4.5 4.5 0 0 0-.08-.83A7.72 7.72 0 0 0 23 3z"></path>
               </svg>
             </a>
-            <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" style={styles.socialLink} aria-label="Linkedin">
-              <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
+            <a 
+              href="https://linkedin.com" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              style={styles.socialBtn} 
+              aria-label="Linkedin"
+              className="footer-social-btn"
+            >
+              <svg viewBox="0 0 24 24" width="15" height="15" stroke="currentColor" strokeWidth="2" fill="none" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
                 <rect x="2" y="9" width="4" height="12"></rect>
                 <circle cx="4" cy="4" r="2"></circle>
               </svg>
             </a>
           </div>
-          <p style={styles.copyright}>&copy; {new Date().getFullYear()} Technik Olympiad Private Limited. All rights reserved.</p>
         </div>
+
       </div>
     </footer>
   );
@@ -56,45 +94,45 @@ export default function Footer() {
 
 const styles = {
   footer: {
-    background: 'rgba(6, 4, 10, 0.9)',
+    background: '#ffffff',
     borderTop: '1px solid var(--border-subtle)',
-    padding: '3rem 0 2rem 0',
+    padding: '1.5rem 0 1.25rem 0',
     marginTop: 'auto',
+    boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.02)',
   },
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '2rem',
-    alignItems: 'center',
-    textAlign: 'center',
-    '@media (min-width: 768px)': {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      textAlign: 'left',
-      alignItems: 'flex-start',
-    }
+    gap: '1.25rem',
   },
-  brandSection: {
-    maxWidth: '400px',
+  topRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1.25rem',
+  },
+  brandGroup: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.75rem',
-    alignItems: 'center',
+    gap: '0.35rem',
   },
   logo: {
-    display: 'flex',
+    display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
     fontWeight: 800,
-    fontSize: '1.1rem',
+    fontSize: '1.15rem',
     fontFamily: 'var(--font-heading)',
+    letterSpacing: '-0.02em',
   },
   logoHex: {
-    width: '24px',
-    height: '24px',
-    background: 'rgba(6, 182, 212, 0.1)',
+    width: '26px',
+    height: '26px',
+    background: 'rgba(37, 99, 235, 0.08)',
     border: '1px solid var(--accent)',
-    borderRadius: '6px',
+    borderRadius: '7px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -103,46 +141,71 @@ const styles = {
     color: 'var(--text-primary)',
   },
   tagline: {
-    fontSize: '0.85rem',
+    fontSize: '0.82rem',
     color: 'var(--text-secondary)',
-    lineHeight: '1.5',
+    lineHeight: '1.4',
+    maxWidth: '450px',
   },
-  quickLinks: {
+  navLinksGroup: {
     display: 'flex',
+    alignItems: 'center',
     gap: '1.25rem',
     flexWrap: 'wrap',
-    justifyContent: 'center',
   },
   footerLink: {
+    fontSize: '0.86rem',
+    fontWeight: 500,
     color: 'var(--text-secondary)',
-    fontSize: '0.85rem',
-    transition: 'color var(--transition-fast)',
     textDecoration: 'none',
+    transition: 'color var(--transition-fast)',
   },
-  linksSection: {
+  divider: {
+    height: '1px',
+    background: 'var(--border-subtle)',
+    width: '100%',
+  },
+  bottomRow: {
     display: 'flex',
-    flexDirection: 'column',
+    justifyContent: 'space-between',
     alignItems: 'center',
-    gap: '1rem',
+    flexWrap: 'wrap',
+    gap: '0.75rem',
+  },
+  copyright: {
+    fontSize: '0.78rem',
+    color: 'var(--text-muted)',
+    fontWeight: 400,
   },
   socials: {
     display: 'flex',
-    gap: '1rem',
+    alignItems: 'center',
+    gap: '0.6rem',
   },
-  socialLink: {
+  socialBtn: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '8px',
+    background: 'rgba(15, 23, 42, 0.04)',
+    border: '1px solid var(--border-subtle)',
+    color: 'var(--text-secondary)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    width: '36px',
-    height: '36px',
-    borderRadius: '50%',
-    background: 'rgba(255,255,255,0.03)',
-    border: '1px solid var(--border-subtle)',
-    color: 'var(--text-secondary)',
     transition: 'all var(--transition-fast)',
   },
-  copyright: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
-  }
 };
+
+// Add responsive and hover styling overrides
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  .footer-social-btn:hover {
+    background: rgba(37, 99, 235, 0.1) !important;
+    color: var(--accent) !important;
+    border-color: var(--accent) !important;
+    transform: translateY(-2px);
+  }
+  footer a:hover {
+    color: var(--accent) !important;
+  }
+`;
+document.head.appendChild(styleSheet);
