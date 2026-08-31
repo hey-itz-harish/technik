@@ -84,13 +84,13 @@ export default function Home() {
       
       {/* HERO SECTION */}
       <section style={styles.heroSection}>
-        <div className="container" style={styles.heroContainer}>
+        <div className="container home-hero-container" style={styles.heroContainer}>
           <div style={styles.heroLeft}>
             <div style={styles.heroEyebrow}>
               <span style={styles.eyebrowYellow}>EVERY STUDENT</span>
             </div>
 
-            <h1 style={styles.heroTitle}>
+            <h1 style={styles.heroTitle} className="home-hero-title">
               DESERVES A <br />
               <span style={{ color: '#fbbf24' }}>MOMENT OF PRIDE.</span>
             </h1>
@@ -163,7 +163,7 @@ export default function Home() {
       {/* STATS FLOATING BAR */}
       <section style={styles.statsSection}>
         <div className="container">
-          <div style={styles.statsCardGrid}>
+          <div style={styles.statsCardGrid} className="home-stats-grid">
             {statsList.map((stat, idx) => {
               const StatIcon = stat.icon;
               return (
@@ -1148,6 +1148,17 @@ styleSheet.innerText = `
     display: inline-block;
   }
   @media (max-width: 991px) {
+    .home-hero-container {
+      grid-template-columns: 1fr !important;
+      gap: 2.5rem !important;
+    }
+    .home-hero-title {
+      font-size: 2.15rem !important;
+      line-height: 1.15 !important;
+    }
+    .home-stats-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
     .home-olympiad-grid, .home-segment-grid, .home-bottom-grid3 {
       grid-template-columns: repeat(2, 1fr) !important;
     }
@@ -1156,6 +1167,9 @@ styleSheet.innerText = `
     }
   }
   @media (max-width: 600px) {
+    .home-stats-grid {
+      grid-template-columns: 1fr !important;
+    }
     .home-olympiad-grid, .home-segment-grid, .home-bottom-grid3, .home-trust-grid {
       grid-template-columns: 1fr !important;
     }

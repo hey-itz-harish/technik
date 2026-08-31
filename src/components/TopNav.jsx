@@ -24,7 +24,7 @@ export default function TopNav() {
   return (
     <header style={styles.headerWrapper}>
       {/* Top Utility Bar */}
-      <div style={styles.topUtilityBar}>
+      <div style={styles.topUtilityBar} className="top-utility-bar">
         <div style={styles.topUtilityContainer}>
           <div style={styles.topContacts}>
             <a href="mailto:info@technikolympiad.com" style={styles.topContactItem}>
@@ -73,11 +73,11 @@ export default function TopNav() {
 
       {/* Main Navbar */}
       <nav style={styles.nav}>
-        <div style={styles.navContainer}>
+        <div style={styles.navContainer} className="main-nav-container">
           {/* Logo */}
           <Link to="/" style={styles.logo} onClick={() => setIsOpen(false)}>
             <div style={styles.logoGearBox}>
-              <svg viewBox="0 0 100 100" width="38" height="38">
+              <svg viewBox="0 0 100 100" width="34" height="34">
                 <path d="M50,15 A35,35 0 1,0 50,85 A35,35 0 1,0 50,15 Z" fill="none" stroke="#2563eb" strokeWidth="6" strokeDasharray="6 4" />
                 <circle cx="50" cy="50" r="28" fill="#0f172a" />
                 <path d="M40,35 L60,35 L60,42 L53,42 L53,65 L47,65 L47,42 L40,42 Z" fill="#f97316" />
@@ -85,10 +85,10 @@ export default function TopNav() {
               </svg>
             </div>
             <div style={styles.logoTextGroup}>
-              <div style={styles.brandTitle}>
+              <div style={styles.brandTitle} className="brand-title-text">
                 TECHNIK <span style={{ color: '#f97316' }}>OLYMPIAD</span>
               </div>
-              <div style={styles.brandSubtitle}>PRIVATE LIMITED</div>
+              <div style={styles.brandSubtitle} className="brand-sub-text">PRIVATE LIMITED</div>
             </div>
           </Link>
 
@@ -200,6 +200,15 @@ export default function TopNav() {
         {/* Mobile Drawer */}
         {isOpen && (
           <div style={styles.mobileDrawer}>
+            <div style={styles.mobileAuthRow}>
+              <Link to="/dashboard" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
+                <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Login
+              </Link>
+              <Link to="/dashboard" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
+                <UserCheck size={14} style={{ marginRight: '0.35rem' }} /> Student Login
+              </Link>
+            </div>
+            
             <div style={styles.mobileLinks}>
               <Link to="/" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>HOME</Link>
               <Link to="/about" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>ABOUT US</Link>
@@ -299,7 +308,7 @@ const styles = {
   },
   nav: {
     background: '#ffffff',
-    height: '74px',
+    height: '70px',
     display: 'flex',
     alignItems: 'center',
     borderBottom: '1px solid #e2e8f0',
@@ -329,7 +338,7 @@ const styles = {
     flexDirection: 'column',
   },
   brandTitle: {
-    fontSize: '1.25rem',
+    fontSize: '1.2rem',
     fontWeight: 900,
     fontFamily: 'var(--font-heading)',
     color: '#0b1d3a',
@@ -337,7 +346,7 @@ const styles = {
     lineHeight: '1',
   },
   brandSubtitle: {
-    fontSize: '0.62rem',
+    fontSize: '0.6rem',
     fontWeight: 700,
     color: '#64748b',
     letterSpacing: '0.18em',
@@ -407,17 +416,51 @@ const styles = {
     cursor: 'pointer',
     display: 'flex',
     alignItems: 'center',
+    padding: '0.5rem',
   },
   mobileDrawer: {
     position: 'absolute',
-    top: '108px',
+    top: '70px',
     left: 0,
     right: 0,
     background: '#ffffff',
-    borderBottom: '2px solid #0f172a',
-    padding: '1rem',
+    borderBottom: '3px solid #f97316',
+    padding: '1.25rem',
     zIndex: 999,
-    boxShadow: '0 10px 20px rgba(0,0,0,0.1)',
+    boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
+  },
+  mobileAuthRow: {
+    display: 'flex',
+    gap: '0.75rem',
+    marginBottom: '1rem',
+    paddingBottom: '1rem',
+    borderBottom: '1px solid #f1f5f9',
+  },
+  mobileAuthBtnGold: {
+    flex: 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#fbbf24',
+    color: '#0f172a',
+    fontWeight: 700,
+    fontSize: '0.8rem',
+    padding: '0.6rem',
+    borderRadius: '6px',
+    textDecoration: 'none',
+  },
+  mobileAuthBtnBlue: {
+    flex: 1,
+    display: 'inline-flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#2563eb',
+    color: '#ffffff',
+    fontWeight: 700,
+    fontSize: '0.8rem',
+    padding: '0.6rem',
+    borderRadius: '6px',
+    textDecoration: 'none',
   },
   mobileLinks: {
     display: 'flex',
@@ -461,6 +504,18 @@ styleSheet.innerText = `
     }
     #mobile-nav-toggle {
       display: flex !important;
+    }
+    .top-utility-bar {
+      display: none !important;
+    }
+    .main-nav-container {
+      padding: 0 1rem !important;
+    }
+    .brand-title-text {
+      font-size: 1.05rem !important;
+    }
+    .brand-sub-text {
+      font-size: 0.52rem !important;
     }
   }
 `;
