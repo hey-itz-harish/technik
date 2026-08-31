@@ -1,283 +1,138 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { 
-  Trophy, 
-  Bot, 
-  Code, 
-  Brain, 
-  Palette, 
+  Calendar, 
+  Users, 
   BookOpen, 
-  School, 
   Award, 
-  GraduationCap, 
-  Laptop, 
+  MapPin, 
+  Trophy, 
+  ArrowRight, 
+  Bot, 
+  TrendingUp, 
   Target, 
   Sparkles, 
-  ArrowRight,
-  ShieldCheck,
-  Rocket,
-  CheckCircle2
+  CheckCircle2, 
+  Star,
+  Medal,
+  Lightbulb,
+  Compass
 } from 'lucide-react';
 
 export default function About() {
-  const whatWeDoList = [
-    {
-      icon: Trophy,
-      emoji: '🏆',
-      title: 'Olympiad Examinations & Assessments',
-      desc: 'Structured examinations and talent assessments designed to gauge and foster academic competence.',
-      badge: 'CORE'
-    },
-    {
-      icon: Bot,
-      emoji: '🤖',
-      title: 'Robotics & Technology Education',
-      desc: 'Hands-on exposure to robotics, engineering principles, and cutting-edge tech fundamentals.',
-      badge: 'FOUNDATION'
-    },
-    {
-      icon: Code,
-      emoji: '💻',
-      title: 'Coding & Generative AI Competitions',
-      desc: 'Future-ready competitions pushing computational thinking and AI application skills.',
-      badge: 'FUTURE-TECH'
-    },
-    {
-      icon: Brain,
-      emoji: '🧠',
-      title: 'Mental Maths & Logical Thinking',
-      desc: 'Speed calculation, problem-solving, and cognitive dexterity development programs.',
-      badge: 'COGNITIVE'
-    },
-    {
-      icon: Palette,
-      emoji: '🎨',
-      title: 'Art & Creativity Competitions',
-      desc: 'Encouraging creative expressions, visual arts, and innovative artistic representation.',
-      badge: 'CREATIVE'
-    },
-    {
-      icon: BookOpen,
-      emoji: '📚',
-      title: 'English & Academic Olympiads',
-      desc: 'Mastery of language, grammar, comprehension, and fundamental school academics.',
-      badge: 'ACADEMIC'
-    },
-    {
-      icon: School,
-      emoji: '🏫',
-      title: 'School-Level Educational Events',
-      desc: 'Collaborative school events bringing together students to compete and collaborate.',
-      badge: 'OUTREACH'
-    },
-    {
-      icon: Award,
-      emoji: '🥇',
-      title: 'Student Awards & Recognition',
-      desc: 'Prestigious trophies, medals, certificates, and state/national rank honors.',
-      badge: 'HONORS'
-    },
-    {
-      icon: GraduationCap,
-      emoji: '👩‍🏫',
-      title: 'Workshops & Training Programs',
-      desc: 'Interactive learning workshops led by educators to build practical skills.',
-      badge: 'SKILLING'
-    },
-    {
-      icon: Laptop,
-      emoji: '💻',
-      title: 'Digital Learning & Online Assessments',
-      desc: 'Seamless, secure, and intuitive digital assessment platform for students everywhere.',
-      badge: 'PLATFORM'
-    }
+  const statsList = [
+    { icon: Calendar, val: "2018", label: "Our Journey Began", color: "#2563eb" },
+    { icon: Users, val: "Play School to Class 12", label: "Eligible Students", color: "#059669" },
+    { icon: BookOpen, val: "6+ Olympiads", label: "Future-Ready Subjects", color: "#d97706" },
+    { icon: Award, val: "School · District · State", label: "Recognition Levels", color: "#f97316" },
+    { icon: MapPin, val: "5 States + Puducherry", label: "Our Focus Region", color: "#dc2626" }
   ];
 
   return (
     <div style={styles.page}>
-      {/* Hero Header */}
+      
+      {/* ABOUT HERO BANNER */}
       <section style={styles.heroSection}>
         <div className="container" style={styles.heroContainer}>
-          <div style={styles.badgeContainer}>
-            <div style={styles.mockupBadge}>
-              <Sparkles size={14} color="var(--accent)" style={{ marginRight: '0.4rem' }} />
-              About Technik Olympiad Pvt. Ltd.
-            </div>
-          </div>
+          
+          <div style={styles.heroLeft}>
+            <h1 style={styles.heroTitle}>ABOUT TECHNIK</h1>
+            <div style={styles.yellowLine}></div>
 
-          <h1 style={styles.heroTitle}>
-            Empowering & Celebrating <br />
-            <span style={{ color: 'var(--secondary)' }}>School Champions</span>
-          </h1>
-
-          <p style={styles.heroSubtext}>
-            Technik Olympiad Private Limited is an education-focused organization dedicated to 
-            identifying, encouraging, and celebrating the talents and achievements of school students.
-          </p>
-
-          <div style={styles.taglineCard}>
-            <span style={styles.taglineText}>
-              Technik Olympiad – <strong>Discover. Compete. Excel. Get Recognised.</strong>
-            </span>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Journey Section */}
-      <section style={styles.journeySection}>
-        <div className="container">
-          <div style={styles.journeyGrid} className="about-grid-2">
-            <div style={styles.journeyContent}>
-              <span className="badge badge-indigo" style={{ marginBottom: '1rem' }}>OUR JOURNEY</span>
-              <h2 style={styles.sectionTitle}>From Robotics Education to Comprehensive Academic Excellence</h2>
-              
-              <p style={styles.paragraphText}>
-                Founded in <strong>2018</strong>, Technik began its journey with a focus on introducing 
-                <span style={styles.highlightText}> robotics and technology education</span> to school students. 
-                Over the years, our vision has expanded beyond robotics to create a broader platform for 
-                <em> academic excellence, innovation, creativity, logical thinking, and skill development</em>.
-              </p>
-
-              <p style={styles.paragraphText}>
-                Today, <strong>Technik Olympiad Private Limited</strong> works towards creating meaningful 
-                opportunities for students from <strong>Class 3 to Class 8</strong> through Olympiads, 
-                talent assessments, educational competitions, workshops, training programs, certifications, 
-                and student recognition initiatives.
-              </p>
-
-              <div style={styles.quickStatsRow}>
-                <div style={styles.quickStatItem}>
-                  <h3 style={styles.quickStatVal}>2018</h3>
-                  <span style={styles.quickStatLbl}>Established Year</span>
-                </div>
-                <div style={styles.quickStatDivider}></div>
-                <div style={styles.quickStatItem}>
-                  <h3 style={styles.quickStatVal}>Class 3 - 8</h3>
-                  <span style={styles.quickStatLbl}>Student Focus</span>
-                </div>
-                <div style={styles.quickStatDivider}></div>
-                <div style={styles.quickStatItem}>
-                  <h3 style={styles.quickStatVal}>10+</h3>
-                  <span style={styles.quickStatLbl}>Initiative Domains</span>
-                </div>
-              </div>
-            </div>
-
-            <div style={styles.journeyVisualCard} className="glass-card">
-              <div style={styles.visualBadge}>
-                <Rocket size={24} color="var(--accent)" />
-              </div>
-              <h3 style={styles.visualTitle}>Evolution Timeline</h3>
-              
-              <div style={styles.timelineList}>
-                <div style={styles.timelineItem}>
-                  <div style={styles.timelineDot}></div>
-                  <div>
-                    <h4 style={styles.timelineYear}>2018 - The Spark</h4>
-                    <p style={styles.timelineDesc}>Pioneered robotics and hands-on technology education for young learners.</p>
-                  </div>
-                </div>
-
-                <div style={styles.timelineItem}>
-                  <div style={styles.timelineDot}></div>
-                  <div>
-                    <h4 style={styles.timelineYear}>Expansion Era</h4>
-                    <p style={styles.timelineDesc}>Extended into Coding, Mental Maths, AI, English, Art, and STEM competitions.</p>
-                  </div>
-                </div>
-
-                <div style={styles.timelineItem}>
-                  <div style={{ ...styles.timelineDot, background: 'var(--secondary)' }}></div>
-                  <div>
-                    <h4 style={styles.timelineYear}>Today & Beyond</h4>
-                    <p style={styles.timelineDesc}>Full-suite educational platform discovering & honoring future innovators nationwide.</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Our Mission Section */}
-      <section style={styles.missionSection}>
-        <div className="container">
-          <div style={styles.missionCard} className="glass-card">
-            <div style={styles.missionHeader}>
-              <div style={styles.missionIconBox}>
-                <Target size={28} color="var(--accent)" />
-              </div>
-              <div>
-                <span className="badge badge-gold" style={{ marginBottom: '0.25rem' }}>CORE PURPOSE</span>
-                <h2 style={styles.missionTitle}>Our Mission</h2>
-              </div>
-            </div>
-
-            <blockquote style={styles.missionQuote}>
-              “Our mission is to provide every student with an opportunity to 
-              <span style={{ color: 'var(--accent)', fontWeight: 700 }}> discover their potential</span>, 
-              <span style={{ color: 'var(--secondary)', fontWeight: 700 }}> demonstrate their talent</span>, 
-              <span style={{ color: 'var(--primary)', fontWeight: 700 }}> compete with confidence</span>, and 
-              <span style={{ color: 'var(--gold)', fontWeight: 700 }}> receive recognition for their achievements</span>.”
-            </blockquote>
-
-            <p style={styles.missionBody}>
-              We believe that every school and every student has something special to contribute. 
-              Through structured competitions and recognition programs, Technik aims to create a platform where 
-              <strong> participation, achievement, and excellence are celebrated</strong>.
+            <p style={styles.heroSubtext}>
+              Empowering young minds to discover, develop, compete, achieve and be recognised.
             </p>
 
-            <div style={styles.missionPillars}>
-              <div style={styles.pillarItem}>
-                <CheckCircle2 size={18} color="var(--accent)" />
-                <span>Discover Potential</span>
-              </div>
-              <div style={styles.pillarItem}>
-                <CheckCircle2 size={18} color="var(--secondary)" />
-                <span>Demonstrate Talent</span>
-              </div>
-              <div style={styles.pillarItem}>
-                <CheckCircle2 size={18} color="var(--primary)" />
-                <span>Compete with Confidence</span>
-              </div>
-              <div style={styles.pillarItem}>
-                <CheckCircle2 size={18} color="var(--gold)" />
-                <span>Receive Recognition</span>
-              </div>
+            {/* Breadcrumb */}
+            <div style={styles.breadcrumb}>
+              <Link to="/" style={styles.breadLink}>Home</Link>
+              <span style={styles.breadSep}>&gt;</span>
+              <span style={styles.breadLink}>About Us</span>
+              <span style={styles.breadSep}>&gt;</span>
+              <span style={styles.breadActive}>About Technik</span>
             </div>
           </div>
+
+          {/* Hero Visual Right */}
+          <div style={styles.heroRight}>
+            <div style={styles.heroVisualCard}>
+              
+              {/* Student Trophy Box */}
+              <div style={styles.trophyBox}>
+                <div style={styles.trophyIconCircle}>
+                  <Trophy size={48} color="#fbbf24" />
+                </div>
+                <div style={styles.proudBadge}>
+                  <Award size={13} color="#0f172a" />
+                  <span>PROUD ACHIEVER</span>
+                </div>
+                <div style={styles.brandTag}>TECHNIK OLYMPIAD</div>
+              </div>
+
+              {/* Floating Badges List */}
+              <div style={styles.badgesStack}>
+                <div style={styles.floatingBadgeCard}>
+                  <div style={{ ...styles.badgeIconCircle, background: 'rgba(37, 99, 235, 0.1)', color: '#2563eb' }}>
+                    <Trophy size={16} />
+                  </div>
+                  <div>
+                    <h4 style={styles.badgeTitle}>Discover</h4>
+                    <p style={styles.badgeSub}>Potential</p>
+                  </div>
+                </div>
+
+                <div style={styles.floatingBadgeCard}>
+                  <div style={{ ...styles.badgeIconCircle, background: 'rgba(245, 158, 11, 0.1)', color: '#d97706' }}>
+                    <Lightbulb size={16} />
+                  </div>
+                  <div>
+                    <h4 style={styles.badgeTitle}>Compete</h4>
+                    <p style={styles.badgeSub}>With Confidence</p>
+                  </div>
+                </div>
+
+                <div style={styles.floatingBadgeCard}>
+                  <div style={{ ...styles.badgeIconCircle, background: 'rgba(5, 150, 105, 0.1)', color: '#059669' }}>
+                    <Medal size={16} />
+                  </div>
+                  <div>
+                    <h4 style={styles.badgeTitle}>Achieve</h4>
+                    <p style={styles.badgeSub}>Excellence</p>
+                  </div>
+                </div>
+
+                <div style={styles.floatingBadgeCard}>
+                  <div style={{ ...styles.badgeIconCircle, background: 'rgba(234, 88, 12, 0.1)', color: '#ea580c' }}>
+                    <Star size={16} />
+                  </div>
+                  <div>
+                    <h4 style={styles.badgeTitle}>Be Recognised</h4>
+                    <p style={styles.badgeSub}>Always</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </section>
 
-      {/* What We Do Section */}
-      <section style={styles.whatWeDoSection}>
+      {/* STATS FLOATING BAR */}
+      <section style={styles.statsSection}>
         <div className="container">
-          <div style={styles.sectionHeader}>
-            <span className="badge badge-orange" style={{ marginBottom: '0.75rem' }}>PORTFOLIO OF EXCELLENCE</span>
-            <h2 style={styles.sectionTitleCenter}>What We Do</h2>
-            <p style={styles.sectionSubtitle}>
-              Empowering students across diverse streams of logic, tech, arts, and academics.
-            </p>
-          </div>
-
-          <div style={styles.grid10} className="about-grid-do">
-            {whatWeDoList.map((item, idx) => {
-              const IconComp = item.icon;
+          <div style={styles.statsCardGrid}>
+            {statsList.map((stat, idx) => {
+              const StatIcon = stat.icon;
               return (
-                <div key={idx} className="glass-card glass-card-hover" style={styles.doCard}>
-                  <div style={styles.doCardTop}>
-                    <span style={styles.emojiSpan}>{item.emoji}</span>
-                    <span className="badge" style={styles.itemBadge}>{item.badge}</span>
+                <div key={idx} style={styles.statCard}>
+                  <div style={{ ...styles.statIconBox, color: stat.color, background: `${stat.color}12` }}>
+                    <StatIcon size={22} />
                   </div>
-                  
-                  <div style={styles.doHeader}>
-                    <div style={styles.doIconContainer}>
-                      <IconComp size={20} color="var(--accent)" />
-                    </div>
-                    <h3 style={styles.doTitle}>{item.title}</h3>
+                  <div>
+                    <h3 style={styles.statVal}>{stat.val}</h3>
+                    <p style={styles.statLbl}>{stat.label}</p>
                   </div>
-                  
-                  <p style={styles.doDesc}>{item.desc}</p>
                 </div>
               );
             })}
@@ -285,36 +140,92 @@ export default function About() {
         </div>
       </section>
 
-      {/* Our Vision Section */}
-      <section style={styles.visionSection}>
+      {/* ABOUT TECHNIK & PROMISE SECTION */}
+      <section style={styles.sectionPadding}>
         <div className="container">
-          <div style={styles.visionBox} className="glass-card">
-            <div style={styles.visionIconCircle}>
-              <ShieldCheck size={32} color="var(--secondary)" />
+          <div style={styles.aboutPromiseGrid} className="about-promise-grid">
+            
+            {/* About Technik Description */}
+            <div style={styles.aboutTextBlock}>
+              <h2 style={styles.sectionTitleLeft}>ABOUT TECHNIK</h2>
+              <p style={styles.paragraphText}>
+                Technik Olympiad Private Limited is an educational organisation committed to creating 
+                meaningful opportunities for school students. We believe every student has unique abilities 
+                and potential that deserve the right platform. Through Olympiads, talent assessments, 
+                competitions and the prestigious Technik Pride Award, we encourage students to explore, 
+                learn, compete and achieve.
+              </p>
             </div>
 
-            <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>OUR VISION</span>
-
-            <h2 style={styles.visionQuoteText}>
-              “To become a trusted educational platform that discovers, develops, and celebrates the potential of every student.”
-            </h2>
-
-            <p style={styles.visionBody}>
-              From our beginnings in robotics education to our vision of building a comprehensive 
-              student excellence platform, <strong>Technik is committed to shaping confident, capable, creative, and future-ready learners.</strong>
-            </p>
-
-            <div style={styles.ctaRow}>
-              <Link to="/register" className="btn btn-orange">
-                Register for Olympiads <ArrowRight size={16} />
-              </Link>
-              <Link to="/catalog" className="btn btn-ghost">
-                Explore Programs
+            {/* The Technik Promise Card */}
+            <div style={styles.promiseCard}>
+              <h3 style={styles.promiseTitle}>THE TECHNIK PROMISE</h3>
+              <p style={styles.promiseText}>
+                Every student deserves an opportunity to shine.
+              </p>
+              <Link to="/catalog" className="btn-navy-promise">
+                EXPLORE OUR PROGRAMS <ArrowRight size={15} style={{ marginLeft: '0.4rem' }} />
               </Link>
             </div>
+
           </div>
         </div>
       </section>
+
+      {/* OUR JOURNEY TIMELINE */}
+      <section style={{ ...styles.sectionPadding, background: '#f8fafc' }}>
+        <div className="container">
+          <div style={styles.sectionHeaderCenter}>
+            <h2 style={styles.sectionTitleCenter}>OUR JOURNEY</h2>
+            <div style={styles.yellowLineCenter}></div>
+          </div>
+
+          <div style={styles.timelineRow} className="about-timeline-row">
+            
+            {/* Timeline Item 1 */}
+            <div style={styles.timelineCard}>
+              <div style={{ ...styles.badgeYear, background: '#2563eb' }}>2018</div>
+              <div style={styles.timelineIconBox}>
+                <Bot size={32} color="#2563eb" />
+              </div>
+              <h3 style={styles.timelineTitle}>The Beginning</h3>
+              <p style={styles.timelineDesc}>
+                Technik began its journey in 2018 with a vision to facilitate robotics education for school students.
+              </p>
+            </div>
+
+            <div style={styles.timelineConnector}></div>
+
+            {/* Timeline Item 2 */}
+            <div style={styles.timelineCard}>
+              <div style={{ ...styles.badgeYear, background: '#059669' }}>Growing Beyond</div>
+              <div style={styles.timelineIconBox}>
+                <TrendingUp size={32} color="#059669" />
+              </div>
+              <h3 style={styles.timelineTitle}>Expanded Horizons</h3>
+              <p style={styles.timelineDesc}>
+                Our vision expanded beyond robotics to include multiple disciplines and support holistic student development.
+              </p>
+            </div>
+
+            <div style={styles.timelineConnector}></div>
+
+            {/* Timeline Item 3 */}
+            <div style={styles.timelineCard}>
+              <div style={{ ...styles.badgeYear, background: '#f97316' }}>2026</div>
+              <div style={styles.timelineIconBox}>
+                <Trophy size={32} color="#f97316" />
+              </div>
+              <h3 style={styles.timelineTitle}>Technik Olympiad Private Limited</h3>
+              <p style={styles.timelineDesc}>
+                Registered as Technik Olympiad Private Limited with a mission to build a strong educational ecosystem across 5 States + Puducherry.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
     </div>
   );
 }
@@ -322,378 +233,340 @@ export default function About() {
 const styles = {
   page: {
     minHeight: '100vh',
-    paddingBottom: '4rem',
+    background: '#ffffff',
   },
   heroSection: {
-    padding: '4.5rem 0 3rem 0',
-    textAlign: 'center',
+    background: 'linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%)',
+    padding: '4rem 0 4.5rem 0',
+    borderBottom: '1px solid #e2e8f0',
   },
   heroContainer: {
+    display: 'grid',
+    gridTemplateColumns: '1.2fr 0.8fr',
+    gap: '3rem',
+    alignItems: 'center',
+  },
+  heroLeft: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'center',
-  },
-  badgeContainer: {
-    marginBottom: '1.25rem',
-  },
-  mockupBadge: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '50px',
-    padding: '0.4rem 1.25rem',
-    fontSize: '0.85rem',
-    fontWeight: 600,
-    color: '#2563eb',
-    boxShadow: '0 4px 6px -1px rgba(0,0,0,0.02)',
   },
   heroTitle: {
-    fontSize: '3.5rem',
-    lineHeight: '1.15',
-    fontWeight: 800,
-    marginBottom: '1.25rem',
-    maxWidth: '850px',
-    color: 'var(--primary)',
+    fontSize: '2.75rem',
+    fontWeight: 900,
+    color: '#0b1d3a',
+    letterSpacing: '-0.02em',
+    marginBottom: '0.35rem',
     fontFamily: 'var(--font-heading)',
+  },
+  yellowLine: {
+    width: '60px',
+    height: '4px',
+    background: '#fbbf24',
+    borderRadius: '2px',
+    marginBottom: '1.25rem',
   },
   heroSubtext: {
     fontSize: '1.15rem',
-    color: 'var(--text-secondary)',
-    maxWidth: '740px',
-    marginBottom: '2rem',
-    lineHeight: '1.65',
+    fontWeight: 600,
+    color: '#475569',
+    lineHeight: '1.6',
+    marginBottom: '1.5rem',
+    maxWidth: '540px',
   },
-  taglineCard: {
-    background: 'rgba(37, 99, 235, 0.05)',
-    border: '1px solid rgba(37, 99, 235, 0.15)',
-    borderRadius: '50px',
-    padding: '0.75rem 1.75rem',
-    display: 'inline-block',
+  breadcrumb: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    fontSize: '0.82rem',
+    color: '#64748b',
   },
-  taglineText: {
-    fontSize: '0.95rem',
-    color: 'var(--primary)',
-    letterSpacing: '0.01em',
+  breadLink: {
+    color: '#2563eb',
+    textDecoration: 'none',
+    fontWeight: 500,
   },
-  journeySection: {
-    padding: '3.5rem 0',
+  breadSep: {
+    color: '#94a3b8',
   },
-  journeyGrid: {
+  breadActive: {
+    color: '#0f172a',
+    fontWeight: 700,
+  },
+  heroRight: {
+    display: 'flex',
+    justifyContent: 'center',
+  },
+  heroVisualCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '1.5rem',
+  },
+  trophyBox: {
+    width: '200px',
+    padding: '1.5rem 1rem',
+    background: '#041026',
+    border: '2px solid #fbbf24',
+    borderRadius: '16px',
+    textAlign: 'center',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.15)',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  trophyIconCircle: {
+    width: '70px',
+    height: '70px',
+    borderRadius: '50%',
+    background: 'rgba(251, 191, 36, 0.12)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '0.85rem',
+  },
+  proudBadge: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.35rem',
+    background: '#fbbf24',
+    color: '#0f172a',
+    fontWeight: 800,
+    fontSize: '0.68rem',
+    padding: '0.25rem 0.65rem',
+    borderRadius: '4px',
+    marginBottom: '0.4rem',
+  },
+  brandTag: {
+    fontSize: '0.62rem',
+    fontWeight: 700,
+    color: '#94a3b8',
+    letterSpacing: '0.1em',
+  },
+  badgesStack: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.75rem',
+  },
+  floatingBadgeCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '0.6rem 1rem',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+    minWidth: '170px',
+  },
+  badgeIconCircle: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  badgeTitle: {
+    fontSize: '0.82rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    lineHeight: '1.2',
+  },
+  badgeSub: {
+    fontSize: '0.72rem',
+    color: '#64748b',
+  },
+  statsSection: {
+    marginTop: '-2rem',
+    position: 'relative',
+    zIndex: 10,
+  },
+  statsCardGrid: {
     display: 'grid',
-    gridTemplateColumns: '1.2fr 0.8fr',
+    gridTemplateColumns: 'repeat(5, 1fr)',
+    gap: '1rem',
+    background: '#ffffff',
+    padding: '1.5rem',
+    borderRadius: '16px',
+    boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+    border: '1px solid #e2e8f0',
+  },
+  statCard: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.85rem',
+  },
+  statIconBox: {
+    width: '44px',
+    height: '44px',
+    borderRadius: '10px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  statVal: {
+    fontSize: '1rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    lineHeight: '1.2',
+  },
+  statLbl: {
+    fontSize: '0.75rem',
+    color: '#64748b',
+    fontWeight: 500,
+  },
+  sectionPadding: {
+    padding: '4.5rem 0',
+  },
+  aboutPromiseGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1.4fr 0.6fr',
     gap: '2.5rem',
     alignItems: 'center',
   },
-  journeyContent: {
+  aboutTextBlock: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
   },
-  sectionTitle: {
-    fontSize: '2.25rem',
-    fontWeight: 800,
-    marginBottom: '1.25rem',
-    color: 'var(--primary)',
-    lineHeight: '1.25',
+  sectionTitleLeft: {
+    fontSize: '1.75rem',
+    fontWeight: 900,
+    color: '#0f172a',
+    letterSpacing: '0.02em',
+    marginBottom: '1rem',
+    fontFamily: 'var(--font-heading)',
   },
   paragraphText: {
-    fontSize: '1.05rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.7',
-    marginBottom: '1.25rem',
-  },
-  highlightText: {
-    color: 'var(--accent)',
-    fontWeight: 600,
-  },
-  quickStatsRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.5rem',
-    marginTop: '1.5rem',
-    padding: '1.25rem 1.5rem',
-    background: '#ffffff',
-    borderRadius: '12px',
-    border: '1px solid var(--border-subtle)',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
-    width: '100%',
-  },
-  quickStatItem: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  quickStatVal: {
-    fontSize: '1.35rem',
-    fontWeight: 800,
-    color: 'var(--accent)',
-  },
-  quickStatLbl: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
-    fontWeight: 500,
-  },
-  quickStatDivider: {
-    width: '1px',
-    height: '35px',
-    background: 'var(--border-subtle)',
-  },
-  journeyVisualCard: {
-    padding: '2rem',
-    background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '16px',
-  },
-  visualBadge: {
-    width: '48px',
-    height: '48px',
-    borderRadius: '12px',
-    background: 'rgba(37, 99, 235, 0.08)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: '1rem',
-  },
-  visualTitle: {
-    fontSize: '1.35rem',
-    fontWeight: 700,
-    marginBottom: '1.5rem',
-    color: 'var(--primary)',
-  },
-  timelineList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.5rem',
-    position: 'relative',
-  },
-  timelineItem: {
-    display: 'flex',
-    gap: '1rem',
-    alignItems: 'flex-start',
-  },
-  timelineDot: {
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: 'var(--accent)',
-    marginTop: '5px',
-    flexShrink: 0,
-  },
-  timelineYear: {
-    fontSize: '0.95rem',
-    fontWeight: 700,
-    color: 'var(--text-primary)',
-    marginBottom: '0.2rem',
-  },
-  timelineDesc: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-  },
-  missionSection: {
-    padding: '3.5rem 0',
-  },
-  missionCard: {
-    padding: '3rem',
-    background: 'linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)',
-    borderRadius: '20px',
-    border: '1px solid var(--border-subtle)',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.03)',
-  },
-  missionHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '1.25rem',
-    marginBottom: '1.75rem',
-  },
-  missionIconBox: {
-    width: '56px',
-    height: '56px',
-    borderRadius: '14px',
-    background: 'rgba(37, 99, 235, 0.08)',
-    border: '1px solid rgba(37, 99, 235, 0.2)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  missionTitle: {
-    fontSize: '2rem',
-    fontWeight: 800,
-    color: 'var(--primary)',
-  },
-  missionQuote: {
-    fontSize: '1.35rem',
-    lineHeight: '1.6',
-    fontWeight: 500,
-    color: 'var(--primary)',
-    fontFamily: 'var(--font-heading)',
-    paddingLeft: '1.5rem',
-    borderLeft: '4px solid var(--accent)',
-    marginBottom: '1.75rem',
-  },
-  missionBody: {
-    fontSize: '1.05rem',
-    color: 'var(--text-secondary)',
+    fontSize: '0.96rem',
+    color: '#475569',
     lineHeight: '1.75',
-    marginBottom: '2rem',
   },
-  missionPillars: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(4, 1fr)',
-    gap: '1rem',
-  },
-  pillarItem: {
+  promiseCard: {
+    background: 'linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%)',
+    border: '1px solid #cbd5e1',
+    borderRadius: '16px',
+    padding: '2rem',
     display: 'flex',
-    alignItems: 'center',
-    gap: '0.6rem',
-    padding: '0.85rem 1rem',
-    background: '#ffffff',
-    borderRadius: '10px',
-    border: '1px solid var(--border-subtle)',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    color: 'var(--text-primary)',
+    flexDirection: 'column',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
   },
-  whatWeDoSection: {
-    padding: '3.5rem 0',
+  promiseTitle: {
+    fontSize: '0.95rem',
+    fontWeight: 900,
+    color: '#0f172a',
+    letterSpacing: '0.05em',
+    marginBottom: '0.75rem',
   },
-  sectionHeader: {
+  promiseText: {
+    fontSize: '1.1rem',
+    fontWeight: 700,
+    color: '#1e293b',
+    marginBottom: '1.5rem',
+    lineHeight: '1.4',
+  },
+  sectionHeaderCenter: {
     textAlign: 'center',
     marginBottom: '3rem',
   },
   sectionTitleCenter: {
-    fontSize: '2.5rem',
-    fontWeight: 800,
-    color: 'var(--primary)',
-    marginBottom: '0.75rem',
+    fontSize: '2rem',
+    fontWeight: 900,
+    color: '#0f172a',
+    letterSpacing: '0.04em',
+    marginBottom: '0.35rem',
+    fontFamily: 'var(--font-heading)',
   },
-  sectionSubtitle: {
-    fontSize: '1.1rem',
-    color: 'var(--text-secondary)',
-    maxWidth: '600px',
+  yellowLineCenter: {
+    width: '60px',
+    height: '4px',
+    background: '#fbbf24',
     margin: '0 auto',
+    borderRadius: '2px',
   },
-  grid10: {
+  timelineRow: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(3, 1fr)',
+    gridTemplateColumns: '1fr auto 1fr auto 1fr',
+    alignItems: 'center',
     gap: '1.5rem',
   },
-  doCard: {
-    padding: '1.75rem',
+  timelineCard: {
     background: '#ffffff',
+    border: '1px solid #e2e8f0',
     borderRadius: '16px',
-    border: '1px solid var(--border-subtle)',
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  doCardTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1rem',
-  },
-  emojiSpan: {
-    fontSize: '1.75rem',
-  },
-  itemBadge: {
-    background: 'rgba(15, 23, 42, 0.05)',
-    color: 'var(--primary)',
-    borderColor: 'rgba(15, 23, 42, 0.1)',
-    fontSize: '0.7rem',
-  },
-  doHeader: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-    marginBottom: '0.75rem',
-  },
-  doIconContainer: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '8px',
-    background: 'rgba(37, 99, 235, 0.06)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  doTitle: {
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    color: 'var(--text-primary)',
-    lineHeight: '1.3',
-  },
-  doDesc: {
-    fontSize: '0.88rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.6',
-    flexGrow: 1,
-  },
-  visionSection: {
-    padding: '3.5rem 0 2rem 0',
-  },
-  visionBox: {
-    padding: '3.5rem 2.5rem',
+    padding: '1.75rem',
     textAlign: 'center',
-    background: 'linear-gradient(135deg, rgba(37, 99, 235, 0.04) 0%, rgba(249, 115, 22, 0.04) 100%)',
-    borderRadius: '24px',
-    border: '1px solid var(--border-subtle)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.03)',
+    position: 'relative',
   },
-  visionIconCircle: {
+  badgeYear: {
+    position: 'absolute',
+    top: '-14px',
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: '0.75rem',
+    padding: '0.25rem 0.85rem',
+    borderRadius: '20px',
+    boxShadow: '0 4px 10px rgba(0,0,0,0.1)',
+  },
+  timelineIconBox: {
     width: '64px',
     height: '64px',
     borderRadius: '50%',
-    background: '#ffffff',
-    boxShadow: '0 8px 20px rgba(0,0,0,0.06)',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '1.25rem',
+    marginTop: '0.5rem',
+    marginBottom: '1rem',
   },
-  visionQuoteText: {
-    fontSize: '1.85rem',
-    fontWeight: 700,
-    color: 'var(--primary)',
-    maxWidth: '800px',
-    marginBottom: '1.5rem',
-    fontStyle: 'italic',
-    lineHeight: '1.4',
-  },
-  visionBody: {
+  timelineTitle: {
     fontSize: '1.1rem',
-    color: 'var(--text-secondary)',
-    maxWidth: '720px',
-    lineHeight: '1.7',
-    marginBottom: '2.5rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    marginBottom: '0.5rem',
   },
-  ctaRow: {
-    display: 'flex',
-    gap: '1rem',
-    justifyContent: 'center',
-    flexWrap: 'wrap',
+  timelineDesc: {
+    fontSize: '0.85rem',
+    color: '#64748b',
+    lineHeight: '1.6',
+  },
+  timelineConnector: {
+    width: '30px',
+    height: '2px',
+    background: '#cbd5e1',
   }
 };
 
-// Responsive styles injection
+// Add responsive CSS rules
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
-  @media (max-width: 991px) {
-    .about-grid-2 {
-      grid-template-columns: 1fr !important;
-    }
-    .about-grid-do {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
-    .missionPillars-responsive {
-      grid-template-columns: repeat(2, 1fr) !important;
-    }
+  .btn-navy-promise {
+    background: #041026;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 0.8rem;
+    font-family: var(--font-heading);
+    padding: 0.7rem 1.25rem;
+    border-radius: 6px;
+    text-decoration: none;
+    letterSpacing: 0.04em;
+    display: inline-flex;
+    align-items: center;
   }
-  @media (max-width: 600px) {
-    .about-grid-do {
+  @media (max-width: 991px) {
+    .about-promise-grid {
       grid-template-columns: 1fr !important;
+    }
+    .about-timeline-row {
+      grid-template-columns: 1fr !important;
+    }
+    .timelineConnector {
+      display: none !important;
     }
   }
 `;
