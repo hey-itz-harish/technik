@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import logoImg from '../assets/logo.png';
 import { 
   Menu, 
   X, 
@@ -22,7 +23,7 @@ export default function TopNav() {
   };
 
   return (
-    <header style={styles.headerWrapper}>
+    <header style={styles.headerWrapper} className="site-header-animated">
       {/* Top Utility Bar */}
       <div style={styles.topUtilityBar} className="top-utility-bar">
         <div style={styles.topUtilityContainer}>
@@ -77,18 +78,18 @@ export default function TopNav() {
           {/* Logo */}
           <Link to="/" style={styles.logo} onClick={() => setIsOpen(false)}>
             <div style={styles.logoGearBox}>
-              <svg viewBox="0 0 100 100" width="34" height="34">
-                <path d="M50,15 A35,35 0 1,0 50,85 A35,35 0 1,0 50,15 Z" fill="none" stroke="#2563eb" strokeWidth="6" strokeDasharray="6 4" />
-                <circle cx="50" cy="50" r="28" fill="#0f172a" />
-                <path d="M40,35 L60,35 L60,42 L53,42 L53,65 L47,65 L47,42 L40,42 Z" fill="#f97316" />
-                <polygon points="50,22 55,30 45,30" fill="#fbbf24" />
-              </svg>
+              <img 
+                src={logoImg} 
+                alt="Technik Olympiad Logo" 
+                style={{ width: '42px', height: '42px', objectFit: 'contain' }} 
+              />
             </div>
             <div style={styles.logoTextGroup}>
               <div style={styles.brandTitle} className="brand-title-text">
                 TECHNIK <span style={{ color: '#f97316' }}>OLYMPIAD</span>
               </div>
               <div style={styles.brandSubtitle} className="brand-sub-text">PRIVATE LIMITED</div>
+              <div style={{ fontSize: '0.52rem', color: '#64748b', fontWeight: 700, letterSpacing: '0.04em', marginTop: '1px' }}>Discover | Compete | Achieve</div>
             </div>
           </Link>
 
@@ -96,6 +97,7 @@ export default function TopNav() {
           <div className="desktop-nav-menu" style={styles.desktopNav}>
             <Link 
               to="/" 
+              className={`nav-item-link ${isActive('/') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
                 color: isActive('/') ? '#f97316' : '#0f172a',
@@ -107,12 +109,14 @@ export default function TopNav() {
 
             {/* About Us Dropdown */}
             <div 
+              className="dropdown-wrapper"
               style={styles.dropdownWrapper}
               onMouseEnter={() => setActiveDropdown('about')}
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <Link 
                 to="/about" 
+                className={`nav-item-link dropdown-trigger ${isActive('/about') ? 'active-link' : ''}`}
                 style={{
                   ...styles.navLink,
                   color: isActive('/about') ? '#f97316' : '#0f172a',
@@ -120,7 +124,7 @@ export default function TopNav() {
                 }}
               >
                 <span>ABOUT US</span>
-                <ChevronDown size={13} style={{ marginLeft: '2px' }} />
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
               </Link>
               {activeDropdown === 'about' && (
                 <div style={styles.dropdownMenu}>
@@ -133,55 +137,139 @@ export default function TopNav() {
               )}
             </div>
 
-            <Link 
-              to="/catalog" 
-              style={{
-                ...styles.navLink,
-                color: isActive('/catalog') ? '#f97316' : '#0f172a',
-                fontWeight: isActive('/catalog') ? 700 : 600,
-              }}
+            <div 
+              className="dropdown-wrapper"
+              style={styles.dropdownWrapper}
+              onMouseEnter={() => setActiveDropdown('olympiads')}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              OLYMPIADS <ChevronDown size={13} />
-            </Link>
+              <Link 
+                to="/catalog" 
+                className={`nav-item-link dropdown-trigger ${isActive('/catalog') ? 'active-link' : ''}`}
+                style={{
+                  ...styles.navLink,
+                  color: isActive('/catalog') ? '#f97316' : '#0f172a',
+                  fontWeight: isActive('/catalog') ? 700 : 600,
+                }}
+              >
+                <span>OLYMPIADS</span>
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
+              </Link>
+              {activeDropdown === 'olympiads' && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/catalog" style={styles.dropdownItem}>Robotics Olympiad</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>Generative AI Olympiad</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>Coding Olympiad</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>Technik Art Olympiad</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>English Olympiad</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>Mental Maths Olympiad</Link>
+                </div>
+              )}
+            </div>
 
-            <Link 
-              to="/awards" 
-              style={{
-                ...styles.navLink,
-                color: isActive('/awards') ? '#f97316' : '#0f172a',
-                fontWeight: isActive('/awards') ? 700 : 600,
-              }}
+            <div 
+              className="dropdown-wrapper"
+              style={styles.dropdownWrapper}
+              onMouseEnter={() => setActiveDropdown('awards')}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              TECHNIK PRIDE AWARD <ChevronDown size={13} />
-            </Link>
+              <Link 
+                to="/awards" 
+                className={`nav-item-link dropdown-trigger ${isActive('/awards') ? 'active-link' : ''}`}
+                style={{
+                  ...styles.navLink,
+                  color: isActive('/awards') ? '#f97316' : '#0f172a',
+                  fontWeight: isActive('/awards') ? 700 : 600,
+                }}
+              >
+                <span>TECHNIK PRIDE AWARD</span>
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
+              </Link>
+              {activeDropdown === 'awards' && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/awards" style={styles.dropdownItem}>Award Overview</Link>
+                  <Link to="/awards" style={styles.dropdownItem}>Recognition Levels</Link>
+                  <Link to="/awards" style={styles.dropdownItem}>Apply for Award</Link>
+                </div>
+              )}
+            </div>
 
-            <Link 
-              to="/schools" 
-              style={{
-                ...styles.navLink,
-                color: isActive('/schools') ? '#f97316' : '#0f172a',
-                fontWeight: isActive('/schools') ? 700 : 600,
-              }}
+            <div 
+              className="dropdown-wrapper"
+              style={styles.dropdownWrapper}
+              onMouseEnter={() => setActiveDropdown('schools')}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              FOR SCHOOLS <ChevronDown size={13} />
-            </Link>
+              <Link 
+                to="/schools" 
+                className={`nav-item-link dropdown-trigger ${isActive('/schools') ? 'active-link' : ''}`}
+                style={{
+                  ...styles.navLink,
+                  color: isActive('/schools') ? '#f97316' : '#0f172a',
+                  fontWeight: isActive('/schools') ? 700 : 600,
+                }}
+              >
+                <span>FOR SCHOOLS</span>
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
+              </Link>
+              {activeDropdown === 'schools' && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/schools" style={styles.dropdownItem}>School Registration</Link>
+                  <Link to="/schools" style={styles.dropdownItem}>Hosting Partner</Link>
+                  <Link to="/schools" style={styles.dropdownItem}>School Benefits</Link>
+                </div>
+              )}
+            </div>
 
-            <Link 
-              to="/skill-compass" 
-              style={styles.navLink}
+            <div 
+              className="dropdown-wrapper"
+              style={styles.dropdownWrapper}
+              onMouseEnter={() => setActiveDropdown('students')}
+              onMouseLeave={() => setActiveDropdown(null)}
             >
-              FOR STUDENTS <ChevronDown size={13} />
-            </Link>
+              <Link 
+                to="/skill-compass" 
+                className="nav-item-link dropdown-trigger"
+                style={styles.navLink}
+              >
+                <span>FOR STUDENTS</span>
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
+              </Link>
+              {activeDropdown === 'students' && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/skill-compass" style={styles.dropdownItem}>Skill Compass Test</Link>
+                  <Link to="/catalog" style={styles.dropdownItem}>Track Selection</Link>
+                  <Link to="/dashboard" style={styles.dropdownItem}>Student Portal</Link>
+                </div>
+              )}
+            </div>
+
+            <div 
+              className="dropdown-wrapper"
+              style={styles.dropdownWrapper}
+              onMouseEnter={() => setActiveDropdown('media')}
+              onMouseLeave={() => setActiveDropdown(null)}
+            >
+              <Link 
+                to="/about" 
+                className="nav-item-link dropdown-trigger"
+                style={styles.navLink}
+              >
+                <span>MEDIA</span>
+                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
+              </Link>
+              {activeDropdown === 'media' && (
+                <div style={styles.dropdownMenu}>
+                  <Link to="/about" style={styles.dropdownItem}>Press Releases</Link>
+                  <Link to="/about" style={styles.dropdownItem}>Photo Gallery</Link>
+                  <Link to="/about" style={styles.dropdownItem}>Event Highlights</Link>
+                </div>
+              )}
+            </div>
 
             <Link 
               to="/about" 
-              style={styles.navLink}
-            >
-              MEDIA <ChevronDown size={13} />
-            </Link>
-
-            <Link 
-              to="/about" 
+              className="nav-item-link"
               style={styles.navLink}
             >
               CONTACT US
@@ -189,6 +277,7 @@ export default function TopNav() {
 
             <Link 
               to="/register" 
+              className="pulse-register-btn"
               style={styles.registerBtn}
             >
               REGISTER NOW
@@ -256,8 +345,9 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '100%',
-    padding: '0 2.5rem',
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '0 1.5rem',
   },
   topContacts: {
     display: 'flex',
@@ -322,8 +412,9 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '100%',
-    padding: '0 2.5rem',
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '0 1.5rem',
   },
   logo: {
     display: 'flex',
@@ -342,7 +433,7 @@ const styles = {
     flexDirection: 'column',
   },
   brandTitle: {
-    fontSize: '1.2rem',
+    fontSize: '1.15rem',
     fontWeight: 900,
     fontFamily: 'var(--font-heading)',
     color: '#0b1d3a',
@@ -350,17 +441,18 @@ const styles = {
     lineHeight: '1',
   },
   brandSubtitle: {
-    fontSize: '0.6rem',
+    fontSize: '0.58rem',
     fontWeight: 700,
     color: '#64748b',
-    letterSpacing: '0.18em',
+    letterSpacing: '0.16em',
     marginTop: '0.15rem',
   },
   desktopNav: {
     display: 'none',
     alignItems: 'center',
-    gap: '0.75rem',
+    gap: '0.45rem',
     height: '100%',
+    flexShrink: 0,
   },
   dropdownWrapper: {
     position: 'relative',
@@ -369,15 +461,15 @@ const styles = {
   navLink: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.2rem',
-    fontSize: '0.8rem',
+    gap: '0.15rem',
+    fontSize: '0.78rem',
     fontFamily: 'var(--font-heading)',
     fontWeight: 600,
     color: '#0f172a',
     textDecoration: 'none',
-    padding: '0.5rem 0.35rem',
+    padding: '0.4rem 0.25rem',
     whiteSpace: 'nowrap',
-    letterSpacing: '0.02em',
+    letterSpacing: '0.01em',
   },
   dropdownMenu: {
     position: 'absolute',
@@ -404,14 +496,15 @@ const styles = {
     background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
     color: '#0f172a',
     fontWeight: 800,
-    fontSize: '0.8rem',
+    fontSize: '0.78rem',
     fontFamily: 'var(--font-heading)',
-    padding: '0.6rem 1.25rem',
+    padding: '0.55rem 1.1rem',
     borderRadius: '6px',
     textDecoration: 'none',
     boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
     whiteSpace: 'nowrap',
-    marginLeft: '0.35rem',
+    flexShrink: 0,
+    marginLeft: '0.25rem',
     letterSpacing: '0.03em',
   },
   mobileMenuButton: {
@@ -491,15 +584,104 @@ const styles = {
   }
 };
 
-// Add responsive CSS styling
+// Add responsive CSS styling and animations
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
+  @keyframes navSlideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .site-header-animated {
+    animation: navSlideDown 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  .nav-item-link {
+    position: relative;
+    transition: color 0.25s ease;
+  }
+
+  .nav-item-link::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, #f97316 0%, #fbbf24 100%);
+    border-radius: 2px;
+    transform: scaleX(0);
+    transform-origin: right;
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .nav-item-link:hover::after,
+  .nav-item-link.active-link::after {
+    transform: scaleX(1);
+    transform-origin: left;
+  }
+
+  .nav-item-link:hover {
+    color: #f97316 !important;
+  }
+
+  .dropdown-wrapper .chevron-icon {
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), color 0.3s ease;
+  }
+
+  .dropdown-wrapper:hover .chevron-icon {
+    transform: rotate(180deg);
+    color: #f97316;
+  }
+
+  @keyframes registerPulseGlow {
+    0%, 100% {
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4), 0 0 0px rgba(245, 158, 11, 0);
+      transform: scale(1);
+    }
+    50% {
+      box-shadow: 0 6px 22px rgba(245, 158, 11, 0.75), 0 0 12px rgba(245, 158, 11, 0.5);
+      transform: scale(1.02);
+    }
+  }
+
+  .pulse-register-btn {
+    animation: registerPulseGlow 3.5s ease-in-out infinite;
+    transition: all 0.3s ease !important;
+  }
+
+  .pulse-register-btn:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 8px 25px rgba(245, 158, 11, 0.85) !important;
+  }
+
   @media (min-width: 992px) {
     #mobile-nav-toggle {
       display: none !important;
     }
     .desktop-nav-menu {
       display: flex !important;
+    }
+  }
+  @media (min-width: 992px) and (max-width: 1240px) {
+    .desktop-nav-menu {
+      gap: 0.2rem !important;
+    }
+    .desktop-nav-menu a {
+      font-size: 0.72rem !important;
+      padding: 0.35rem 0.15rem !important;
+    }
+    .main-nav-container {
+      padding: 0 0.85rem !important;
+    }
+    .brand-title-text {
+      font-size: 1.05rem !important;
     }
   }
   @media (max-width: 991px) {

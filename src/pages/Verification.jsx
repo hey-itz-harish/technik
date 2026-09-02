@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import logoImg from '../assets/logo.png';
 import { ShieldCheck, Search, FileSignature, Calendar, Building2, User, Trophy, AlertCircle } from 'lucide-react';
 
 export default function Verification({ registrations }) {
@@ -99,7 +100,11 @@ export default function Verification({ registrations }) {
               <div className="glass-card" style={styles.successSheet}>
                 <div style={styles.successHeader}>
                   <div style={styles.badgeWrapper}>
-                    <ShieldCheck size={28} color="var(--success)" />
+                    <img 
+                      src={logoImg} 
+                      alt="Technik Seal" 
+                      style={{ width: '48px', height: '48px', objectFit: 'contain' }} 
+                    />
                     <div style={{ textAlign: 'left' }}>
                       <h3 style={styles.verifBadgeTitle}>VERIFIED GENUINE</h3>
                       <p style={styles.verifBadgeSub}>Official Technik Olympiad Registry Record</p>

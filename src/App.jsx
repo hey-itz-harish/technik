@@ -12,6 +12,8 @@ import Verification from './pages/Verification';
 import About from './pages/About';
 import Schools from './pages/Schools';
 
+import ComingSoon from './pages/ComingSoon';
+
 function App() {
   // State for storing registrations
   const [registrations, setRegistrations] = useState([]);
@@ -31,67 +33,6 @@ function App() {
     }
   }, []);
 
-  // Save registration utility
-  const handleRegisterSuccess = (newReg) => {
-    const updated = [newReg, ...registrations];
-    setRegistrations(updated);
-    localStorage.setItem('technik_registrations', JSON.stringify(updated));
-  };
-
-  // Update registration progress stage (1 to 4)
-  const handleUpdateStage = (regId, stageNum) => {
-    const updated = registrations.map(reg => {
-      if (reg.id === regId) {
-        return { ...reg, stage: stageNum };
-      }
-      return reg;
-    });
-    setRegistrations(updated);
-    localStorage.setItem('technik_registrations', JSON.stringify(updated));
-  };
-
-  // Preselect a track when clicking cards in Catalog/Compass
-  const handleSelectTrack = (trackName) => {
-    setSelectedTrack(trackName);
-  };
-
-  // Reset selected track state after form pre-population
-  const clearSelectedTrack = () => {
-    setSelectedTrack(null);
-  };
-
-  // Load demo registration data for testing dashboard directly
-  const handleLoadDemoData = () => {
-    const demoData = [
-      {
-        id: 'REG-528491',
-        studentName: 'Aarav Sharma',
-        grade: 'Grade 6',
-        school: 'Delhi Public School',
-        city: 'New Delhi',
-        track: 'Coding & Algorithms',
-        regType: 'One-time (All Levels)',
-        fee: 599,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-        stage: 2 // Stage 2 is district level (School Qualifier Certificate unlocked!)
-      },
-      {
-        id: 'REG-892404',
-        studentName: 'Aarav Sharma',
-        grade: 'Grade 6',
-        school: 'Delhi Public School',
-        city: 'New Delhi',
-        track: 'AI & Machine Learning',
-        regType: 'Per Level',
-        fee: 299,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-        stage: 1 // School level
-      }
-    ];
-    setRegistrations(demoData);
-    localStorage.setItem('technik_registrations', JSON.stringify(demoData));
-  };
-
   return (
     <Router>
       <div className="app-container">
@@ -99,26 +40,8 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/catalog" element={<Catalog onSelectTrack={handleSelectTrack} />} />
-            <Route path="/skill-compass" element={<SkillCompass onSelectTrack={handleSelectTrack} />} />
-            <Route path="/register" element={
-              <Register 
-                selectedTrack={selectedTrack} 
-                onRegisterSuccess={handleRegisterSuccess} 
-                clearSelectedTrack={clearSelectedTrack}
-              />
-            } />
-            <Route path="/awards" element={<Awards registrations={registrations} />} />
             <Route path="/about" element={<About />} />
-            <Route path="/schools" element={<Schools />} />
-            <Route path="/verify" element={<Verification registrations={registrations} />} />
-            <Route path="/dashboard" element={
-              <Dashboard 
-                registrations={registrations} 
-                onUpdateStage={handleUpdateStage}
-                onLoadDemoData={handleLoadDemoData}
-              />
-            } />
+            <Route path="*" element={<ComingSoon />} />
           </Routes>
         </main>
         <Footer />

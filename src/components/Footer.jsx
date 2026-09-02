@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import logoImg from '../assets/logo.png';
 import { 
   Phone, 
   Mail, 
@@ -16,12 +17,11 @@ export default function Footer() {
         <div style={styles.brandHeader}>
           <Link to="/" style={styles.logo}>
             <div style={styles.logoGearBox}>
-              <svg viewBox="0 0 100 100" width="34" height="34">
-                <path d="M50,15 A35,35 0 1,0 50,85 A35,35 0 1,0 50,15 Z" fill="none" stroke="#38bdf8" strokeWidth="6" strokeDasharray="6 4" />
-                <circle cx="50" cy="50" r="28" fill="#0f172a" />
-                <path d="M40,35 L60,35 L60,42 L53,42 L53,65 L47,65 L47,42 L40,42 Z" fill="#f97316" />
-                <polygon points="50,22 55,30 45,30" fill="#fbbf24" />
-              </svg>
+              <img 
+                src={logoImg} 
+                alt="Technik Olympiad Logo" 
+                style={{ width: '42px', height: '42px', objectFit: 'contain' }} 
+              />
             </div>
             <div style={styles.logoTextGroup}>
               <div style={styles.brandTitle}>
