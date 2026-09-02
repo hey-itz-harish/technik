@@ -99,11 +99,11 @@ export default function Footer() {
           <div style={styles.col}>
             <h4 style={styles.colTitle}>SUPPORT</h4>
             <div style={styles.linkList}>
-              <Link to="/about" style={styles.linkItem}>FAQs</Link>
-              <Link to="/about" style={styles.linkItem}>Contact Us</Link>
-              <Link to="/about" style={styles.linkItem}>Privacy Policy</Link>
-              <Link to="/about" style={styles.linkItem}>Terms & Conditions</Link>
-              <Link to="/about" style={styles.linkItem}>Refund Policy</Link>
+              <Link to="/faq" style={styles.linkItem}>FAQs</Link>
+              <Link to="/contact" style={styles.linkItem}>Contact Us</Link>
+              <Link to="/privacy" style={styles.linkItem}>Privacy Policy</Link>
+              <Link to="/privacy" style={styles.linkItem}>Terms & Conditions</Link>
+              <Link to="/privacy" style={styles.linkItem}>Refund Policy</Link>
             </div>
           </div>
 

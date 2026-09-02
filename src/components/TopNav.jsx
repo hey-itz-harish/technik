@@ -251,8 +251,8 @@ export default function TopNav() {
               onMouseLeave={() => setActiveDropdown(null)}
             >
               <Link 
-                to="/about" 
-                className="nav-item-link dropdown-trigger"
+                to="/media" 
+                className={`nav-item-link dropdown-trigger ${isActive('/media') ? 'active-link' : ''}`}
                 style={styles.navLink}
               >
                 <span>MEDIA</span>
@@ -260,16 +260,16 @@ export default function TopNav() {
               </Link>
               {activeDropdown === 'media' && (
                 <div style={styles.dropdownMenu}>
-                  <Link to="/about" style={styles.dropdownItem}>Press Releases</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Photo Gallery</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Event Highlights</Link>
+                  <Link to="/media" style={styles.dropdownItem}>Press Releases</Link>
+                  <Link to="/media" style={styles.dropdownItem}>Photo Gallery</Link>
+                  <Link to="/media" style={styles.dropdownItem}>Event Highlights</Link>
                 </div>
               )}
             </div>
 
             <Link 
-              to="/about" 
-              className="nav-item-link"
+              to="/contact" 
+              className={`nav-item-link ${isActive('/contact') ? 'active-link' : ''}`}
               style={styles.navLink}
             >
               CONTACT US

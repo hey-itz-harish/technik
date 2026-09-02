@@ -30,6 +30,10 @@ export default function ComingSoon() {
       case '/schools': return 'School Partnership Portal';
       case '/verify': return 'Certificate Verification Engine';
       case '/dashboard': return 'Student & School Portal';
+      case '/media': return 'Media Center & Press Releases';
+      case '/contact': return 'Contact Us & Support Center';
+      case '/faq': return 'Frequently Asked Questions';
+      case '/privacy': return 'Privacy Policy & Terms';
       default:
         const cleanPath = path.replace('/', '').replace(/-/g, ' ');
         return cleanPath ? cleanPath.toUpperCase() : 'PORTAL';
