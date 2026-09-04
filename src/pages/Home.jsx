@@ -363,7 +363,7 @@ export default function Home() {
       {/* TECHNIK PRIDE AWARD BANNER */}
       <section style={styles.awardSection}>
         <div className="container">
-          <div style={styles.awardBanner}>
+          <div style={styles.awardBanner} className="home-award-banner">
             <div style={styles.awardLeft}>
               <div style={styles.awardTrophyFrame}>
                 <Trophy size={64} color="#fbbf24" />
@@ -371,7 +371,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div style={styles.awardCenter}>
+            <div style={styles.awardCenter} className="award-center-col">
               <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>NATIONAL RECOGNITION</span>
               <h2 style={styles.awardBannerTitle}>TECHNIK PRIDE AWARD</h2>
               <p style={styles.awardBannerSubtitle}>Celebrating Every Young Achiever</p>
@@ -379,22 +379,22 @@ export default function Home() {
                 The Technik Pride Award is a prestigious recognition initiative created to celebrate
                 outstanding achievements of school students. Our vision is simple – Every achiever deserves recognition.
               </p>
-              <Link to="/awards" className="btn-hero-gold" style={{ alignSelf: 'flex-start' }}>
+              <Link to="/awards" className="btn-hero-gold award-cta-btn" style={{ alignSelf: 'flex-start' }}>
                 EXPLORE AWARD
               </Link>
             </div>
 
-            <div style={styles.awardRight}>
+            <div style={styles.awardRight} className="award-right-col">
               <div style={styles.awardFeatureBadge}>
-                <Award size={20} color="#fbbf24" />
+                <Award size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
                 <span>MULTIPLE CATEGORIES</span>
               </div>
               <div style={styles.awardFeatureBadge}>
-                <Trophy size={20} color="#fbbf24" />
+                <Trophy size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
                 <span>3 LEVELS OF RECOGNITION</span>
               </div>
               <div style={styles.awardFeatureBadge}>
-                <Star size={20} color="#fbbf24" />
+                <Star size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
                 <span>PRESTIGIOUS AWARDS</span>
               </div>
             </div>
@@ -977,14 +977,17 @@ const styles = {
   awardBanner: {
     background: 'linear-gradient(135deg, #030c1e 0%, #0b1d3a 100%)',
     borderRadius: '20px',
-    padding: '3rem',
+    padding: '2.5rem',
     color: '#ffffff',
     display: 'grid',
     gridTemplateColumns: '0.5fr 1.5fr 1fr',
-    gap: '2rem',
+    gap: '1.75rem',
     alignItems: 'center',
     border: '1px solid rgba(251, 191, 36, 0.3)',
     boxShadow: '0 20px 40px rgba(0,0,0,0.3)',
+    maxWidth: '100%',
+    boxSizing: 'border-box',
+    overflow: 'hidden',
   },
   awardLeft: {
     display: 'flex',
@@ -1003,33 +1006,41 @@ const styles = {
     color: '#0f172a',
     padding: '0.25rem 0.65rem',
     borderRadius: '4px',
+    textAlign: 'center',
+    whiteSpace: 'nowrap',
   },
   awardCenter: {
     display: 'flex',
     flexDirection: 'column',
+    minWidth: 0,
   },
   awardBannerTitle: {
     fontSize: '2rem',
     fontWeight: 900,
     color: '#ffffff',
     marginBottom: '0.25rem',
+    wordBreak: 'break-word',
+    overflowWrap: 'break-word',
   },
   awardBannerSubtitle: {
     fontSize: '1.1rem',
     fontWeight: 700,
     color: '#fbbf24',
     marginBottom: '0.75rem',
+    wordBreak: 'break-word',
   },
   awardBannerDesc: {
     fontSize: '0.9rem',
     color: '#cbd5e1',
     lineHeight: '1.6',
     marginBottom: '1.5rem',
+    wordBreak: 'break-word',
   },
   awardRight: {
     display: 'flex',
     flexDirection: 'column',
     gap: '0.85rem',
+    minWidth: 0,
   },
   awardFeatureBadge: {
     display: 'flex',
@@ -1038,10 +1049,12 @@ const styles = {
     background: 'rgba(255,255,255,0.06)',
     border: '1px solid rgba(255,255,255,0.1)',
     borderRadius: '10px',
-    padding: '0.85rem 1rem',
+    padding: '0.75rem 1rem',
     fontSize: '0.82rem',
     fontWeight: 700,
     color: '#ffffff',
+    minWidth: 0,
+    wordBreak: 'break-word',
   },
   segmentGrid: {
     display: 'grid',
@@ -1630,6 +1643,31 @@ styleSheet.innerText = `
     background: #09204a;
   }
 
+  @media (max-width: 1024px) {
+    .home-award-banner {
+      grid-template-columns: 1fr !important;
+      gap: 1.5rem !important;
+      padding: 2rem 1.25rem !important;
+    }
+    .award-center-col {
+      align-items: center !important;
+      text-align: center !important;
+    }
+    .award-center-col .badge {
+      align-self: center !important;
+    }
+    .award-center-col .award-cta-btn {
+      align-self: center !important;
+    }
+    .award-right-col {
+      display: flex !important;
+      flex-direction: row !important;
+      flex-wrap: wrap !important;
+      justify-content: center !important;
+      gap: 0.75rem !important;
+    }
+  }
+
   @media (max-width: 991px) {
     .home-hero-container {
       grid-template-columns: 1fr !important;
@@ -1655,6 +1693,10 @@ styleSheet.innerText = `
     }
     .home-olympiad-grid, .home-segment-grid, .home-bottom-grid3, .home-trust-grid {
       grid-template-columns: 1fr !important;
+    }
+    .award-right-col {
+      flex-direction: column !important;
+      width: 100% !important;
     }
   }
 `;
