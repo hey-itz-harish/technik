@@ -11,20 +11,20 @@ import news3Img from '../assets/news3.jpg';
 import achiever1Img from '../assets/achiever1.jpg';
 import achiever2Img from '../assets/achiever2.jpg';
 import achiever3Img from '../assets/achiever3.jpg';
-import { 
-  Trophy, 
-  ArrowRight, 
-  Sparkles, 
-  Calendar, 
-  Users, 
-  BookOpen, 
-  Award, 
-  MapPin, 
-  Bot, 
-  Cpu, 
-  Code, 
-  Palette, 
-  BookMarked, 
+import {
+  Trophy,
+  ArrowRight,
+  Sparkles,
+  Calendar,
+  Users,
+  BookOpen,
+  Award,
+  MapPin,
+  Bot,
+  Cpu,
+  Code,
+  Palette,
+  BookMarked,
   Calculator,
   CheckCircle2,
   School,
@@ -175,7 +175,7 @@ export default function Home() {
 
   return (
     <div style={styles.page}>
-      
+
       {/* HERO SECTION */}
       <section style={styles.heroSection}>
         <div className="container home-hero-container" style={styles.heroContainer}>
@@ -194,7 +194,7 @@ export default function Home() {
             </p>
 
             <p style={styles.heroDesc} className="hero-stagger-5">
-              Technik Olympiad Private Limited is an educational initiative committed to identifying, 
+              Technik Olympiad Private Limited is an educational initiative committed to identifying,
               encouraging and celebrating the unique talents and achievements of school students.
             </p>
 
@@ -218,13 +218,13 @@ export default function Home() {
           </div>
 
           {/* Hero Visual Right with 3D Mouse Parallax */}
-          <div 
-            style={styles.heroRight} 
+          <div
+            style={styles.heroRight}
             ref={heroVisualRef}
             onMouseMove={handleMouseMoveHero}
             onMouseLeave={handleMouseLeaveHero}
           >
-            <div 
+            <div
               style={{
                 ...styles.heroVisualFrame,
                 transform: `perspective(1000px) rotateY(${mouseTilt.x}deg) rotateX(${mouseTilt.y}deg)`,
@@ -233,54 +233,65 @@ export default function Home() {
               className="hero-badge-card-frame"
             >
               <div style={styles.orbitRing} className="orbit-ring-pulse"></div>
-              
+
               {/* Floating Orbit Badges with tooltips */}
-              <div 
-                style={{ ...styles.orbitBadge, top: '2%', left: '2%' }} 
+              <div
+                style={{ ...styles.orbitBadge, top: '0%', left: '0%' }}
                 className="orbit-badge-item orbit-badge-1"
                 data-tooltip="Robotics & AI"
               >
-                <Bot size={18} color="#38bdf8" />
+                <Bot size={20} color="#0284c7" />
               </div>
-              <div 
-                style={{ ...styles.orbitBadge, top: '22%', right: '-10px' }} 
+              <div
+                style={{ ...styles.orbitBadge, top: '20%', right: '-15px' }}
                 className="orbit-badge-item orbit-badge-2"
                 data-tooltip="Coding & Logic"
               >
-                <Code size={18} color="#fbbf24" />
+                <Code size={20} color="#d97706" />
               </div>
-              <div 
-                style={{ ...styles.orbitBadge, bottom: '22%', left: '-10px' }} 
+              <div
+                style={{ ...styles.orbitBadge, bottom: '20%', left: '-15px' }}
                 className="orbit-badge-item orbit-badge-3"
                 data-tooltip="Mental Maths"
               >
-                <Calculator size={18} color="#4ade80" />
+                <Calculator size={20} color="#059669" />
               </div>
-              <div 
-                style={{ ...styles.orbitBadge, bottom: '2%', right: '5%' }} 
+              <div
+                style={{ ...styles.orbitBadge, bottom: '0%', right: '2%' }}
                 className="orbit-badge-item orbit-badge-4"
                 data-tooltip="Creativity & Art"
               >
-                <Palette size={18} color="#f472b6" />
+                <Palette size={20} color="#c026d3" />
               </div>
 
-              {/* Student Achiever Illustration Box */}
+              {/* Executive Student Achiever Emblem Card */}
               <div style={styles.achieverBox} className="achiever-box-floating">
-                <div className="shield-logo-wrapper">
-                  <img 
-                    src={logoImg} 
-                    alt="Technik Emblem" 
-                    className="shield-logo-img"
-                    style={{ width: '130px', height: '130px', objectFit: 'contain', margin: '0 auto 0.75rem auto', filter: 'drop-shadow(0 8px 16px rgba(0,0,0,0.3))' }} 
-                  />
-                  <div className="shield-shine-sweep"></div>
+                {/* Full-card shine sweep animation */}
+                <div className="card-shine-sweep"></div>
+
+                {/* Glowing Emblem Frame */}
+                <div style={styles.emblemGlowContainer}>
+                  <div className="shield-logo-wrapper">
+                    <img
+                      src={logoImg}
+                      alt="Technik Crest"
+                      className="shield-logo-img"
+                      style={{ width: '135px', height: '135px', objectFit: 'contain', margin: '0 auto', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.4))' }}
+                    />
+                  </div>
                 </div>
+
+                {/* Gold Crest Ribbon Badge */}
                 <div style={styles.achieverRibbon}>
-                  <Award size={13} color="#0f172a" style={{ flexShrink: 0 }} />
-                  <span style={{ whiteSpace: 'nowrap' }}>INNOVATE • COMPETE • EXCEL</span>
+                  <Award size={14} color="#0b1d3a" style={{ flexShrink: 0 }} />
+                  <span>INNOVATE • COMPETE • EXCEL</span>
                 </div>
+
+                {/* Subtitle Organization Label */}
                 <div style={styles.achieverOrgText}>
+                  <Star size={11} color="#fbbf24" style={{ marginRight: '0.3rem' }} />
                   TECHNIK OLYMPIAD
+                  <Star size={11} color="#fbbf24" style={{ marginLeft: '0.3rem' }} />
                 </div>
               </div>
             </div>
@@ -365,7 +376,7 @@ export default function Home() {
               <h2 style={styles.awardBannerTitle}>TECHNIK PRIDE AWARD</h2>
               <p style={styles.awardBannerSubtitle}>Celebrating Every Young Achiever</p>
               <p style={styles.awardBannerDesc}>
-                The Technik Pride Award is a prestigious recognition initiative created to celebrate 
+                The Technik Pride Award is a prestigious recognition initiative created to celebrate
                 outstanding achievements of school students. Our vision is simple – Every achiever deserves recognition.
               </p>
               <Link to="/awards" className="btn-hero-gold" style={{ alignSelf: 'flex-start' }}>
@@ -395,7 +406,7 @@ export default function Home() {
       <section style={styles.sectionPadding}>
         <div className="container">
           <div style={styles.segmentGrid} className="home-segment-grid">
-            
+
             {/* For Students */}
             <div style={styles.segmentCard}>
               <div style={styles.segmentBodyFlex}>
@@ -533,7 +544,7 @@ export default function Home() {
       <section style={{ ...styles.sectionPadding, background: '#f8fafc' }}>
         <div className="container">
           <div style={styles.bottomGrid3} className="home-bottom-grid3">
-            
+
             {/* Upcoming Events */}
             <div style={styles.bottomBox}>
               <div style={styles.boxHeader}>
@@ -693,7 +704,7 @@ const styles = {
     background: '#ffffff',
   },
   heroSection: {
-    background: 'linear-gradient(135deg, #030c1e 0%, #081d3d 50%, #06152e 100%)',
+    background: 'linear-gradient(135deg, #0c2340 0%, #153a70 50%, #1e40af 100%)',
     color: '#ffffff',
     padding: '4.5rem 0 5rem 0',
     position: 'relative',
@@ -738,7 +749,7 @@ const styles = {
   },
   heroDesc: {
     fontSize: '0.98rem',
-    color: '#94a3b8',
+    color: '#cbd5e1',
     lineHeight: '1.65',
     marginBottom: '1.5rem',
     maxWidth: '560px',
@@ -766,10 +777,10 @@ const styles = {
     position: 'relative',
   },
   heroVisualFrame: {
-    width: '380px',
-    height: '380px',
+    width: '400px',
+    height: '400px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(37,99,235,0.2) 0%, transparent 70%)',
+    background: 'radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(37,99,235,0.08) 50%, transparent 75%)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -777,68 +788,71 @@ const styles = {
   },
   orbitRing: {
     position: 'absolute',
-    inset: '-10px',
+    inset: '-12px',
     borderRadius: '50%',
-    border: '2px stroke rgba(56, 189, 248, 0.2)',
-    boxShadow: '0 0 30px rgba(37,99,235,0.3)',
+    border: '1.5px dashed rgba(148, 163, 184, 0.3)',
+    boxShadow: '0 0 40px rgba(56, 189, 248, 0.2)',
   },
   orbitBadge: {
     position: 'absolute',
-    width: '44px',
-    height: '44px',
+    width: '48px',
+    height: '48px',
     borderRadius: '50%',
-    background: '#041026',
-    border: '1px solid rgba(255,255,255,0.25)',
+    background: 'linear-gradient(135deg, #ffffff 0%, #eff6ff 100%)',
+    border: '1px solid rgba(255, 255, 255, 0.9)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 6px 16px rgba(0,0,0,0.5)',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.18), 0 0 15px rgba(56,189,248,0.2)',
     zIndex: 10,
   },
   achieverBox: {
-    width: '260px',
-    padding: '1.75rem 1rem',
-    background: 'rgba(15, 23, 42, 0.9)',
-    border: '2px solid #fbbf24',
-    borderRadius: '20px',
+    width: '280px',
+    padding: '2rem 1.25rem 1.5rem 1.25rem',
+    background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 58, 138, 0.92) 60%, rgba(15, 23, 42, 0.98) 100%)',
+    backdropFilter: 'blur(16px)',
+    border: '1px solid rgba(251, 191, 36, 0.45)',
+    borderRadius: '24px',
     textAlign: 'center',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 0 35px rgba(251, 191, 36, 0.15)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    position: 'relative',
+    overflow: 'hidden',
   },
-  avatarCircle: {
-    width: '80px',
-    height: '80px',
-    borderRadius: '50%',
-    background: 'rgba(251, 191, 36, 0.12)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
+  emblemGlowContainer: {
     marginBottom: '1rem',
+    position: 'relative',
   },
   achieverRibbon: {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: '0.35rem',
-    background: '#fbbf24',
-    color: '#0f172a',
-    fontWeight: 800,
-    fontSize: '0.64rem',
-    padding: '0.4rem 0.6rem',
-    borderRadius: '6px',
-    marginBottom: '0.5rem',
+    gap: '0.4rem',
+    background: 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #d97706 100%)',
+    color: '#0b1d3a',
+    fontWeight: 900,
+    fontSize: '0.68rem',
+    fontFamily: 'var(--font-heading)',
+    padding: '0.5rem 0.85rem',
+    borderRadius: '50px',
+    marginBottom: '0.75rem',
     whiteSpace: 'nowrap',
-    width: '95%',
+    width: '100%',
     boxSizing: 'border-box',
-    letterSpacing: '0.02em',
+    letterSpacing: '0.05em',
+    boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
   },
   achieverOrgText: {
-    fontSize: '0.65rem',
-    fontWeight: 700,
-    color: '#94a3b8',
-    letterSpacing: '0.1em',
+    fontSize: '0.74rem',
+    fontWeight: 800,
+    color: '#e2e8f0',
+    letterSpacing: '0.14em',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontFamily: 'var(--font-heading)',
   },
   statsSection: {
     marginTop: '-2.5rem',
@@ -1488,25 +1502,22 @@ styleSheet.innerText = `
     overflow: hidden;
   }
 
-  .shield-logo-wrapper {
-    position: relative;
-    display: inline-block;
-  }
-
-  .shield-shine-sweep {
+  .card-shine-sweep {
     position: absolute;
-    top: 0;
-    left: -100%;
-    width: 60%;
-    height: 100%;
+    top: -50%;
+    left: -120%;
+    width: 65%;
+    height: 200%;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
     transform: skewX(-25deg);
-    animation: shieldShine 4s ease-in-out infinite 1s;
+    animation: cardShineSweep 4s ease-in-out infinite 1s;
+    pointer-events: none;
+    z-index: 5;
   }
 
-  @keyframes shieldShine {
-    0%, 65% { left: -100%; }
-    100% { left: 200%; }
+  @keyframes cardShineSweep {
+    0%, 60% { left: -120%; }
+    100% { left: 220%; }
   }
 
   /* ORBIT RADIAL GLOW PULSE */

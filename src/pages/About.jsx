@@ -1,45 +1,29 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import logoImg from '../assets/logo.png';
 import heroStudentImg from '../assets/hero_student.jpg';
-import { 
-  Calendar, 
-  Users, 
-  BookOpen, 
-  Award, 
-  MapPin, 
-  Trophy, 
-  ArrowRight, 
-  Bot, 
-  TrendingUp, 
-  Sparkles, 
-  ShieldCheck, 
-  HeartHandshake
-} from 'lucide-react';
+import { Trophy, HeartHandshake, ShieldCheck, Award } from 'lucide-react';
 
 export default function About() {
-  const statsList = [
-    { icon: Calendar, val: "2018", label: "Our Journey Began", color: "#2563eb" },
-    { icon: Users, val: "Play School to Class 12", label: "Eligible Students", color: "#059669" },
-    { icon: BookOpen, val: "6+ Olympiads", label: "Future-Ready Subjects", color: "#d97706" },
-    { icon: Award, val: "School · District · State", label: "Recognition Levels", color: "#f97316" },
-    { icon: MapPin, val: "5 States + Puducherry", label: "Our Focus Region", color: "#dc2626" }
-  ];
-
   return (
     <div style={styles.page}>
       
-      {/* ABOUT HERO BANNER */}
-      <section style={styles.heroSection}>
-        <div className="container" style={styles.heroContainer}>
+      {/* CREATIVE ANIMATED HERO SECTION */}
+      <section style={styles.heroSection} className="about-hero-animated">
+        {/* Animated Background Mesh Glow Orbs */}
+        <div className="animated-bg-orb orb-1"></div>
+        <div className="animated-bg-orb orb-2"></div>
+        <div className="animated-bg-orb orb-3"></div>
+
+        <div className="container about-hero-container" style={styles.heroContainer}>
           
           {/* Hero Left Content */}
           <div style={styles.heroLeft}>
-            <h1 style={styles.heroTitle}>ABOUT TECHNIK</h1>
+            <span style={styles.heroBadge}>About Technik</span>
+            <h1 style={styles.heroTitle}>Building confidence through competition, technology and recognition.</h1>
             <div style={styles.yellowLine}></div>
 
             <p style={styles.heroSubtext}>
-              Empowering young minds to discover, develop, compete, achieve and be recognised.
+              Technik began in 2018 with a focus on robotics education for school students and has evolved into Technik Olympiad Private Limited, creating broader academic and talent-development opportunities.
             </p>
 
             {/* Breadcrumb */}
@@ -52,7 +36,7 @@ export default function About() {
             </div>
           </div>
 
-          {/* Hero Visual Right: Student with Trophy & Feature Badges */}
+          {/* Hero Right Visual: Student Achiever Photo with Floating Feature Badges */}
           <div style={styles.heroRight}>
             <div style={styles.heroImageWrapper}>
               <img 
@@ -61,9 +45,9 @@ export default function About() {
                 style={styles.heroStudentPhoto}
               />
               
-              {/* Feature Badges Column overlay on right */}
+              {/* Floating Feature Badges Column */}
               <div style={styles.floatingBadgesColumn}>
-                <div style={styles.featureBadgePill}>
+                <div style={styles.featureBadgePill} className="floating-badge badge-anim-1">
                   <div style={styles.badgeIconBg}>
                     <Trophy size={18} color="#2563eb" />
                   </div>
@@ -73,7 +57,7 @@ export default function About() {
                   </div>
                 </div>
 
-                <div style={styles.featureBadgePill}>
+                <div style={styles.featureBadgePill} className="floating-badge badge-anim-2">
                   <div style={styles.badgeIconBg}>
                     <HeartHandshake size={18} color="#2563eb" />
                   </div>
@@ -83,7 +67,7 @@ export default function About() {
                   </div>
                 </div>
 
-                <div style={styles.featureBadgePill}>
+                <div style={styles.featureBadgePill} className="floating-badge badge-anim-3">
                   <div style={styles.badgeIconBg}>
                     <ShieldCheck size={18} color="#2563eb" />
                   </div>
@@ -93,7 +77,7 @@ export default function About() {
                   </div>
                 </div>
 
-                <div style={styles.featureBadgePill}>
+                <div style={styles.featureBadgePill} className="floating-badge badge-anim-4">
                   <div style={styles.badgeIconBg}>
                     <Award size={18} color="#2563eb" />
                   </div>
@@ -109,122 +93,80 @@ export default function About() {
         </div>
       </section>
 
-      {/* STATS FLOATING BAR */}
-      <section style={styles.statsSection}>
-        <div className="container">
-          <div style={styles.statsCardGrid} className="home-stats-grid">
-            {statsList.map((stat, idx) => {
-              const StatIcon = stat.icon;
-              return (
-                <div key={idx} style={styles.statCard}>
-                  <div style={{ ...styles.statIconBox, color: stat.color, background: `${stat.color}12` }}>
-                    <StatIcon size={22} />
-                  </div>
-                  <div>
-                    <h3 style={styles.statVal}>{stat.val}</h3>
-                    <p style={styles.statLbl}>{stat.label}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT TECHNIK & PROMISE SECTION */}
+      {/* WHO WE ARE & VISION / MISSION SECTION */}
       <section style={styles.sectionPadding}>
         <div className="container">
-          <div style={styles.aboutPromiseGrid} className="about-promise-grid">
+          <div style={styles.whoWeAreGrid} className="about-two-grid">
             
-            {/* About Technik Description */}
-            <div style={styles.aboutTextBlock}>
-              <h2 style={styles.sectionTitleLeft}>ABOUT TECHNIK</h2>
+            {/* Who We Are Left Column */}
+            <div style={styles.whoWeAreLeft}>
+              <h2 style={styles.sectionTitle}>Who We Are</h2>
               <p style={styles.paragraphText}>
-                Technik Olympiad Private Limited is an educational organisation committed to creating 
-                meaningful opportunities for school students. We believe every student has unique abilities 
-                and potential that deserve the right platform. Through Olympiads, talent assessments, 
-                competitions and the prestigious Technik Pride Award, we encourage students to explore, 
-                learn, compete and achieve.
+                Technik Olympiad Private Limited designs and conducts Olympiad examinations, academic competitions, student talent assessments, educational events, workshops and certification programmes.
+              </p>
+              <p style={{ ...styles.paragraphText, marginTop: '1.25rem' }}>
+                Our aim is to make structured competition accessible to schools while recognising students not only for marks, but also for creativity, communication, discipline, innovation, leadership and presentation.
               </p>
             </div>
 
-            {/* The Technik Promise Card */}
-            <div style={styles.promiseCard}>
-              <h3 style={styles.promiseTitle}>THE TECHNIK PROMISE</h3>
-              <p style={styles.promiseText}>
-                Every student deserves an opportunity to shine.
-              </p>
-              <Link to="/catalog" className="btn-navy-promise">
-                EXPLORE OUR PROGRAMS <ArrowRight size={15} style={{ marginLeft: '0.4rem' }} />
-              </Link>
+            {/* Vision & Mission Card Right Column */}
+            <div style={styles.visionMissionCard}>
+              <div style={{ marginBottom: '2rem' }}>
+                <h3 style={styles.cardHeading}>Our Vision</h3>
+                <p style={styles.cardText}>
+                  To build a trusted student recognition and competition platform that connects schools, students, educators and industry experts across India.
+                </p>
+              </div>
+
+              <div>
+                <h3 style={styles.cardHeading}>Our Mission</h3>
+                <p style={styles.cardText}>
+                  To identify, encourage and celebrate student potential through transparent evaluation, meaningful competition and school partnerships.
+                </p>
+              </div>
             </div>
 
           </div>
         </div>
       </section>
 
-      {/* OUR JOURNEY TIMELINE */}
-      <section style={{ ...styles.sectionPadding, background: '#ffffff', borderTop: '1px solid #f1f5f9' }}>
+      {/* WHAT WE DO SECTION */}
+      <section style={styles.whatWeDoSection}>
         <div className="container">
-          <div style={styles.sectionHeaderCenter}>
-            <div style={styles.timelineHeaderRow}>
-              <div style={styles.timelineHeaderLine} />
-              <h2 style={styles.sectionTitleCenter}>OUR JOURNEY</h2>
-              <div style={styles.timelineHeaderLine} />
+          <h2 style={styles.sectionTitle}>What We Do</h2>
+          
+          <div style={styles.cardsGrid} className="about-cards-grid">
+            
+            <div style={styles.whatWeDoCard} className="what-card-item">
+              <div style={styles.cardIconHeader}>
+                <Trophy size={22} color="#2563eb" />
+              </div>
+              <h3 style={styles.cardHeading}>Olympiad Programs</h3>
+              <p style={styles.cardText}>
+                Subject and skill-based competitions with structured levels and assessment.
+              </p>
             </div>
-          </div>
 
-          <div style={styles.timelineTrackContainer}>
-            {/* Dotted horizontal track line behind nodes */}
-            <div style={styles.timelineMainLine} />
-
-            <div style={styles.timelineGrid} className="about-timeline-grid">
-              
-              {/* Timeline Item 1 */}
-              <div style={styles.timelineNodeCard}>
-                <div style={{ ...styles.nodeYearPill, background: '#2563eb' }}>2018</div>
-                <div style={styles.nodeDotBlue} />
-                <div style={styles.timelineCardBody}>
-                  <div style={styles.nodeIconBox}>
-                    <Bot size={28} color="#2563eb" />
-                  </div>
-                  <h3 style={styles.nodeTitle}>The Beginning</h3>
-                  <p style={styles.nodeDesc}>
-                    Technik began its journey in 2018 with a vision to facilitate robotics education for school students.
-                  </p>
-                </div>
+            <div style={styles.whatWeDoCard} className="what-card-item">
+              <div style={styles.cardIconHeader}>
+                <Award size={22} color="#059669" />
               </div>
-
-              {/* Timeline Item 2 */}
-              <div style={styles.timelineNodeCard}>
-                <div style={{ ...styles.nodeYearPill, background: '#059669' }}>Growing Beyond</div>
-                <div style={styles.nodeDotGreen} />
-                <div style={styles.timelineCardBody}>
-                  <div style={styles.nodeIconBox}>
-                    <TrendingUp size={28} color="#059669" />
-                  </div>
-                  <p style={{ ...styles.nodeDesc, marginTop: '0.75rem' }}>
-                    Our vision expanded beyond robotics to include multiple disciplines and talent areas to support holistic student development.
-                  </p>
-                </div>
-              </div>
-
-              {/* Timeline Item 3 */}
-              <div style={styles.timelineNodeCard}>
-                <div style={{ ...styles.nodeYearPill, background: '#ea580c' }}>2026</div>
-                <div style={styles.nodeDotOrange} />
-                <div style={styles.timelineCardBody}>
-                  <div style={styles.nodeIconBox}>
-                    <img src={logoImg} alt="Technik Logo" style={{ width: '36px', height: '36px', objectFit: 'contain' }} />
-                  </div>
-                  <h3 style={styles.nodeTitle}>Technik Olympiad<br />Private Limited</h3>
-                  <p style={styles.nodeDesc}>
-                    Registered as Technik Olympiad Private Limited with a mission to build a strong educational ecosystem across 5 States + Puducherry.
-                  </p>
-                </div>
-              </div>
-
+              <h3 style={styles.cardHeading}>Student Awards</h3>
+              <p style={styles.cardText}>
+                Recognition programmes including the Technik Pride Award.
+              </p>
             </div>
+
+            <div style={styles.whatWeDoCard} className="what-card-item">
+              <div style={styles.cardIconHeader}>
+                <ShieldCheck size={22} color="#ea580c" />
+              </div>
+              <h3 style={styles.cardHeading}>School Partnerships</h3>
+              <p style={styles.cardText}>
+                School-level and district-level hosting models, training and event support.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>
@@ -239,62 +181,79 @@ const styles = {
     background: '#ffffff',
   },
   heroSection: {
-    background: 'linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%)',
-    padding: '3.5rem 0 4.5rem 0',
-    borderBottom: '1px solid #e2e8f0',
+    background: 'linear-gradient(135deg, #0c2340 0%, #153a70 50%, #1e40af 100%)',
+    padding: '4.5rem 0 5rem 0',
     position: 'relative',
     overflow: 'hidden',
+    borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
   },
   heroContainer: {
     display: 'grid',
     gridTemplateColumns: '1fr 1fr',
     gap: '2.5rem',
     alignItems: 'center',
+    position: 'relative',
+    zIndex: 2,
   },
   heroLeft: {
     display: 'flex',
     flexDirection: 'column',
   },
+  heroBadge: {
+    display: 'inline-block',
+    padding: '0.4rem 1.1rem',
+    background: 'linear-gradient(90deg, rgba(37, 99, 235, 0.25) 0%, rgba(99, 102, 241, 0.3) 100%)',
+    border: '1px solid rgba(56, 189, 248, 0.35)',
+    color: '#38bdf8',
+    borderRadius: '50px',
+    fontSize: '0.82rem',
+    fontWeight: 700,
+    marginBottom: '1.25rem',
+    width: 'fit-content',
+    letterSpacing: '0.04em',
+    boxShadow: '0 0 15px rgba(56, 189, 248, 0.2)',
+  },
   heroTitle: {
-    fontSize: '2.85rem',
+    fontSize: '2.75rem',
     fontWeight: 900,
-    color: '#0b1d3a',
+    color: '#ffffff',
     letterSpacing: '-0.02em',
-    marginBottom: '0.35rem',
+    lineHeight: '1.2',
+    marginBottom: '0.5rem',
     fontFamily: 'var(--font-heading)',
   },
   yellowLine: {
-    width: '55px',
+    width: '60px',
     height: '4px',
     background: '#fbbf24',
     borderRadius: '2px',
     marginBottom: '1.25rem',
   },
   heroSubtext: {
-    fontSize: '1.1rem',
-    fontWeight: 600,
-    color: '#475569',
-    lineHeight: '1.6',
-    marginBottom: '1.5rem',
+    fontSize: '1.05rem',
+    fontWeight: 400,
+    color: '#cbd5e1',
+    lineHeight: '1.75',
+    marginBottom: '1.75rem',
     maxWidth: '520px',
   },
   breadcrumb: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.4rem',
+    gap: '0.45rem',
     fontSize: '0.82rem',
-    color: '#64748b',
+    color: '#94a3b8',
   },
   breadLink: {
-    color: '#2563eb',
+    color: '#38bdf8',
     textDecoration: 'none',
     fontWeight: 500,
   },
   breadSep: {
-    color: '#94a3b8',
+    color: '#64748b',
   },
   breadActive: {
-    color: '#0f172a',
+    color: '#ffffff',
     fontWeight: 700,
   },
   heroRight: {
@@ -314,8 +273,8 @@ const styles = {
     height: '310px',
     objectFit: 'cover',
     borderRadius: '24px',
-    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.12)',
-    border: '4px solid #ffffff',
+    boxShadow: '0 25px 50px rgba(0, 0, 0, 0.5), 0 0 35px rgba(37, 99, 235, 0.3)',
+    border: '4px solid rgba(255, 255, 255, 0.95)',
   },
   floatingBadgesColumn: {
     display: 'flex',
@@ -327,12 +286,13 @@ const styles = {
     alignItems: 'center',
     gap: '0.75rem',
     background: 'rgba(255, 255, 255, 0.95)',
-    backdropFilter: 'blur(8px)',
-    border: '1px solid #e2e8f0',
+    backdropFilter: 'blur(12px)',
+    border: '1px solid rgba(255, 255, 255, 0.6)',
     borderRadius: '50px',
     padding: '0.55rem 1.1rem',
-    boxShadow: '0 6px 18px rgba(0,0,0,0.05)',
+    boxShadow: '0 10px 25px rgba(0,0,0,0.2)',
     minWidth: '180px',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   },
   badgeIconBg: {
     width: '36px',
@@ -343,7 +303,7 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
-    border: '1px solid rgba(37,99,235,0.15)',
+    border: '1px solid rgba(37,99,235,0.2)',
   },
   featureBadgeTitle: {
     fontSize: '0.82rem',
@@ -356,252 +316,171 @@ const styles = {
     color: '#64748b',
     fontWeight: 500,
   },
-  statsSection: {
-    marginTop: '-2rem',
-    position: 'relative',
-    zIndex: 10,
-  },
-  statsCardGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(5, 1fr)',
-    gap: '1rem',
-    background: '#ffffff',
-    padding: '1.5rem',
-    borderRadius: '16px',
-    boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
-    border: '1px solid #e2e8f0',
-  },
-  statCard: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.85rem',
-  },
-  statIconBox: {
-    width: '44px',
-    height: '44px',
-    borderRadius: '10px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  statVal: {
-    fontSize: '0.98rem',
-    fontWeight: 800,
-    color: '#0f172a',
-    lineHeight: '1.2',
-  },
-  statLbl: {
-    fontSize: '0.74rem',
-    color: '#64748b',
-    fontWeight: 500,
-  },
   sectionPadding: {
-    padding: '4rem 0',
+    padding: '5rem 0',
   },
-  aboutPromiseGrid: {
+  whoWeAreGrid: {
     display: 'grid',
-    gridTemplateColumns: '1.35fr 0.65fr',
-    gap: '2.5rem',
-    alignItems: 'center',
+    gridTemplateColumns: '1.2fr 0.8fr',
+    gap: '3rem',
+    alignItems: 'flex-start',
   },
-  aboutTextBlock: {
+  whoWeAreLeft: {
     display: 'flex',
     flexDirection: 'column',
   },
-  sectionTitleLeft: {
-    fontSize: '1.75rem',
+  sectionTitle: {
+    fontSize: '2.25rem',
     fontWeight: 900,
     color: '#0f172a',
-    letterSpacing: '0.02em',
-    marginBottom: '1rem',
+    marginBottom: '1.5rem',
     fontFamily: 'var(--font-heading)',
   },
   paragraphText: {
-    fontSize: '0.96rem',
-    color: '#475569',
-    lineHeight: '1.75',
+    fontSize: '1.02rem',
+    color: '#334155',
+    lineHeight: '1.8',
   },
-  promiseCard: {
-    background: '#f8fafc',
-    border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    padding: '2rem',
-    display: 'flex',
-    flexDirection: 'column',
-    boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
+  visionMissionCard: {
+    background: 'linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%)',
+    border: '1px solid #bae6fd',
+    borderRadius: '24px',
+    padding: '2.5rem 2rem',
+    boxShadow: '0 12px 35px rgba(15, 23, 42, 0.05)',
   },
-  promiseTitle: {
-    fontSize: '0.88rem',
-    fontWeight: 900,
+  cardHeading: {
+    fontSize: '1.25rem',
+    fontWeight: 800,
     color: '#0f172a',
-    letterSpacing: '0.05em',
     marginBottom: '0.75rem',
-  },
-  promiseText: {
-    fontSize: '1.1rem',
-    fontWeight: 700,
-    color: '#1e293b',
-    marginBottom: '1.5rem',
-    lineHeight: '1.4',
-  },
-  sectionHeaderCenter: {
-    textAlign: 'center',
-    marginBottom: '3.5rem',
-  },
-  timelineHeaderRow: {
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: '1.25rem',
-  },
-  timelineHeaderLine: {
-    width: '70px',
-    height: '2px',
-    background: '#fbbf24',
-  },
-  sectionTitleCenter: {
-    fontSize: '1.85rem',
-    fontWeight: 900,
-    color: '#0f172a',
-    letterSpacing: '0.04em',
     fontFamily: 'var(--font-heading)',
   },
-  timelineTrackContainer: {
-    position: 'relative',
-    maxWidth: '1080px',
-    margin: '0 auto',
+  cardText: {
+    fontSize: '0.96rem',
+    color: '#475569',
+    lineHeight: '1.7',
   },
-  timelineMainLine: {
-    position: 'absolute',
-    top: '38px',
-    left: '12%',
-    right: '12%',
-    height: '2px',
-    borderTop: '2px dashed #cbd5e1',
-    zIndex: 1,
+  whatWeDoSection: {
+    padding: '5rem 0 6rem 0',
+    background: '#f8fafc',
+    borderTop: '1px solid #e2e8f0',
   },
-  timelineGrid: {
+  cardsGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(3, 1fr)',
-    gap: '2.5rem',
-    position: 'relative',
-    zIndex: 2,
+    gap: '2rem',
+    marginTop: '2rem',
   },
-  timelineNodeCard: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    position: 'relative',
-  },
-  nodeYearPill: {
-    color: '#ffffff',
-    fontWeight: 800,
-    fontSize: '0.78rem',
-    padding: '0.35rem 1.1rem',
-    borderRadius: '6px',
-    boxShadow: '0 4px 12px rgba(0,0,0,0.12)',
-    marginBottom: '0.75rem',
-    zIndex: 3,
-  },
-  nodeDotBlue: {
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: '#ffffff',
-    border: '3px solid #2563eb',
-    marginBottom: '1.5rem',
-    zIndex: 3,
-  },
-  nodeDotGreen: {
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: '#ffffff',
-    border: '3px solid #059669',
-    marginBottom: '1.5rem',
-    zIndex: 3,
-  },
-  nodeDotOrange: {
-    width: '12px',
-    height: '12px',
-    borderRadius: '50%',
-    background: '#ffffff',
-    border: '3px solid #ea580c',
-    marginBottom: '1.5rem',
-    zIndex: 3,
-  },
-  timelineCardBody: {
+  whatWeDoCard: {
     background: '#ffffff',
     border: '1px solid #e2e8f0',
-    borderRadius: '16px',
-    padding: '1.75rem 1.5rem',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    boxShadow: '0 6px 20px rgba(0,0,0,0.04)',
-    width: '100%',
-    minHeight: '220px',
+    borderRadius: '20px',
+    padding: '2.25rem 1.75rem',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.04)',
+    transition: 'transform 0.3s ease, box-shadow 0.3s ease',
   },
-  nodeIconBox: {
-    width: '68px',
-    height: '68px',
-    borderRadius: '50%',
-    background: '#f8fafc',
-    border: '1px solid #e2e8f0',
+  cardIconHeader: {
+    width: '48px',
+    height: '48px',
+    borderRadius: '12px',
+    background: '#f1f5f9',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '1rem',
-  },
-  nodeTitle: {
-    fontSize: '1rem',
-    fontWeight: 800,
-    color: '#0f172a',
-    marginBottom: '0.5rem',
-    lineHeight: '1.3',
-  },
-  nodeDesc: {
-    fontSize: '0.82rem',
-    color: '#64748b',
-    lineHeight: '1.6',
+    marginBottom: '1.25rem',
   }
 };
 
-// Add responsive CSS rules
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-  .btn-navy-promise {
-    background: #041026;
-    color: #ffffff;
-    font-weight: 800;
-    font-size: 0.8rem;
-    font-family: var(--font-heading);
-    padding: 0.75rem 1.35rem;
-    border-radius: 6px;
-    text-decoration: none;
-    letter-spacing: 0.04em;
-    display: inline-flex;
-    align-items: center;
-    align-self: flex-start;
-    transition: background 0.3s ease, transform 0.3s ease;
-  }
-  .btn-navy-promise:hover {
-    background: #09204a;
-    transform: translateY(-2px);
-  }
-  @media (max-width: 991px) {
-    .about-promise-grid {
-      grid-template-columns: 1fr !important;
+// Responsive CSS rules and animated mesh backgrounds
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement("style");
+  styleSheet.innerText = `
+    /* ANIMATED HERO BACKGROUND ORBS */
+    @keyframes orbFloat1 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(30px, -20px) scale(1.15); }
     }
-    .about-timeline-grid {
-      grid-template-columns: 1fr !important;
-      gap: 2rem !important;
+    @keyframes orbFloat2 {
+      0%, 100% { transform: translate(0px, 0px) scale(1); }
+      50% { transform: translate(-30px, 25px) scale(1.1); }
     }
-    .timelineMainLine {
-      display: none !important;
+
+    .animated-bg-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(70px);
+      opacity: 0.45;
+      pointer-events: none;
+      z-index: 1;
     }
-  }
-`;
-document.head.appendChild(styleSheet);
+
+    .animated-bg-orb.orb-1 {
+      width: 320px;
+      height: 320px;
+      background: #2563eb;
+      top: -10%;
+      left: 15%;
+      animation: orbFloat1 8s ease-in-out infinite;
+    }
+
+    .animated-bg-orb.orb-2 {
+      width: 380px;
+      height: 380px;
+      background: #4f46e5;
+      bottom: -15%;
+      right: 10%;
+      animation: orbFloat2 10s ease-in-out infinite 1s;
+    }
+
+    .animated-bg-orb.orb-3 {
+      width: 250px;
+      height: 250px;
+      background: #0284c7;
+      top: 30%;
+      right: 35%;
+      animation: orbFloat1 7s ease-in-out infinite 2s;
+    }
+
+    /* FLOATING BADGES STAGGERED ANIMATIONS */
+    @keyframes badgeFloat {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-6px); }
+    }
+
+    .floating-badge {
+      animation: badgeFloat 4s ease-in-out infinite;
+    }
+
+    .badge-anim-1 { animation-delay: 0s; }
+    .badge-anim-2 { animation-delay: 0.8s; }
+    .badge-anim-3 { animation-delay: 1.6s; }
+    .badge-anim-4 { animation-delay: 2.4s; }
+
+    .floating-badge:hover {
+      transform: translateY(-4px) scale(1.05) !important;
+      box-shadow: 0 14px 30px rgba(0, 0, 0, 0.3) !important;
+    }
+
+    .what-card-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 15px 35px rgba(15, 23, 42, 0.08) !important;
+      border-color: #cbd5e1 !important;
+    }
+
+    @media (max-width: 991px) {
+      .about-hero-container {
+        grid-template-columns: 1fr !important;
+        gap: 2.5rem !important;
+      }
+      .about-two-grid {
+        grid-template-columns: 1fr !important;
+        gap: 2rem !important;
+      }
+      .about-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+    }
+  `;
+  document.head.appendChild(styleSheet);
+}
