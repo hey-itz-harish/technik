@@ -38,15 +38,16 @@ export default function About() {
 
           {/* Hero Right Visual: Student Achiever Photo with Floating Feature Badges */}
           <div style={styles.heroRight}>
-            <div style={styles.heroImageWrapper}>
+            <div style={styles.heroImageWrapper} className="hero-image-wrapper-flex">
               <img 
                 src={heroStudentImg} 
                 alt="Technik Student Achiever" 
                 style={styles.heroStudentPhoto}
+                className="hero-student-photo"
               />
               
               {/* Floating Feature Badges Column */}
-              <div style={styles.floatingBadgesColumn}>
+              <div style={styles.floatingBadgesColumn} className="floating-badges-col">
                 <div style={styles.featureBadgePill} className="floating-badge badge-anim-1">
                   <div style={styles.badgeIconBg}>
                     <Trophy size={18} color="#2563eb" />
@@ -479,6 +480,27 @@ if (typeof document !== 'undefined') {
       .about-cards-grid {
         grid-template-columns: 1fr !important;
         gap: 1.5rem !important;
+      }
+    }
+
+    @media (max-width: 650px) {
+      .hero-image-wrapper-flex {
+        flex-direction: column !important;
+        align-items: center !important;
+        width: 100% !important;
+      }
+      .hero-student-photo {
+        width: 100% !important;
+        max-width: 300px !important;
+        height: 250px !important;
+      }
+      .floating-badges-col {
+        width: 100% !important;
+        align-items: stretch !important;
+      }
+      .floating-badge {
+        min-width: 100% !important;
+        box-sizing: border-box !important;
       }
     }
   `;

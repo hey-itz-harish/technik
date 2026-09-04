@@ -197,7 +197,7 @@ export default function Schools() {
       {/* STATS OVERVIEW BAR */}
       <section style={styles.statsBarSection}>
         <div className="container">
-          <div style={styles.statsGrid}>
+          <div style={styles.statsGrid} className="schools-stats-grid">
             <div style={styles.statBox}>
               <School size={28} color="#2563eb" />
               <div>
@@ -341,7 +341,7 @@ export default function Schools() {
               </div>
             )}
 
-            <form onSubmit={handleRegisterSchool} style={styles.formGrid}>
+            <form onSubmit={handleRegisterSchool} style={styles.formGrid} className="formGrid-responsive">
               <div style={styles.formGroup}>
                 <label style={styles.formLabel}>School Name *</label>
                 <input 
@@ -945,13 +945,23 @@ styleSheet.innerText = `
     .schools-directory-grid {
       grid-template-columns: repeat(2, 1fr) !important;
     }
+    .schools-stats-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 1rem !important;
+    }
   }
   @media (max-width: 600px) {
     .schools-directory-grid {
       grid-template-columns: 1fr !important;
     }
+    .schools-stats-grid {
+      grid-template-columns: 1fr !important;
+    }
     .formGrid-responsive {
       grid-template-columns: 1fr !important;
+    }
+    .formGrid-responsive > div {
+      grid-column: span 1 !important;
     }
   }
 `;
