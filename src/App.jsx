@@ -11,7 +11,10 @@ import Awards from './pages/Awards';
 import Verification from './pages/Verification';
 import About from './pages/About';
 import Schools from './pages/Schools';
+import MfaSetup from './pages/MfaSetup';
+import Login from './pages/Login';
 
+import Contact from './pages/Contact';
 import ComingSoon from './pages/ComingSoon';
 
 function App() {
@@ -33,6 +36,12 @@ function App() {
     }
   }, []);
 
+  const handleRegisterSuccess = (newReg) => {
+    const updated = [newReg, ...registrations];
+    setRegistrations(updated);
+    localStorage.setItem('technik_registrations', JSON.stringify(updated));
+  };
+
   return (
     <Router>
       <div className="app-container">
@@ -41,6 +50,28 @@ function App() {
           <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
+            <Route path="/schools" element={<Schools />} />
+            <Route path="/catalog" element={<Catalog onSelectTrack={setSelectedTrack} />} />
+            <Route path="/skill-compass" element={<ComingSoon />} />
+            <Route 
+              path="/register" 
+              element={
+                <Register 
+                  selectedTrack={selectedTrack} 
+                  onRegisterSuccess={handleRegisterSuccess} 
+                  clearSelectedTrack={() => setSelectedTrack(null)} 
+                />
+              } 
+            />
+            <Route path="/dashboard" element={<Dashboard registrations={registrations} />} />
+            <Route path="/mfa-setup" element={<MfaSetup />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/school-login" element={<Login />} />
+            <Route path="/awards" element={<Awards />} />
+            <Route path="/verification" element={<Verification registrations={registrations} />} />
+            <Route path="/results" element={<Verification registrations={registrations} />} />
+            <Route path="/media" element={<ComingSoon />} />
+            <Route path="/contact" element={<Contact />} />
             <Route path="*" element={<ComingSoon />} />
           </Routes>
         </main>

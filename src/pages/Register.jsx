@@ -1,758 +1,1002 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { CreditCard, ShieldCheck, CheckCircle, ArrowRight, Loader2, Sparkles, Building2, User, MapPin } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import ComingSoon from './ComingSoon';
+import { 
+  Building2, 
+  User, 
+  FileText, 
+  ArrowRight, 
+  ArrowLeft, 
+  CheckCircle, 
+  Sparkles, 
+  GraduationCap, 
+  Loader2, 
+  ShieldCheck,
+  AlertCircle
+} from 'lucide-react';
 
-export default function Register({ selectedTrack, onRegisterSuccess, clearSelectedTrack }) {
+export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Form Fields State
-  const [formData, setFormData] = useState({
-    name: '',
-    grade: 'Grade 6',
-    school: '',
+  // Read URL query parameter for active portal level (e.g., /register?level=student or /register?level=school)
+  const queryParams = new URLSearchParams(location.search);
+  const initialLevel = queryParams.get('level') === 'student' ? 'student' : 'school';
+  
+  const [activeLevel, setActiveLevel] = useState(initialLevel); // 'school' | 'student'
+
+  useEffect(() => {
+    const level = new URLSearchParams(location.search).get('level');
+    if (level === 'student' || level === 'school') {
+      setActiveLevel(level);
+    }
+  }, [location.search]);
+
+  // ==========================================
+  // SCHOOL REGISTRATION FORM STATE
+  // ==========================================
+  const [schoolDetails, setSchoolDetails] = useState({
+    schoolName: '',
+    board: '',
+    state: '',
+    district: '',
     city: '',
-    track: selectedTrack || 'Coding & Algorithms',
-    regType: 'all-levels' // 'all-levels' -> ₹599, 'per-level' -> ₹299
+    address: '',
+    email: '',
+    mobile: '',
+    principalName: ''
   });
 
-  // Keep form track synchronized with props (if selected from Catalog/Compass)
-  useEffect(() => {
-    if (selectedTrack) {
-      setFormData(prev => ({ ...prev, track: selectedTrack }));
-    }
-  }, [selectedTrack]);
+  const [coordinatorDetails, setCoordinatorDetails] = useState({
+    name: '',
+    designation: '',
+    mobile: '',
+    email: ''
+  });
 
-  // Derived Values
-  const feeAmount = formData.regType === 'all-levels' ? 599 : 299;
-  
-  // Calculate Grade Category
-  const getCategory = (gradeStr) => {
-    const num = parseInt(gradeStr.replace(/[^0-9]/g, ''), 10);
-    if (num <= 5) return 'Junior Division (Grades 4-5)';
-    if (num <= 7) return 'Middle Division (Grades 6-7)';
-    return 'Senior Division (Grades 8-9)';
+  const [declarationConfirmed, setDeclarationConfirmed] = useState(false);
+  const [declarationError, setDeclarationError] = useState(false);
+  const declarationRef = useRef(null);
+
+  // Auto-Fill Demo Data Helper
+  const handleFillDemoData = () => {
+    setSchoolDetails({
+      schoolName: "St. Xavier's International School",
+      board: 'CBSE',
+      state: 'Andhra Pradesh',
+      district: 'NTR District',
+      city: 'Vijayawada',
+      address: 'Plot 42, Executive Campus, Ring Road, Vijayawada - 520008',
+      email: 'principal@stxaviers.edu.in',
+      mobile: '+91 98765 43210',
+      principalName: 'Dr. Ramesh Verma'
+    });
+
+    setCoordinatorDetails({
+      name: 'Mrs. Anitha Sharma',
+      designation: 'STEM & Science HOD',
+      mobile: '+91 95004 28800',
+      email: 'stem.coordinator@stxaviers.edu.in'
+    });
+
+    setDeclarationConfirmed(true);
+    setDeclarationError(false);
   };
 
-  // State for Payment Modal Flow
-  const [showCheckout, setShowCheckout] = useState(false);
-  const [paymentStep, setPaymentStep] = useState('input'); // 'input', 'processing', 'success'
-  const [cardNumber, setCardNumber] = useState('');
-  const [cardExpiry, setCardExpiry] = useState('');
-  const [cardCvv, setCardCvv] = useState('');
+  // Modal State
+  const [showModal, setShowModal] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(true);
+  const [registrationId, setRegistrationId] = useState('');
 
-  // Handle Form Submission
-  const handleSubmit = (e) => {
+  // Submit School Registration Form
+  const handleSchoolRegisterSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.school || !formData.city) {
-      alert("Please fill in all required fields.");
+
+    if (!schoolDetails.schoolName || !schoolDetails.email || !schoolDetails.mobile) {
+      alert("Please fill in all required School Details.");
       return;
     }
-    setShowCheckout(true);
-  };
+    if (!coordinatorDetails.name || !coordinatorDetails.mobile || !coordinatorDetails.email) {
+      alert("Please fill in all required Coordinator Details.");
+      return;
+    }
+    if (!declarationConfirmed) {
+      setDeclarationError(true);
+      if (declarationRef.current) {
+        declarationRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+      return;
+    }
 
-  // Execute Simulated Payment
-  const handlePaymentSubmit = (e) => {
-    e.preventDefault();
-    setPaymentStep('processing');
-    
+    setDeclarationError(false);
+    const regId = 'SCH-' + Math.floor(100000 + Math.random() * 900000);
+    setRegistrationId(regId);
+    setIsProcessing(true);
+    setShowModal(true);
+
     setTimeout(() => {
-      setPaymentStep('success');
-      
-      // Save registration state
-      const newRegistration = {
-        id: 'REG-' + Math.floor(100000 + Math.random() * 900000),
-        studentName: formData.name,
-        grade: formData.grade,
-        school: formData.school,
-        city: formData.city,
-        track: formData.track,
-        regType: formData.regType === 'all-levels' ? 'One-time (All Levels)' : 'Per Level',
-        fee: feeAmount,
-        date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-        stage: 1 // School level active
-      };
-      
-      onRegisterSuccess(newRegistration);
-      clearSelectedTrack();
-    }, 2000);
+      setIsProcessing(false);
+      if (onRegisterSuccess) {
+        onRegisterSuccess({
+          id: regId,
+          schoolName: schoolDetails.schoolName,
+          email: schoolDetails.email,
+          phone: schoolDetails.mobile,
+          address: schoolDetails.address,
+          date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+        });
+      }
+      if (clearSelectedTrack) clearSelectedTrack();
+    }, 1500);
   };
 
-  const handleGoToDashboard = () => {
-    setShowCheckout(false);
-    setPaymentStep('input');
-    navigate('/dashboard');
+  const handleFinishModal = () => {
+    setShowModal(false);
+    navigate('/login?registered=true', { 
+      state: { 
+        email: schoolDetails.email, 
+        schoolName: schoolDetails.schoolName,
+        id: registrationId
+      } 
+    });
   };
 
   return (
-    <div style={styles.page}>
-      <header className="container" style={styles.header}>
-        <h1 style={styles.title}>Secure <span className="text-gradient">Registration</span></h1>
-        <p style={styles.subtitle}>Enter student details, select your registration format, and proceed to payment to unlock learning resources.</p>
-      </header>
+    <div style={styles.pageContainer}>
+      
+      {/* Top Banner & Level Switcher Header */}
+      <div style={styles.topBarSection}>
+        <div style={styles.levelSwitcherContainer}>
+          <button
+            type="button"
+            onClick={() => setActiveLevel('school')}
+            style={{
+              ...styles.levelTab,
+              ...(activeLevel === 'school' ? styles.levelTabActiveSchool : {})
+            }}
+          >
+            <Building2 size={18} />
+            <span>School Portal Registration</span>
+            {activeLevel === 'school' && <span style={styles.activeDotSchool} />}
+          </button>
 
-      <main className="container" style={styles.mainGrid} className="register-main-grid">
-        {/* Left Column: Form */}
-        <div className="glass-card" style={styles.formCard}>
-          <h2 style={styles.cardHeader}>Student Particulars</h2>
-          <form onSubmit={handleSubmit} style={styles.form}>
-            {/* Student Name */}
-            <div className="form-group">
-              <label htmlFor="name-input" className="form-label">Student Full Name *</label>
-              <div style={styles.inputWrapper}>
-                <User size={16} style={styles.inputIcon} />
-                <input 
-                  type="text" 
-                  id="name-input" 
-                  className="form-control" 
-                  style={styles.controlWithIcon}
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g. Aarav Sharma"
-                  required 
-                />
-              </div>
-            </div>
-
-            <div style={styles.formRow} className="register-form-row">
-              {/* Grade */}
-              <div className="form-group" style={{ flex: 1 }}>
-                <label htmlFor="grade-select" className="form-label">Grade / Class *</label>
-                <select 
-                  id="grade-select" 
-                  className="form-control"
-                  value={formData.grade}
-                  onChange={(e) => setFormData({ ...formData, grade: e.target.value })}
-                >
-                  <option value="Grade 4">Grade 4</option>
-                  <option value="Grade 5">Grade 5</option>
-                  <option value="Grade 6">Grade 6</option>
-                  <option value="Grade 7">Grade 7</option>
-                  <option value="Grade 8">Grade 8</option>
-                  <option value="Grade 9">Grade 9</option>
-                </select>
-              </div>
-
-              {/* Olympiad Track */}
-              <div className="form-group" style={{ flex: 1.5 }}>
-                <label htmlFor="track-select" className="form-label">Olympiad Track *</label>
-                <select 
-                  id="track-select" 
-                  className="form-control"
-                  value={formData.track}
-                  onChange={(e) => setFormData({ ...formData, track: e.target.value })}
-                >
-                  <option value="Abacus Championship">Abacus Championship</option>
-                  <option value="Mental Math Arena">Mental Math Arena</option>
-                  <option value="Coding & Algorithms">Coding & Algorithms</option>
-                  <option value="Robotics & Hardware">Robotics & Hardware</option>
-                  <option value="English & Creative Writing">English & Creative Writing</option>
-                  <option value="Digital & Classical Art">Digital & Classical Art</option>
-                  <option value="AI & Machine Learning">AI & Machine Learning</option>
-                  <option value="Public Speaking & Debate">Public Speaking & Debate</option>
-                </select>
-              </div>
-            </div>
-
-            {/* School */}
-            <div className="form-group">
-              <label htmlFor="school-input" className="form-label">School Name *</label>
-              <div style={styles.inputWrapper}>
-                <Building2 size={16} style={styles.inputIcon} />
-                <input 
-                  type="text" 
-                  id="school-input" 
-                  className="form-control" 
-                  style={styles.controlWithIcon}
-                  value={formData.school}
-                  onChange={(e) => setFormData({ ...formData, school: e.target.value })}
-                  placeholder="e.g. St. Xavier's Academy"
-                  required 
-                />
-              </div>
-            </div>
-
-            {/* City */}
-            <div className="form-group">
-              <label htmlFor="city-input" className="form-label">City *</label>
-              <div style={styles.inputWrapper}>
-                <MapPin size={16} style={styles.inputIcon} />
-                <input 
-                  type="text" 
-                  id="city-input" 
-                  className="form-control" 
-                  style={styles.controlWithIcon}
-                  value={formData.city}
-                  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                  placeholder="e.g. Mumbai"
-                  required 
-                />
-              </div>
-            </div>
-
-            {/* Registration Type Select */}
-            <div className="form-group">
-              <label className="form-label">Registration Plan *</label>
-              <div style={styles.regOptions}>
-                <label 
-                  style={{
-                    ...styles.regLabel,
-                    borderColor: formData.regType === 'all-levels' ? 'var(--primary)' : 'var(--border-subtle)',
-                    background: formData.regType === 'all-levels' ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                  }}
-                >
-                  <input 
-                    type="radio" 
-                    name="regType" 
-                    value="all-levels"
-                    checked={formData.regType === 'all-levels'}
-                    onChange={() => setFormData({ ...formData, regType: 'all-levels' })}
-                    style={styles.radioInput}
-                  />
-                  <div>
-                    <span style={styles.regTitle}>All Levels Package (Recommended)</span>
-                    <span style={styles.regSubtitle}>One-time payment. Unlocks School, District & State study modules.</span>
-                  </div>
-                  <span style={styles.regPrice}>₹599</span>
-                </label>
-
-                <label 
-                  style={{
-                    ...styles.regLabel,
-                    borderColor: formData.regType === 'per-level' ? 'var(--primary)' : 'var(--border-subtle)',
-                    background: formData.regType === 'per-level' ? 'rgba(99, 102, 241, 0.05)' : 'transparent',
-                  }}
-                >
-                  <input 
-                    type="radio" 
-                    name="regType" 
-                    value="per-level"
-                    checked={formData.regType === 'per-level'}
-                    onChange={() => setFormData({ ...formData, regType: 'per-level' })}
-                    style={styles.radioInput}
-                  />
-                  <div>
-                    <span style={styles.regTitle}>Per Level Plan</span>
-                    <span style={styles.regSubtitle}>Pay step-by-step. Includes entry-level School module only.</span>
-                  </div>
-                  <span style={styles.regPrice}>₹299</span>
-                </label>
-              </div>
-            </div>
-
-            {/* Live Fee Display */}
-            <div style={styles.feeDisplayCard}>
-              <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Calculated Total Fee</span>
-              <span style={styles.feeDisplayVal}>₹{feeAmount}</span>
-            </div>
-
-            <button type="submit" className="btn btn-primary" style={styles.submitBtn}>
-              Proceed to Payment
-              <ArrowRight size={18} />
-            </button>
-          </form>
+          <button
+            type="button"
+            onClick={() => setActiveLevel('student')}
+            style={{
+              ...styles.levelTab,
+              ...(activeLevel === 'student' ? styles.levelTabActiveStudent : {})
+            }}
+          >
+            <GraduationCap size={18} />
+            <span>Student Portal Registration</span>
+            <span style={styles.comingSoonPill}>Coming Soon</span>
+          </button>
         </div>
+      </div>
 
-        {/* Right Column: Order Summary */}
-        <div className="glass-card" style={styles.summaryCard}>
-          <div style={styles.summaryBadgeWrapper}>
-            <span className="badge badge-indigo">Live Invoice State</span>
-          </div>
-          
-          <h2 style={styles.cardHeader}>Order Summary</h2>
-          
-          <div style={styles.summaryDetails}>
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Track</span>
-              <span style={styles.summaryValue}>{formData.track}</span>
-            </div>
-            
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Category</span>
-              <span style={styles.summaryValue}>{getCategory(formData.grade)}</span>
-            </div>
-            
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Exam Format</span>
-              <span style={styles.summaryValue}>Online Proctored Exam</span>
-            </div>
-            
-            <div style={styles.summaryRow}>
-              <span style={styles.summaryLabel}>Qualifiers Date</span>
-              <span style={styles.summaryValue}>Oct 18, 2026</span>
-            </div>
-
-            <div style={styles.summaryDivider} />
-
-            {/* Small Path diagram */}
-            <div style={styles.diagramContainer}>
-              <h4 style={styles.diagramHeader}>Progression Path</h4>
-              
-              <div style={styles.diagramFlow}>
-                <div style={styles.diagramNode}>
-                  <div style={{ ...styles.diagramDot, background: 'var(--primary)' }}>S</div>
-                  <span style={styles.diagramNodeLabel}>School</span>
+      {activeLevel === 'school' ? (
+        /* ======================================================== */
+        /* SCHOOL REGISTRATION FLOW                                 */
+        /* ======================================================== */
+        <>
+          {/* Step Indicator Bar (1, 2, 3) */}
+          <div style={styles.stepBarWrapper}>
+            <div style={styles.stepBarContainer}>
+              <div style={styles.stepItemActive}>
+                <div style={styles.stepNumberActive}>1</div>
+                <div style={styles.stepTextGroup}>
+                  <div style={styles.stepTitleActive}>School Details</div>
+                  <div style={styles.stepSub}>Tell us about your school</div>
                 </div>
-                <div style={styles.diagramConnector} />
-                <div style={styles.diagramNode}>
-                  <div style={styles.diagramDot}>D</div>
-                  <span style={styles.diagramNodeLabel}>District</span>
+              </div>
+              <div style={styles.stepDivider} />
+
+              <div style={styles.stepItem}>
+                <div style={styles.stepNumber}>2</div>
+                <div style={styles.stepTextGroup}>
+                  <div style={styles.stepTitle}>Coordinator Details</div>
+                  <div style={styles.stepSub}>Add contact person</div>
                 </div>
-                <div style={styles.diagramConnector} />
-                <div style={styles.diagramNode}>
-                  <div style={styles.diagramDot}>St</div>
-                  <span style={styles.diagramNodeLabel}>State</span>
+              </div>
+              <div style={styles.stepDivider} />
+
+              <div style={styles.stepItem}>
+                <div style={styles.stepNumber}>3</div>
+                <div style={styles.stepTextGroup}>
+                  <div style={styles.stepTitle}>Review & Submit</div>
+                  <div style={styles.stepSub}>Confirm and submit</div>
                 </div>
               </div>
             </div>
-
-            <div style={styles.summaryDivider} />
-
-            <div style={styles.summaryTotal}>
-              <span>Final Charge</span>
-              <span style={{ color: 'var(--accent)' }}>₹{feeAmount}</span>
-            </div>
           </div>
 
-          <div style={styles.invoiceFooter}>
-            <ShieldCheck size={16} color="var(--success)" />
-            <span>Secured 256-bit SSL transaction</span>
-          </div>
-        </div>
-      </main>
+          {/* Main Form Body */}
+          <main style={styles.formMainContainer}>
+            <form onSubmit={handleSchoolRegisterSubmit} style={styles.formStack}>
 
-      {/* Payment Overlay Modal */}
-      {showCheckout && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={styles.checkoutModal}>
-            
-            {paymentStep === 'input' && (
-              <>
-                <div style={styles.modalHeader}>
-                  <CreditCard size={28} color="var(--primary)" />
-                  <div>
-                    <h3 style={styles.modalTitle}>Gateway Simulator</h3>
-                    <p style={styles.modalSubtitle}>Technik Olympiad Payment Sandbox</p>
+              {/* CARD 1: SCHOOL DETAILS */}
+              <div style={styles.cardBox}>
+                <div style={styles.cardSectionHeader}>
+                  <div style={styles.sectionIconSquare}>
+                    <Building2 size={22} color="#0284c7" />
                   </div>
+                  <div style={{ flex: 1 }}>
+                    <h2 style={styles.cardTitle}>School Details</h2>
+                    <p style={styles.cardSub}>Provide your school information</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleFillDemoData}
+                    style={styles.demoFillBtn}
+                    title="Auto-fill sample school & coordinator details"
+                  >
+                    <Sparkles size={14} color="#ea580c" /> Auto-Fill Demo Details
+                  </button>
                 </div>
 
-                <div style={styles.checkoutDetailsSummary}>
-                  <span>Paying for: <strong>{formData.track}</strong></span>
-                  <span style={styles.checkoutAmt}>₹{feeAmount}</span>
-                </div>
-
-                <form onSubmit={handlePaymentSubmit} style={styles.checkoutForm}>
-                  <div className="form-group">
-                    <label className="form-label">Card Number</label>
-                    <input 
-                      type="text" 
-                      className="form-control" 
-                      placeholder="4111 2222 3333 4444"
-                      value={cardNumber}
-                      onChange={(e) => setCardNumber(e.target.value.replace(/[^0-9 ]/g, '').substring(0, 19))}
-                      required 
+                <div style={styles.formGrid3}>
+                  <div style={{ ...styles.fieldGroup, gridColumn: 'span 2' }}>
+                    <label style={styles.label}>School Name <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter school name"
+                      value={schoolDetails.schoolName}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, schoolName: e.target.value })}
+                      required
                     />
                   </div>
 
-                  <div style={styles.checkoutFormRow}>
-                    <div className="form-group" style={{ flex: 1 }}>
-                      <label className="form-label">Expiry Date</label>
-                      <input 
-                        type="text" 
-                        className="form-control" 
-                        placeholder="MM/YY" 
-                        value={cardExpiry}
-                        onChange={(e) => setCardExpiry(e.target.value.replace(/[^0-9/]/g, '').substring(0, 5))}
-                        required
-                      />
-                    </div>
-                    <div className="form-group" style={{ flex: 1 }}>
-                      <label className="form-label">CVV</label>
-                      <input 
-                        type="password" 
-                        className="form-control" 
-                        placeholder="123" 
-                        value={cardCvv}
-                        onChange={(e) => setCardCvv(e.target.value.replace(/[^0-9]/g, '').substring(0, 3))}
-                        required
-                      />
-                    </div>
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Board <span style={styles.req}>*</span></label>
+                    <select
+                      style={styles.select}
+                      value={schoolDetails.board}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, board: e.target.value })}
+                      required
+                    >
+                      <option value="">Select Board</option>
+                      <option value="CBSE">CBSE</option>
+                      <option value="ICSE">ICSE</option>
+                      <option value="State Board">State Board</option>
+                      <option value="IB">IB</option>
+                      <option value="IGCSE">IGCSE</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
 
-                  <div style={styles.checkoutActions}>
-                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>
-                      Pay ₹{feeAmount}
-                    </button>
-                    <button type="button" onClick={() => setShowCheckout(false)} className="btn btn-ghost">
-                      Cancel
-                    </button>
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>State <span style={styles.req}>*</span></label>
+                    <select
+                      style={styles.select}
+                      value={schoolDetails.state}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, state: e.target.value })}
+                      required
+                    >
+                      <option value="">Select State</option>
+                      <option value="Andhra Pradesh">Andhra Pradesh</option>
+                      <option value="Telangana">Telangana</option>
+                      <option value="Maharashtra">Maharashtra</option>
+                      <option value="Tamil Nadu">Tamil Nadu</option>
+                      <option value="Karnataka">Karnataka</option>
+                      <option value="Delhi">Delhi</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
-                </form>
-              </>
-            )}
 
-            {paymentStep === 'processing' && (
-              <div style={styles.processingWrapper}>
-                <Loader2 size={48} className="pulse-glowing" style={styles.spinner} />
-                <h3 style={styles.processingTitle}>Authorizing Transaction...</h3>
-                <p style={styles.processingDesc}>Contacting mock banking networks. Please do not close this window.</p>
-              </div>
-            )}
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>District <span style={styles.req}>*</span></label>
+                    <select
+                      style={styles.select}
+                      value={schoolDetails.district}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, district: e.target.value })}
+                      required
+                    >
+                      <option value="">Select District</option>
+                      <option value="Krishna / Vijayawada">Krishna / Vijayawada</option>
+                      <option value="NTR District">NTR District</option>
+                      <option value="Visakhapatnam">Visakhapatnam</option>
+                      <option value="Guntur">Guntur</option>
+                      <option value="Hyderabad">Hyderabad</option>
+                      <option value="Mumbai City">Mumbai City</option>
+                      <option value="Chennai">Chennai</option>
+                      <option value="Bengaluru Urban">Bengaluru Urban</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  </div>
 
-            {paymentStep === 'success' && (
-              <div style={styles.successWrapper}>
-                <div style={styles.successIconOuter}>
-                  <CheckCircle size={44} color="white" />
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>City <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter city"
+                      value={schoolDetails.city}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, city: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }}>
+                    <label style={styles.label}>School Address <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter complete address (Street, Landmark, Pincode)"
+                      value={schoolDetails.address}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, address: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>School Email <span style={styles.req}>*</span></label>
+                    <input
+                      type="email"
+                      style={styles.input}
+                      placeholder="Enter school email"
+                      value={schoolDetails.email}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, email: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>School Mobile <span style={styles.req}>*</span></label>
+                    <input
+                      type="tel"
+                      style={styles.input}
+                      placeholder="Enter school mobile number"
+                      value={schoolDetails.mobile}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, mobile: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Principal Name <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter principal name"
+                      value={schoolDetails.principalName}
+                      onChange={(e) => setSchoolDetails({ ...schoolDetails, principalName: e.target.value })}
+                      required
+                    />
+                  </div>
                 </div>
-                <h3 style={styles.successTitle}>Payment Successful!</h3>
-                <p style={styles.successDesc}>
-                  Congratulations! Student **{formData.name}** is registered. Your study materials are unlocked.
+
+              </div>
+
+              {/* CARD 2: COORDINATOR DETAILS */}
+              <div style={styles.cardBox}>
+                <div style={styles.cardSectionHeader}>
+                  <div style={styles.sectionIconSquare}>
+                    <User size={22} color="#0284c7" />
+                  </div>
+                  <div>
+                    <h2 style={styles.cardTitle}>Coordinator Details</h2>
+                    <p style={styles.cardSub}>Provide the details of the person coordinating this nomination</p>
+                  </div>
+                </div>
+
+                <div style={styles.formGrid2}>
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Coordinator Name <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter coordinator name"
+                      value={coordinatorDetails.name}
+                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, name: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Designation <span style={styles.req}>*</span></label>
+                    <input
+                      type="text"
+                      style={styles.input}
+                      placeholder="Enter designation (e.g. Science HOD, STEM Coordinator)"
+                      value={coordinatorDetails.designation}
+                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, designation: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Mobile Number <span style={styles.req}>*</span></label>
+                    <input
+                      type="tel"
+                      style={styles.input}
+                      placeholder="Enter mobile number"
+                      value={coordinatorDetails.mobile}
+                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, mobile: e.target.value })}
+                      required
+                    />
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Email ID <span style={styles.req}>*</span></label>
+                    <input
+                      type="email"
+                      style={styles.input}
+                      placeholder="Enter email address"
+                      value={coordinatorDetails.email}
+                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, email: e.target.value })}
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* CARD 3: DECLARATION */}
+              <div 
+                ref={declarationRef}
+                style={{
+                  ...styles.cardBox,
+                  ...(declarationError ? styles.cardBoxError : {})
+                }}
+              >
+                <div style={styles.cardSectionHeader}>
+                  <div style={{
+                    ...styles.sectionIconSquare,
+                    background: declarationError ? '#fee2e2' : '#e0f2fe'
+                  }}>
+                    <FileText size={22} color={declarationError ? '#dc2626' : '#0284c7'} />
+                  </div>
+                  <div>
+                    <h2 style={{
+                      ...styles.cardTitle,
+                      color: declarationError ? '#dc2626' : '#0b1d3a'
+                    }}>Declaration</h2>
+                  </div>
+                </div>
+
+                {declarationError && (
+                  <div style={styles.declarationErrorAlert} className="shake-error-alert">
+                    <AlertCircle size={18} color="#dc2626" style={{ flexShrink: 0 }} />
+                    <span>
+                      <strong>Confirmation Required:</strong> Please check the declaration box below to confirm that all information provided is true and correct before submitting.
+                    </span>
+                  </div>
+                )}
+
+                <div style={styles.declarationCheckRow}>
+                  <input
+                    type="checkbox"
+                    id="declaration-chk"
+                    checked={declarationConfirmed}
+                    onChange={(e) => {
+                      setDeclarationConfirmed(e.target.checked);
+                      if (e.target.checked) setDeclarationError(false);
+                    }}
+                    style={{
+                      ...styles.checkbox,
+                      ...(declarationError ? styles.checkboxError : {})
+                    }}
+                  />
+                  <label htmlFor="declaration-chk" style={{
+                    ...styles.declarationText,
+                    color: declarationError ? '#dc2626' : '#334155',
+                    fontWeight: declarationError ? 600 : 400
+                  }}>
+                    We hereby confirm that the information provided is true and correct. We have obtained the consent from the school administration to register for the Technik Olympiad.
+                  </label>
+                </div>
+              </div>
+
+              {/* FOOTER ACTIONS BAR */}
+              <div style={styles.actionsBar}>
+                <button
+                  type="button"
+                  onClick={() => navigate('/')}
+                  style={styles.backBtn}
+                >
+                  <ArrowLeft size={16} /> Back
+                </button>
+
+                <button
+                  type="submit"
+                  style={styles.reviewSubmitBtn}
+                >
+                  Review & Submit <ArrowRight size={18} />
+                </button>
+              </div>
+
+            </form>
+          </main>
+        </>
+      ) : (
+        <main style={{ width: '100%', margin: 0, padding: 0 }}>
+          <ComingSoon title="Student Portal" forceRegisterTheme={true} />
+        </main>
+      )}
+
+      {/* CONFIRMATION / SUCCESS MODAL */}
+      {showModal && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalCard}>
+            {isProcessing ? (
+              <div style={styles.modalContentCenter}>
+                <Loader2 size={48} color="#0284c7" className="spin-slow" style={{ marginBottom: '1rem' }} />
+                <h3 style={styles.modalTitle}>Submitting Registration...</h3>
+                <p style={styles.modalDesc}>Connecting to Technik Olympiad server. Please wait.</p>
+              </div>
+            ) : (
+              <div style={styles.modalContentCenter}>
+                <div style={styles.successIconCircle}>
+                  <CheckCircle size={40} color="#ffffff" />
+                </div>
+                <h3 style={styles.modalTitle}>Registration Submitted Successfully!</h3>
+                <p style={styles.modalDesc}>
+                  Your registration reference number is <strong>{registrationId}</strong>. Access instructions have been sent to your registered email.
                 </p>
-                <button onClick={handleGoToDashboard} className="btn btn-primary" style={styles.successBtn}>
-                  Go to Student Dashboard
-                  <ArrowRight size={16} />
+                <button onClick={handleFinishModal} style={styles.modalActionBtn}>
+                  Set Up MFA Security <ArrowRight size={16} />
                 </button>
               </div>
             )}
-
           </div>
         </div>
       )}
+
     </div>
   );
 }
 
 const styles = {
-  page: {
-    padding: '3rem 0',
+  pageContainer: {
+    background: '#f8fafc',
+    minHeight: '100vh',
+    paddingBottom: '5rem',
+    boxSizing: 'border-box',
   },
-  header: {
-    textAlign: 'center',
-    marginBottom: '3.5rem',
+
+  /* Top Bar Section */
+  topBarSection: {
+    background: '#ffffff',
+    borderBottom: '1px solid #e2e8f0',
+    padding: '1.25rem 0',
+    display: 'flex',
+    justifyContent: 'center',
+    boxSizing: 'border-box',
   },
-  title: {
-    fontSize: '2.75rem',
-    marginBottom: '0.75rem',
+  levelSwitcherContainer: {
+    display: 'inline-flex',
+    background: '#f1f5f9',
+    padding: '0.35rem',
+    borderRadius: '16px',
+    border: '1px solid #cbd5e1',
+    gap: '0.5rem',
   },
-  subtitle: {
-    color: 'var(--text-secondary)',
-    maxWidth: '620px',
-    margin: '0 auto',
-    fontSize: '1.05rem',
-  },
-  mainGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '2rem',
-    alignItems: 'start',
-  },
-  formCard: {
-    padding: '2.5rem',
-    border: '1px solid var(--border-subtle)',
-  },
-  cardHeader: {
-    fontSize: '1.4rem',
-    marginBottom: '1.5rem',
+  levelTab: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.6rem',
+    padding: '0.65rem 1.4rem',
+    borderRadius: '12px',
+    border: 'none',
+    background: 'transparent',
+    color: '#64748b',
     fontFamily: 'var(--font-heading)',
     fontWeight: 600,
-  },
-  form: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  formRow: {
-    display: 'flex',
-    gap: '1rem',
-  },
-  inputWrapper: {
-    position: 'relative',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  inputIcon: {
-    position: 'absolute',
-    left: '1rem',
-    color: 'var(--text-muted)',
-  },
-  controlWithIcon: {
-    paddingLeft: '2.5rem',
-    width: '100%',
-  },
-  regOptions: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-  },
-  regLabel: {
-    display: 'flex',
-    alignItems: 'center',
-    padding: '1rem',
-    border: '1px solid',
-    borderRadius: '12px',
-    cursor: 'pointer',
-    transition: 'all var(--transition-fast)',
-    gap: '1rem',
-  },
-  radioInput: {
-    accentColor: 'var(--primary)',
-    width: '18px',
-    height: '18px',
-  },
-  regTitle: {
-    display: 'block',
-    fontSize: '0.95rem',
-    fontWeight: 600,
-    color: 'var(--text-primary)',
-  },
-  regSubtitle: {
-    display: 'block',
-    fontSize: '0.75rem',
-    color: 'var(--text-secondary)',
-  },
-  regPrice: {
-    marginLeft: 'auto',
-    fontSize: '1.2rem',
-    fontWeight: 800,
-    color: 'var(--text-primary)',
-    fontFamily: 'var(--font-heading)',
-  },
-  feeDisplayCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    background: 'rgba(255,255,255,0.02)',
-    border: '1px solid var(--border-subtle)',
-    borderRadius: '12px',
-    padding: '1rem 1.25rem',
-    margin: '1.5rem 0',
-  },
-  feeDisplayVal: {
-    fontSize: '1.5rem',
-    fontWeight: 800,
-    color: 'var(--accent)',
-    fontFamily: 'var(--font-heading)',
-  },
-  submitBtn: {
-    padding: '0.9rem',
-    width: '100%',
-  },
-  summaryCard: {
-    padding: '2.5rem',
-    border: '1px solid var(--border-subtle)',
-    position: 'sticky',
-    top: '100px',
-  },
-  summaryBadgeWrapper: {
-    marginBottom: '1rem',
-  },
-  summaryDetails: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1rem',
-  },
-  summaryRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
     fontSize: '0.9rem',
+    cursor: 'pointer',
+    transition: 'all 0.2s ease',
   },
-  summaryLabel: {
-    color: 'var(--text-secondary)',
+  levelTabActiveSchool: {
+    background: '#041026',
+    color: '#ffffff',
+    boxShadow: '0 4px 14px rgba(4, 16, 38, 0.25)',
   },
-  summaryValue: {
-    fontWeight: 600,
-    textAlign: 'right',
+  levelTabActiveStudent: {
+    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    color: '#ffffff',
+    boxShadow: '0 4px 14px rgba(249, 115, 22, 0.3)',
   },
-  summaryDivider: {
-    height: '1px',
-    background: 'var(--border-subtle)',
-    margin: '0.5rem 0',
+  activeDotSchool: {
+    width: '6px',
+    height: '6px',
+    borderRadius: '50%',
+    background: '#38bdf8',
   },
-  diagramContainer: {
-    margin: '0.5rem 0',
-  },
-  diagramHeader: {
-    fontSize: '0.8rem',
+  comingSoonPill: {
+    fontSize: '0.65rem',
+    fontWeight: 800,
     textTransform: 'uppercase',
-    color: 'var(--text-muted)',
-    marginBottom: '1rem',
-    letterSpacing: '0.05em',
+    background: '#fef3c7',
+    color: '#b45309',
+    padding: '0.15rem 0.45rem',
+    borderRadius: '20px',
+    letterSpacing: '0.04em',
+    marginLeft: '0.2rem',
   },
-  diagramFlow: {
+
+  /* Step Indicator Bar */
+  stepBarWrapper: {
+    background: '#ffffff',
+    borderBottom: '1px solid #e2e8f0',
+    padding: '1.25rem 1.5rem',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.03)',
+    boxSizing: 'border-box',
+  },
+  stepBarContainer: {
+    maxWidth: '960px',
+    margin: '0 auto',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    padding: '0 0.5rem',
+    gap: '1rem',
   },
-  diagramNode: {
+  stepItemActive: {
     display: 'flex',
-    flexDirection: 'column',
     alignItems: 'center',
-    gap: '0.35rem',
+    gap: '0.75rem',
+    flex: 1,
   },
-  diagramDot: {
-    width: '26px',
-    height: '26px',
+  stepItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    flex: 1,
+    opacity: 0.6,
+  },
+  stepNumberActive: {
+    width: '38px',
+    height: '38px',
     borderRadius: '50%',
-    background: 'rgba(255,255,255,0.05)',
-    border: '1px solid var(--border-subtle)',
+    background: '#041026',
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: '1rem',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    color: 'var(--text-secondary)',
+    boxShadow: '0 4px 10px rgba(4, 16, 38, 0.25)',
+    flexShrink: 0,
   },
-  diagramNodeLabel: {
-    fontSize: '0.65rem',
-    color: 'var(--text-muted)',
-    fontWeight: 600,
-  },
-  diagramConnector: {
-    flexGrow: 1,
-    height: '2px',
-    background: 'rgba(255,255,255,0.05)',
-    margin: '0 0.5rem',
-    marginTop: '-12px',
-  },
-  summaryTotal: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    fontSize: '1.25rem',
+  stepNumber: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '50%',
+    background: '#94a3b8',
+    color: '#ffffff',
     fontWeight: 800,
+    fontSize: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  stepTextGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  stepTitleActive: {
+    fontSize: '0.92rem',
+    fontWeight: 700,
+    color: '#0f172a',
     fontFamily: 'var(--font-heading)',
   },
-  invoiceFooter: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    justifyContent: 'center',
-    marginTop: '2rem',
+  stepTitle: {
+    fontSize: '0.92rem',
+    fontWeight: 600,
+    color: '#475569',
+    fontFamily: 'var(--font-heading)',
+  },
+  stepSub: {
     fontSize: '0.75rem',
-    color: 'var(--text-muted)',
+    color: '#64748b',
   },
-  checkoutModal: {
-    maxWidth: '460px',
-    width: '90%',
+  stepDivider: {
+    width: '1px',
+    height: '30px',
+    background: '#cbd5e1',
+  },
+
+  /* Form Container */
+  formMainContainer: {
+    maxWidth: '1000px',
+    margin: '2rem auto 0 auto',
+    padding: '0 1.5rem',
+    boxSizing: 'border-box',
+  },
+  formStack: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.75rem',
+  },
+  cardBox: {
+    background: '#ffffff',
+    borderRadius: '12px',
+    border: '1px solid #e2e8f0',
     padding: '2rem',
+    boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
+    transition: 'all 0.3s ease',
+    boxSizing: 'border-box',
   },
-  modalHeader: {
+  cardBoxError: {
+    border: '2px solid #ef4444',
+    boxShadow: '0 0 20px rgba(239, 68, 68, 0.18)',
+    background: '#fff8f8',
+  },
+  cardSectionHeader: {
     display: 'flex',
     alignItems: 'center',
     gap: '1rem',
-    borderBottom: '1px solid var(--border-subtle)',
-    paddingBottom: '1.25rem',
     marginBottom: '1.5rem',
+    paddingBottom: '0.85rem',
+    borderBottom: '1px solid #f1f5f9',
   },
-  modalTitle: {
+  sectionIconSquare: {
+    width: '44px',
+    height: '44px',
+    minWidth: '44px',
+    minHeight: '44px',
+    borderRadius: '10px',
+    background: '#e0f2fe',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  cardTitle: {
     fontSize: '1.25rem',
+    fontWeight: 800,
+    color: '#0b1d3a',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.15rem',
+  },
+  cardSub: {
+    fontSize: '0.82rem',
+    color: '#64748b',
+  },
+  demoFillBtn: {
+    background: '#fff7ed',
+    border: '1px solid #fed7aa',
+    color: '#c2410c',
+    padding: '0.45rem 0.95rem',
+    borderRadius: '8px',
+    fontSize: '0.8rem',
     fontWeight: 700,
+    fontFamily: 'var(--font-heading)',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    transition: 'all 0.2s ease',
+    boxShadow: '0 2px 6px rgba(234, 88, 12, 0.08)',
   },
-  modalSubtitle: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
+
+  /* Form Grids */
+  formGrid3: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(3, 1fr)',
+    gap: '1.25rem',
   },
-  checkoutDetailsSummary: {
+  formGrid2: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1.25rem',
+  },
+  fieldGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.45rem',
+    width: '100%',
+    boxSizing: 'border-box',
+  },
+  label: {
+    fontSize: '0.84rem',
+    fontWeight: 700,
+    color: '#1e293b',
+    fontFamily: 'var(--font-heading)',
+  },
+  req: {
+    color: '#ef4444',
+  },
+  input: {
+    width: '100%',
+    height: '42px',
+    padding: '0.65rem 0.85rem',
+    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+    fontSize: '0.88rem',
+    color: '#0f172a',
+    outline: 'none',
+    background: '#ffffff',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    transition: 'all 0.2s ease',
+  },
+  select: {
+    width: '100%',
+    height: '42px',
+    padding: '0.65rem 0.85rem',
+    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+    fontSize: '0.88rem',
+    color: '#0f172a',
+    outline: 'none',
+    background: '#ffffff',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    transition: 'all 0.2s ease',
+  },
+
+  /* Declaration Section */
+  declarationErrorAlert: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    background: '#fef2f2',
+    border: '1px solid #fca5a5',
+    color: '#991b1b',
+    padding: '0.85rem 1rem',
+    borderRadius: '8px',
+    fontSize: '0.85rem',
+    lineHeight: '1.45',
+    marginBottom: '1rem',
+    fontFamily: 'var(--font-heading)',
+  },
+  declarationCheckRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.85rem',
+    padding: '0.85rem 1rem',
+    background: '#f8fafc',
+    borderRadius: '8px',
+    border: '1px solid #e2e8f0',
+  },
+  checkbox: {
+    width: '20px',
+    height: '20px',
+    minWidth: '20px',
+    minHeight: '20px',
+    accentColor: '#041026',
+    cursor: 'pointer',
+    flexShrink: 0,
+  },
+  checkboxError: {
+    outline: '3px solid #ef4444',
+    outlineOffset: '2px',
+    borderRadius: '3px',
+  },
+  declarationText: {
+    fontSize: '0.88rem',
+    color: '#334155',
+    lineHeight: '1.5',
+    cursor: 'pointer',
+  },
+
+  /* Actions Bar */
+  actionsBar: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    background: 'rgba(255,255,255,0.02)',
-    padding: '0.75rem 1rem',
+    marginTop: '1rem',
+  },
+  backBtn: {
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    padding: '0.75rem 1.75rem',
     borderRadius: '8px',
-    border: '1px solid var(--border-subtle)',
-    fontSize: '0.85rem',
-    marginBottom: '1.5rem',
-  },
-  checkoutAmt: {
-    fontWeight: 800,
-    color: 'var(--accent)',
-    fontSize: '1.1rem',
-  },
-  checkoutForm: {
-    display: 'flex',
-    flexDirection: 'column',
+    color: '#0f172a',
+    fontWeight: 700,
+    fontSize: '0.9rem',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
     gap: '0.5rem',
   },
-  checkoutFormRow: {
-    display: 'flex',
-    gap: '1rem',
+  reviewSubmitBtn: {
+    background: '#041026',
+    border: 'none',
+    padding: '0.85rem 2.25rem',
+    borderRadius: '8px',
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: '0.95rem',
+    fontFamily: 'var(--font-heading)',
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    boxShadow: '0 6px 20px rgba(4, 16, 38, 0.25)',
   },
-  checkoutActions: {
+
+  /* Modal */
+  modalOverlay: {
+    position: 'fixed',
+    inset: 0,
+    background: 'rgba(15, 23, 42, 0.75)',
+    backdropFilter: 'blur(6px)',
     display: 'flex',
-    gap: '0.75rem',
-    marginTop: '1.5rem',
+    alignItems: 'center',
+    justifyContent: 'center',
+    zIndex: 9999,
+    padding: '1.5rem',
   },
-  processingWrapper: {
+  modalCard: {
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '3rem 2.5rem',
+    maxWidth: '480px',
+    width: '100%',
+    boxShadow: '0 25px 50px -12px rgba(0,0,0,0.3)',
+  },
+  modalContentCenter: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     textAlign: 'center',
-    padding: '3rem 0',
   },
-  spinner: {
-    color: 'var(--primary)',
-    animation: 'spin 1.5s linear infinite',
-    marginBottom: '1.5rem',
-  },
-  processingTitle: {
-    fontSize: '1.25rem',
-    marginBottom: '0.5rem',
-  },
-  processingDesc: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    maxWidth: '300px',
-  },
-  successWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    textAlign: 'center',
-    padding: '2rem 0',
-  },
-  successIconOuter: {
+  successIconCircle: {
     width: '64px',
     height: '64px',
     borderRadius: '50%',
-    background: 'var(--success)',
+    background: '#10b981',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '1.5rem',
-    boxShadow: '0 0 20px var(--success-glow)',
+    marginBottom: '1.25rem',
+    boxShadow: '0 0 20px rgba(16, 185, 129, 0.4)',
   },
-  successTitle: {
-    fontSize: '1.5rem',
-    marginBottom: '0.75rem',
+  modalTitle: {
+    fontSize: '1.35rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    marginBottom: '0.5rem',
+    fontFamily: 'var(--font-heading)',
   },
-  successDesc: {
+  modalDesc: {
     fontSize: '0.9rem',
-    color: 'var(--text-secondary)',
+    color: '#475569',
     lineHeight: '1.5',
     marginBottom: '2rem',
-    maxWidth: '340px',
   },
-  successBtn: {
+  modalActionBtn: {
     width: '100%',
     padding: '0.85rem',
+    borderRadius: '10px',
+    background: '#041026',
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: '0.9rem',
+    fontFamily: 'var(--font-heading)',
+    border: 'none',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
   }
 };
 
-// Add CSS keyframes for rotation spinner and responsive registration grid
-const styleSheet = document.createElement("style");
-styleSheet.innerText += `
-  @keyframes spin {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
+// Add CSS keyframe animation for shake-error-alert and responsive form grid
+if (typeof document !== 'undefined') {
+  let styleSheet = document.getElementById('register-error-styles');
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
+    styleSheet.id = 'register-error-styles';
+    document.head.appendChild(styleSheet);
   }
-  @media (min-width: 1024px) {
-    .register-main-grid {
-      grid-template-columns: 1.5fr 1fr !important;
-      column-gap: 3.5rem !important;
+  styleSheet.innerText = `
+    @keyframes errorShake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
     }
-  }
-  @media (max-width: 768px) {
-    .register-form-row {
-      flex-direction: column !important;
+    .shake-error-alert {
+      animation: errorShake 0.45s ease-in-out;
     }
-  }
-`;
-document.head.appendChild(styleSheet);
+    @media (max-width: 768px) {
+      div[style*="gridTemplateColumns"] {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  `;
+}

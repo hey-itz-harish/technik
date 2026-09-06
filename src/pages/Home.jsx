@@ -11,6 +11,9 @@ import news3Img from '../assets/news3.jpg';
 import achiever1Img from '../assets/achiever1.jpg';
 import achiever2Img from '../assets/achiever2.jpg';
 import achiever3Img from '../assets/achiever3.jpg';
+import prideTrophy3DImg from '../assets/pride_trophy_3d.jpg';
+import olympiadRocket3DImg from '../assets/olympiad_rocket_3d.jpg';
+import resultMedalImg from '../assets/result_gold_medal_3d.jpg';
 import {
   Trophy,
   ArrowRight,
@@ -33,7 +36,15 @@ import {
   ShieldCheck,
   Star,
   ExternalLink,
-  Phone
+  Phone,
+  Building2,
+  Lightbulb,
+  FileText,
+  Shield,
+  Rocket,
+  QrCode,
+  Headphones,
+  Search
 } from 'lucide-react';
 
 // Helper component for count-up animated numbers
@@ -271,12 +282,28 @@ export default function Home() {
 
                 {/* Glowing Emblem Frame */}
                 <div style={styles.emblemGlowContainer}>
-                  <div className="shield-logo-wrapper">
+                  <div className="shield-logo-wrapper" style={{
+                    background: '#ffffff',
+                    borderRadius: '50%',
+                    padding: '14px',
+                    boxShadow: '0 12px 28px rgba(0, 0, 0, 0.35), 0 0 25px rgba(251, 191, 36, 0.4)',
+                    border: '3px solid #fbbf24',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '160px',
+                    height: '160px'
+                  }}>
                     <img
                       src={logoImg}
                       alt="Technik Crest"
                       className="shield-logo-img"
-                      style={{ width: '135px', height: '135px', objectFit: 'contain', margin: '0 auto', filter: 'drop-shadow(0 10px 20px rgba(0,0,0,0.4))' }}
+                      style={{
+                        width: '132px',
+                        height: '132px',
+                        objectFit: 'contain',
+                        display: 'block'
+                      }}
                     />
                   </div>
                 </div>
@@ -299,240 +326,225 @@ export default function Home() {
         </div>
       </section>
 
-      {/* STATS FLOATING BAR */}
-      <section style={styles.statsSection} className="reveal-on-scroll">
+      {/* HIGHLIGHT STATS BAR (Image 2 Banner replacing Image 1 Banner) */}
+      <section style={styles.statsBarSection}>
         <div className="container">
-          <div style={styles.statsCardGrid} className="home-stats-grid">
-            {statsList.map((stat, idx) => {
-              const StatIcon = stat.icon;
-              return (
-                <div key={idx} style={styles.statCard} className="stat-card-item">
-                  <div style={{ ...styles.statIconBox, color: stat.color, background: `${stat.color}12` }}>
-                    <StatIcon size={22} />
-                  </div>
-                  <div>
-                    <h3 style={styles.statVal}>
-                      <AnimatedStatNumber val={stat.val} />
-                    </h3>
-                    <p style={styles.statLbl}>{stat.label}</p>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* OUR OLYMPIADS SECTION */}
-      <section style={styles.sectionPadding} className="reveal-on-scroll">
-        <div className="container">
-          <div style={styles.sectionHeaderCenter}>
-            <h2 style={styles.sectionTitle}>OUR OLYMPIADS</h2>
-            <div style={styles.goldLine}></div>
-            <p style={styles.sectionSubtitle}>
-              Explore the world of knowledge, innovation and excellence
-            </p>
-          </div>
-
-          <div style={styles.olympiadGrid} className="home-olympiad-grid">
-            {olympiadsList.map((item, idx) => {
-              const TrackIcon = item.icon;
-              return (
-                <div key={idx} style={styles.olympiadCard} className="glass-card-hover">
-                  <div style={{ ...styles.trackIconBox, background: item.bgColor, color: item.color }}>
-                    <TrackIcon size={28} />
-                  </div>
-                  <h3 style={styles.olympiadTitle}>{item.title}</h3>
-                  <p style={styles.olympiadDesc}>{item.desc}</p>
-                  <Link to="/catalog" style={{ ...styles.viewDetailsBtn, background: item.color }}>
-                    VIEW DETAILS
-                  </Link>
-                </div>
-              );
-            })}
-          </div>
-
-          <div style={styles.centerActionRow}>
-            <Link to="/catalog" className="btn-navy-lg">
-              VIEW ALL OLYMPIADS
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* TECHNIK PRIDE AWARD BANNER */}
-      <section style={styles.awardSection}>
-        <div className="container">
-          <div style={styles.awardBanner} className="home-award-banner">
-            <div style={styles.awardLeft}>
-              <div style={styles.awardTrophyFrame}>
-                <Trophy size={64} color="#fbbf24" />
-                <div style={styles.awardTag}>TECHNIK PRIDE AWARD</div>
+          <div style={styles.statsGridBar}>
+            {/* Stat 1 */}
+            <div style={styles.statCardBar}>
+              <div style={{ ...styles.statIconCircleBar, background: '#eff6ff' }}>
+                <Calendar size={24} color="#2563eb" />
+              </div>
+              <div>
+                <h4 style={styles.statTitleBar}>2018</h4>
+                <p style={styles.statSubBar}>Our Journey Began</p>
               </div>
             </div>
 
-            <div style={styles.awardCenter} className="award-center-col">
-              <span className="badge badge-gold" style={{ marginBottom: '0.5rem' }}>NATIONAL RECOGNITION</span>
-              <h2 style={styles.awardBannerTitle}>TECHNIK PRIDE AWARD</h2>
-              <p style={styles.awardBannerSubtitle}>Celebrating Every Young Achiever</p>
-              <p style={styles.awardBannerDesc}>
-                The Technik Pride Award is a prestigious recognition initiative created to celebrate
-                outstanding achievements of school students. Our vision is simple – Every achiever deserves recognition.
+            {/* Stat 2 */}
+            <div style={styles.statCardBar}>
+              <div style={{ ...styles.statIconCircleBar, background: '#f0fdf4' }}>
+                <Users size={24} color="#16a34a" />
+              </div>
+              <div>
+                <h4 style={styles.statTitleBar}>Play School to Class 12</h4>
+                <p style={styles.statSubBar}>Eligible Students</p>
+              </div>
+            </div>
+
+            {/* Stat 3 */}
+            <div style={styles.statCardBar}>
+              <div style={{ ...styles.statIconCircleBar, background: '#fff7ed' }}>
+                <Building2 size={24} color="#ea580c" />
+              </div>
+              <div>
+                <h4 style={styles.statTitleBar}>School • District • State</h4>
+                <p style={styles.statSubBar}>Recognition Levels</p>
+              </div>
+            </div>
+
+            {/* Stat 4 */}
+            <div style={styles.statCardBar}>
+              <div style={{ ...styles.statIconCircleBar, background: '#fef2f2' }}>
+                <MapPin size={24} color="#dc2626" />
+              </div>
+              <div>
+                <h4 style={styles.statTitleBar}>5 States + 1 Union Territory</h4>
+                <p style={styles.statSubBar}>Our Focus Region</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* KEY INITIATIVES SECTION (TECHNIK PRIDE AWARD & TECHNIK OLYMPIAD) */}
+      <section style={{ padding: '1.75rem 0 1rem 0' }} className="reveal-on-scroll">
+        <div className="container">
+          <div style={styles.initiativesGridHome}>
+            {/* Technik Pride Award Card */}
+            <div style={styles.initiativeCardPrideHome}>
+              <div style={styles.img3DWrapperHome}>
+                <img 
+                  src={prideTrophy3DImg} 
+                  alt="Technik Pride Award 3D Golden Trophy" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                />
+              </div>
+              <h3 style={styles.initCardTitleGoldHome}>TECHNIK PRIDE AWARD</h3>
+              <p style={styles.initCardDescHome}>
+                Celebrating and recognising the achievements, talents and potential of school students.
               </p>
-              <Link to="/awards" className="btn-hero-gold award-cta-btn" style={{ alignSelf: 'flex-start' }}>
-                EXPLORE AWARD
+              <Link to="/awards" style={styles.initBtnGoldHome}>
+                EXPLORE TECHNIK PRIDE AWARD &rarr;
               </Link>
             </div>
 
-            <div style={styles.awardRight} className="award-right-col">
-              <div style={styles.awardFeatureBadge}>
-                <Award size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
-                <span>MULTIPLE CATEGORIES</span>
+            {/* Technik Olympiad Card */}
+            <div style={styles.initiativeCardOlympiadHome}>
+              <div style={styles.img3DWrapperHome}>
+                <img 
+                  src={olympiadRocket3DImg} 
+                  alt="Technik Olympiad 3D Blue Rocket" 
+                  style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '50%' }} 
+                />
               </div>
-              <div style={styles.awardFeatureBadge}>
-                <Trophy size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
-                <span>3 LEVELS OF RECOGNITION</span>
-              </div>
-              <div style={styles.awardFeatureBadge}>
-                <Star size={20} color="#fbbf24" style={{ flexShrink: 0 }} />
-                <span>PRESTIGIOUS AWARDS</span>
-              </div>
+              <h3 style={styles.initCardTitleBlueHome}>TECHNIK OLYMPIAD</h3>
+              <p style={styles.initCardDescHome}>
+                Providing students opportunities to discover, learn and compete through future-ready Olympiads.
+              </p>
+              <Link to="/catalog" style={styles.initBtnBlueHome}>
+                EXPLORE TECHNIK OLYMPIAD &rarr;
+              </Link>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3-COLUMN SEGMENTS SECTION */}
-      <section style={styles.sectionPadding}>
+
+      {/* THREE ACTION CARDS (FOR SCHOOLS, HOSTING PARTNER, FOR RESULT) */}
+      <section style={styles.actionCardsSection}>
         <div className="container">
-          <div style={styles.segmentGrid} className="home-segment-grid">
+          <div style={styles.threeActionGrid}>
 
-            {/* For Students */}
-            <div style={styles.segmentCard}>
-              <div style={styles.segmentBodyFlex}>
-                <div style={styles.segmentLeftContent}>
-                  <div style={{ ...styles.segmentHeader, borderLeft: '4px solid #2563eb' }}>
-                    <h3 style={styles.segmentTitle}>FOR STUDENTS</h3>
-                    <p style={styles.segmentSubtitle}>Your journey starts here!</p>
+            {/* Card 1: FOR SCHOOLS */}
+            <div style={styles.actionCardSchools}>
+              {/* Header Zone */}
+              <div>
+                <h3 style={styles.schoolsTitle}>FOR SCHOOLS</h3>
+                <p style={styles.actionSub}>Partner with us and empower your students.</p>
+              </div>
+
+              {/* Middle Body Zone (Checklist + Image) */}
+              <div style={styles.cardMiddleBody}>
+                <div style={styles.checkListAction}>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Register Your School</span>
                   </div>
-
-                  <div style={styles.segmentChecklist}>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#2563eb" />
-                      <span>Register for Olympiads</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#2563eb" />
-                      <span>View Exam Schedule</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#2563eb" />
-                      <span>Check Results & Rank</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#2563eb" />
-                      <span>Download Certificates</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#2563eb" />
-                      <span>Apply for Awards</span>
-                    </div>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Access Coordinator Dashboard</span>
                   </div>
-
-                  <Link to="/dashboard" style={{ ...styles.segmentBtn, background: '#2563eb' }}>
-                    STUDENT LOGIN
-                  </Link>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Track Performance & Results</span>
+                  </div>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#16a34a" style={{ flexShrink: 0 }} />
+                    <span>Awards & Recognitions</span>
+                  </div>
                 </div>
 
-                <div style={styles.segmentRightImgBox}>
-                  <img src={studentCardImg} alt="For Students" style={styles.segmentCardImg} />
+                <div style={styles.actionCardImgCol}>
+                  <img src={schoolCardImg} alt="School Building" style={styles.cardBuildingImg} />
                 </div>
+              </div>
+
+              {/* Footer Zone (Full Width Button) */}
+              <div style={styles.cardFooterArea}>
+                <Link to="/register?tab=school" style={styles.btnGreenAction}>
+                  SCHOOL LOGIN &rarr;
+                </Link>
               </div>
             </div>
 
-            {/* For Schools */}
-            <div style={styles.segmentCard}>
-              <div style={styles.segmentBodyFlex}>
-                <div style={styles.segmentLeftContent}>
-                  <div style={{ ...styles.segmentHeader, borderLeft: '4px solid #059669' }}>
-                    <h3 style={styles.segmentTitle}>FOR SCHOOLS</h3>
-                    <p style={styles.segmentSubtitle}>Partner with us and empower your students.</p>
-                  </div>
+            {/* Card 2: HOSTING PARTNER */}
+            <div style={styles.actionCardPartner}>
+              {/* Header Zone */}
+              <div>
+                <h3 style={styles.partnerTitle}>HOSTING PARTNER</h3>
+                <p style={styles.actionSub}>Be a part of our mission and create impact in your region.</p>
+              </div>
 
-                  <div style={styles.segmentChecklist}>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#059669" />
-                      <span>Register Your School</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#059669" />
-                      <span>Bulk Student Registration</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#059669" />
-                      <span>Access Coordinator Dashboard</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#059669" />
-                      <span>Track Performance & Results</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#059669" />
-                      <span>Awards & Recognitions</span>
-                    </div>
+              {/* Middle Body Zone (Checklist + Image) */}
+              <div style={styles.cardMiddleBody}>
+                <div style={styles.checkListAction}>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#ea580c" style={{ flexShrink: 0 }} />
+                    <span>School Level Partner</span>
                   </div>
-
-                  <Link to="/register" style={{ ...styles.segmentBtn, background: '#059669' }}>
-                    SCHOOL LOGIN
-                  </Link>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#ea580c" style={{ flexShrink: 0 }} />
+                    <span>District Level Partner</span>
+                  </div>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#ea580c" style={{ flexShrink: 0 }} />
+                    <span>Pride Award Partner</span>
+                  </div>
+                  <div style={styles.checkItemAction}>
+                    <CheckCircle2 size={17} color="#ea580c" style={{ flexShrink: 0 }} />
+                    <span>Event Partner</span>
+                  </div>
                 </div>
 
-                <div style={styles.segmentRightImgBox}>
-                  <img src={schoolCardImg} alt="For Schools" style={styles.segmentCardImg} />
+                <div style={styles.actionCardImgCol}>
+                  <img src={handshakeCardImg} alt="Handshake Partnership" style={styles.cardHandshakeImg} />
                 </div>
+              </div>
+
+              {/* Footer Zone (Full Width Button) */}
+              <div style={styles.cardFooterArea}>
+                <Link to="/register?tab=partner" style={styles.btnOrangeAction}>
+                  BECOME A PARTNER &rarr;
+                </Link>
               </div>
             </div>
 
-            {/* Hosting Partner */}
-            <div style={styles.segmentCard}>
-              <div style={styles.segmentBodyFlex}>
-                <div style={styles.segmentLeftContent}>
-                  <div style={{ ...styles.segmentHeader, borderLeft: '4px solid #ea580c' }}>
-                    <h3 style={styles.segmentTitle}>HOSTING PARTNER</h3>
-                    <p style={styles.segmentSubtitle}>Host events and be a part of our mission.</p>
-                  </div>
+            {/* Card 3: FOR RESULT */}
+            <div style={styles.actionCardResult}>
+              {/* Header Zone */}
+              <div>
+                <h3 style={styles.resultTitle}>FOR RESULT</h3>
+                <p style={styles.actionSub}>Access your results and verify your achievements.</p>
+              </div>
 
-                  <div style={styles.segmentChecklist}>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#ea580c" />
-                      <span>School Level Events</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#ea580c" />
-                      <span>District Level Events</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#ea580c" />
-                      <span>Award Ceremonies</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#ea580c" />
-                      <span>Workshops & More</span>
-                    </div>
-                    <div style={styles.checkItem}>
-                      <CheckCircle2 size={16} color="#ea580c" />
-                      <span>Institutional Recognition</span>
-                    </div>
+              {/* Middle Body Zone (Checklist + Medal Graphic) */}
+              <div style={styles.cardMiddleBody}>
+                <div style={styles.checkListAction}>
+                  <div style={styles.checkItemAction}>
+                    <FileText size={17} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <span>Check Result</span>
                   </div>
-
-                  <Link to="/about" style={{ ...styles.segmentBtn, background: '#ea580c' }}>
-                    APPLY NOW
-                  </Link>
+                  <div style={styles.checkItemAction}>
+                    <Search size={17} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <span>Verify Certificate</span>
+                  </div>
+                  <div style={styles.checkItemAction}>
+                    <Trophy size={17} color="#2563eb" style={{ flexShrink: 0 }} />
+                    <span>Verify Pride Award</span>
+                  </div>
                 </div>
 
-                <div style={styles.segmentRightImgBox}>
-                  <img src={handshakeCardImg} alt="Hosting Partner" style={styles.segmentCardImg} />
+                <div style={styles.actionCardImgCol}>
+                  <img src={resultMedalImg} alt="Winner Gold Medal" style={styles.cardMedalImg} />
                 </div>
+              </div>
+
+              {/* Footer Zone (Full Width Button) */}
+              <div style={styles.cardFooterArea}>
+                <Link to="/verification" style={styles.btnBlueAction}>
+                  GO TO RESULT &rarr;
+                </Link>
               </div>
             </div>
 
@@ -540,120 +552,99 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BOTTOM 3-GRID (UPCOMING EVENTS / LATEST NEWS / TOP ACHIEVERS) */}
-      <section style={{ ...styles.sectionPadding, background: '#f8fafc' }}>
+      {/* UPCOMING EVENTS, LATEST NEWS & OUR FOCUS SECTION */}
+      <section style={styles.eventsNewsFocusSection}>
         <div className="container">
-          <div style={styles.bottomGrid3} className="home-bottom-grid3">
+          <div style={styles.threeGridRow}>
 
-            {/* Upcoming Events */}
-            <div style={styles.bottomBox}>
-              <div style={styles.boxHeader}>
-                <h3 style={styles.boxTitle}>UPCOMING EVENTS</h3>
-                <Link to="/catalog" style={styles.viewAllText}>View all</Link>
+            {/* UPCOMING EVENTS */}
+            <div style={styles.gridCardBox}>
+              <div style={styles.cardHeaderRow}>
+                <h3 style={styles.gridCardHeaderTitle}>UPCOMING EVENTS</h3>
               </div>
 
-              <div style={styles.eventsList}>
-                <div style={styles.eventRow}>
-                  <div>
-                    <h4 style={styles.eventTitle}>Robotics Olympiad 2026</h4>
-                    <p style={styles.eventDate}>15 Sep - 15 Oct 2026</p>
-                  </div>
-                  <span style={styles.badgeSoon}>Coming Soon</span>
+              <div style={styles.launchedSoonBox}>
+                <div style={styles.launchedIconCircle}>
+                  <Rocket size={28} color="#2563eb" />
                 </div>
-
-                <div style={styles.eventRow}>
-                  <div>
-                    <h4 style={styles.eventTitle}>Generative AI Olympiad 2026</h4>
-                    <p style={styles.eventDate}>20 Sep - 20 Oct 2026</p>
-                  </div>
-                  <span style={styles.badgeSoon}>Coming Soon</span>
-                </div>
-
-                <div style={styles.eventRow}>
-                  <div>
-                    <h4 style={styles.eventTitle}>Coding Olympiad 2026</h4>
-                    <p style={styles.eventDate}>10 Oct - 10 Nov 2026</p>
-                  </div>
-                  <span style={styles.badgeSoon}>Coming Soon</span>
-                </div>
+                <h4 style={styles.launchedTitle}>WILL BE LAUNCHED SOON</h4>
+                <p style={styles.launchedDesc}>
+                  Exciting new Olympiad events and competition schedules will be announced shortly. Stay tuned!
+                </p>
+                <span style={styles.badgeComingSoonLarge}>Coming Soon</span>
               </div>
-
-              <Link to="/catalog" style={styles.fullWidthBtn}>
-                VIEW ALL EVENTS
-              </Link>
             </div>
 
-            {/* Latest News */}
-            <div style={styles.bottomBox}>
-              <div style={styles.boxHeader}>
-                <h3 style={styles.boxTitle}>LATEST NEWS</h3>
-                <Link to="/about" style={styles.viewAllText}>View all</Link>
+            {/* LATEST NEWS */}
+            <div style={styles.gridCardBox}>
+              <div style={styles.cardHeaderRow}>
+                <h3 style={styles.gridCardHeaderTitle}>LATEST NEWS</h3>
+                <Link to="/coming-soon" style={styles.viewAllLink}>View all</Link>
               </div>
 
               <div style={styles.newsList}>
-                <div style={styles.newsItemWithThumb}>
+                {/* News 1 */}
+                <div style={styles.newsRowItem}>
                   <img src={news1Img} alt="News 1" style={styles.newsThumbImg} />
                   <div>
-                    <h4 style={styles.newsHeadline}>Technik Pride Award Nominations Open for 2026</h4>
-                    <p style={styles.newsDate}>01 Aug 2026</p>
+                    <h4 style={styles.newsItemTitle}>Technik Pride Award Nominations Open for 2026</h4>
+                    <p style={styles.newsItemDate}>01 Aug 2026</p>
                   </div>
                 </div>
-                <div style={styles.newsItemWithThumb}>
+
+                {/* News 2 */}
+                <div style={styles.newsRowItem}>
                   <img src={news2Img} alt="News 2" style={styles.newsThumbImg} />
                   <div>
-                    <h4 style={styles.newsHeadline}>District Level Olympiad Dates Announced</h4>
-                    <p style={styles.newsDate}>28 Jul 2026</p>
+                    <h4 style={styles.newsItemTitle}>District Level Olympiad Dates Announced</h4>
+                    <p style={styles.newsItemDate}>28 Jul 2026</p>
                   </div>
                 </div>
-                <div style={styles.newsItemWithThumb}>
+
+                {/* News 3 */}
+                <div style={styles.newsRowItem}>
                   <img src={news3Img} alt="News 3" style={styles.newsThumbImg} />
                   <div>
-                    <h4 style={styles.newsHeadline}>Congratulations to All State Toppers! Results Live</h4>
-                    <p style={styles.newsDate}>25 Jul 2026</p>
+                    <h4 style={styles.newsItemTitle}>Congratulations to All State Toppers! Results Are Live Now</h4>
+                    <p style={styles.newsItemDate}>25 Jul 2026</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Top Achievers */}
-            <div style={styles.bottomBox}>
-              <div style={styles.boxHeader}>
-                <h3 style={styles.boxTitle}>TOP ACHIEVERS</h3>
-                <Link to="/awards" style={styles.viewAllText}>View all</Link>
+            {/* OUR FOCUS */}
+            <div style={styles.gridCardBox}>
+              <div style={styles.cardHeaderRow}>
+                <h3 style={styles.gridCardHeaderTitle}>OUR FOCUS</h3>
               </div>
 
-              <div style={styles.achieversList}>
-                <div style={styles.achieverRow}>
-                  <div style={styles.achieverAvatarWrapper}>
-                    <img src={achiever1Img} alt="Rohan S." style={styles.achieverPhoto} />
-                    <div style={styles.rankBadgeGold}>1</div>
-                  </div>
-                  <div>
-                    <h4 style={styles.achieverName}>Rohan S.</h4>
-                    <p style={styles.achieverDetails}>Class 8 · Robotics Olympiad</p>
-                  </div>
+              <div style={styles.focusMetricsGrid}>
+                {/* Metric 1 */}
+                <div style={styles.focusMetricItem}>
+                  <Building2 size={32} color="#1e3a8a" />
+                  <h4 style={styles.metricBigVal}>1000+</h4>
+                  <p style={styles.metricSubLabel}>Partner Schools</p>
                 </div>
 
-                <div style={styles.achieverRow}>
-                  <div style={styles.achieverAvatarWrapper}>
-                    <img src={achiever2Img} alt="Ananya R." style={styles.achieverPhoto} />
-                    <div style={styles.rankBadgeSilver}>2</div>
-                  </div>
-                  <div>
-                    <h4 style={styles.achieverName}>Ananya R.</h4>
-                    <p style={styles.achieverDetails}>Class 7 · AI Olympiad</p>
-                  </div>
+                {/* Metric 2 */}
+                <div style={styles.focusMetricItem}>
+                  <Users size={32} color="#1e3a8a" />
+                  <h4 style={styles.metricBigVal}>1 Lakh+</h4>
+                  <p style={styles.metricSubLabel}>Students Reached</p>
                 </div>
 
-                <div style={styles.achieverRow}>
-                  <div style={styles.achieverAvatarWrapper}>
-                    <img src={achiever3Img} alt="Vihaan K." style={styles.achieverPhoto} />
-                    <div style={styles.rankBadgeBronze}>3</div>
-                  </div>
-                  <div>
-                    <h4 style={styles.achieverName}>Vihaan K.</h4>
-                    <p style={styles.achieverDetails}>Class 6 · Coding Olympiad</p>
-                  </div>
+                {/* Metric 3 */}
+                <div style={styles.focusMetricItem}>
+                  <Trophy size={32} color="#1e3a8a" />
+                  <h4 style={styles.metricBigVal}>Holistic</h4>
+                  <p style={styles.metricSubLabel}>Student Development</p>
+                </div>
+
+                {/* Metric 4 */}
+                <div style={styles.focusMetricItem}>
+                  <MapPin size={32} color="#1e3a8a" />
+                  <h4 style={styles.metricBigVal}>5 States + 1 UT</h4>
+                  <p style={styles.metricSubLabel}>Our Presence</p>
                 </div>
               </div>
             </div>
@@ -662,34 +653,66 @@ export default function Home() {
         </div>
       </section>
 
-      {/* TRUST BAR */}
-      <section style={styles.trustBarSection}>
+      {/* TRUST FEATURES BAR */}
+      <section style={styles.trustFeaturesSection}>
         <div className="container">
-          <div style={styles.trustGrid} className="home-trust-grid">
-            <div style={styles.trustItem}>
-              <ShieldCheck size={18} color="#2563eb" />
-              <span>Trusted by Thousands of Schools</span>
+          <div style={styles.trustFeaturesRow}>
+
+            {/* Feature 1 */}
+            <div style={styles.trustFeatureCol}>
+              <div style={styles.trustIconCircle}>
+                <Shield size={24} color="#2563eb" />
+              </div>
+              <div style={styles.trustTextGroup}>
+                <h5 style={styles.trustTitle}>Trusted by</h5>
+                <p style={styles.trustSub}>Thousands of Schools</p>
+              </div>
             </div>
-            <div style={styles.trustItem}>
-              <Award size={18} color="#2563eb" />
-              <span>Recognizing Young Talent</span>
+
+            {/* Feature 2 */}
+            <div style={styles.trustFeatureCol}>
+              <div style={styles.trustIconCircle}>
+                <Lightbulb size={24} color="#2563eb" />
+              </div>
+              <div style={styles.trustTextGroup}>
+                <h5 style={styles.trustTitle}>Future-Ready</h5>
+                <p style={styles.trustSub}>Skills</p>
+              </div>
             </div>
-            <div style={styles.trustItem}>
-              <Sparkles size={18} color="#2563eb" />
-              <span>Future-Ready Olympiads</span>
+
+            {/* Feature 3 */}
+            <div style={styles.trustFeatureCol}>
+              <div style={styles.trustIconCircle}>
+                <FileText size={24} color="#2563eb" />
+              </div>
+              <div style={styles.trustTextGroup}>
+                <h5 style={styles.trustTitle}>Transparent</h5>
+                <p style={styles.trustSub}>Process</p>
+              </div>
             </div>
-            <div style={styles.trustItem}>
-              <CheckCircle size={18} color="#2563eb" />
-              <span>Certificates with QR Verification</span>
+
+            {/* Feature 4 */}
+            <div style={styles.trustFeatureCol}>
+              <div style={styles.trustIconCircle}>
+                <QrCode size={24} color="#2563eb" />
+              </div>
+              <div style={styles.trustTextGroup}>
+                <h5 style={styles.trustTitle}>Certificates with</h5>
+                <p style={styles.trustSub}>QR Verification</p>
+              </div>
             </div>
-            <div style={styles.trustItem}>
-              <Users size={18} color="#2563eb" />
-              <span>Transparent Exam Process</span>
+
+            {/* Feature 5 */}
+            <div style={styles.trustFeatureCol}>
+              <div style={styles.trustIconCircle}>
+                <Headphones size={24} color="#2563eb" />
+              </div>
+              <div style={styles.trustTextGroup}>
+                <h5 style={styles.trustTitle}>Dedicated</h5>
+                <p style={styles.trustSub}>Support</p>
+              </div>
             </div>
-            <div style={styles.trustItem}>
-              <Phone size={18} color="#2563eb" />
-              <span>Dedicated Support</span>
-            </div>
+
           </div>
         </div>
       </section>
@@ -702,18 +725,19 @@ const styles = {
   page: {
     minHeight: '100vh',
     background: '#ffffff',
+    paddingBottom: '1.25rem',
   },
   heroSection: {
     background: 'linear-gradient(135deg, #0c2340 0%, #153a70 50%, #1e40af 100%)',
     color: '#ffffff',
-    padding: '4.5rem 0 5rem 0',
+    padding: '2.25rem 0 2rem 0',
     position: 'relative',
     overflow: 'hidden',
   },
   heroContainer: {
     display: 'grid',
     gridTemplateColumns: '1.2fr 0.8fr',
-    gap: '3rem',
+    gap: '1.75rem',
     alignItems: 'center',
   },
   heroLeft: {
@@ -722,36 +746,36 @@ const styles = {
     alignItems: 'flex-start',
   },
   heroEyebrow: {
-    marginBottom: '0.5rem',
+    marginBottom: '0.35rem',
   },
   eyebrowYellow: {
-    fontSize: '0.88rem',
+    fontSize: '0.85rem',
     fontWeight: 800,
     color: '#fbbf24',
     letterSpacing: '0.12em',
     fontFamily: 'var(--font-heading)',
   },
   heroTitle: {
-    fontSize: '3.25rem',
+    fontSize: '2.8rem',
     fontWeight: 900,
     lineHeight: '1.1',
     letterSpacing: '-0.02em',
-    marginBottom: '0.75rem',
+    marginBottom: '0.5rem',
     fontFamily: 'var(--font-heading)',
     color: '#ffffff',
   },
   heroSlogan: {
-    fontSize: '1.25rem',
+    fontSize: '1.15rem',
     fontWeight: 700,
     color: '#38bdf8',
-    marginBottom: '1rem',
+    marginBottom: '0.75rem',
     letterSpacing: '0.01em',
   },
   heroDesc: {
-    fontSize: '0.98rem',
+    fontSize: '0.92rem',
     color: '#cbd5e1',
-    lineHeight: '1.65',
-    marginBottom: '1.5rem',
+    lineHeight: '1.55',
+    marginBottom: '1rem',
     maxWidth: '560px',
   },
   heroBadgeCapsule: {
@@ -760,15 +784,15 @@ const styles = {
     background: 'rgba(255, 255, 255, 0.08)',
     border: '1px solid rgba(255, 255, 255, 0.15)',
     borderRadius: '50px',
-    padding: '0.4rem 1.25rem',
-    fontSize: '0.85rem',
+    padding: '0.35rem 1.1rem',
+    fontSize: '0.82rem',
     fontWeight: 600,
     color: '#ffffff',
-    marginBottom: '2rem',
+    marginBottom: '1.25rem',
   },
   heroActions: {
     display: 'flex',
-    gap: '0.85rem',
+    gap: '0.75rem',
     flexWrap: 'wrap',
   },
   heroRight: {
@@ -777,8 +801,8 @@ const styles = {
     position: 'relative',
   },
   heroVisualFrame: {
-    width: '400px',
-    height: '400px',
+    width: '360px',
+    height: '360px',
     borderRadius: '50%',
     background: 'radial-gradient(circle, rgba(56,189,248,0.15) 0%, rgba(37,99,235,0.08) 50%, transparent 75%)',
     display: 'flex',
@@ -795,26 +819,27 @@ const styles = {
   },
   orbitBadge: {
     position: 'absolute',
-    width: '48px',
-    height: '48px',
+    width: '42px',
+    height: '42px',
     borderRadius: '50%',
-    background: 'linear-gradient(135deg, #ffffff 0%, #eff6ff 100%)',
-    border: '1px solid rgba(255, 255, 255, 0.9)',
+    background: '#ffffff',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    boxShadow: '0 10px 25px rgba(0,0,0,0.18), 0 0 15px rgba(56,189,248,0.2)',
-    zIndex: 10,
+    boxShadow: '0 6px 18px rgba(0, 0, 0, 0.15)',
+    zIndex: 5,
+    cursor: 'pointer',
+    transition: 'transform 0.2s ease',
   },
   achieverBox: {
     width: '280px',
-    padding: '2rem 1.25rem 1.5rem 1.25rem',
-    background: 'linear-gradient(145deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 58, 138, 0.92) 60%, rgba(15, 23, 42, 0.98) 100%)',
-    backdropFilter: 'blur(16px)',
-    border: '1px solid rgba(251, 191, 36, 0.45)',
+    background: 'linear-gradient(135deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.98) 100%)',
+    border: '1px solid rgba(251, 191, 36, 0.4)',
     borderRadius: '24px',
+    padding: '1.25rem 1rem 1rem 1rem',
     textAlign: 'center',
-    boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.6), inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 0 35px rgba(251, 191, 36, 0.15)',
+    boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1)',
+    backdropFilter: 'blur(12px)',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
@@ -822,7 +847,7 @@ const styles = {
     overflow: 'hidden',
   },
   emblemGlowContainer: {
-    marginBottom: '1rem',
+    marginBottom: '0.85rem',
     position: 'relative',
   },
   achieverRibbon: {
@@ -835,9 +860,9 @@ const styles = {
     fontWeight: 900,
     fontSize: '0.68rem',
     fontFamily: 'var(--font-heading)',
-    padding: '0.5rem 0.85rem',
+    padding: '0.45rem 0.75rem',
     borderRadius: '50px',
-    marginBottom: '0.75rem',
+    marginBottom: '0.6rem',
     whiteSpace: 'nowrap',
     width: '100%',
     boxSizing: 'border-box',
@@ -845,7 +870,7 @@ const styles = {
     boxShadow: '0 4px 15px rgba(245, 158, 11, 0.4)',
   },
   achieverOrgText: {
-    fontSize: '0.74rem',
+    fontSize: '0.72rem',
     fontWeight: 800,
     color: '#e2e8f0',
     letterSpacing: '0.14em',
@@ -855,16 +880,16 @@ const styles = {
     fontFamily: 'var(--font-heading)',
   },
   statsSection: {
-    marginTop: '-2.5rem',
+    marginTop: '-2rem',
     position: 'relative',
     zIndex: 10,
   },
   statsCardGrid: {
     display: 'grid',
     gridTemplateColumns: 'repeat(5, 1fr)',
-    gap: '1rem',
+    gap: '0.85rem',
     background: '#ffffff',
-    padding: '1.5rem',
+    padding: '1.1rem 1.25rem',
     borderRadius: '16px',
     boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
     border: '1px solid #e2e8f0',
@@ -872,11 +897,11 @@ const styles = {
   statCard: {
     display: 'flex',
     alignItems: 'center',
-    gap: '0.85rem',
+    gap: '0.75rem',
   },
   statIconBox: {
-    width: '44px',
-    height: '44px',
+    width: '40px',
+    height: '40px',
     borderRadius: '10px',
     display: 'flex',
     alignItems: 'center',
@@ -884,41 +909,578 @@ const styles = {
     flexShrink: 0,
   },
   statVal: {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     fontWeight: 800,
     color: '#0f172a',
     lineHeight: '1.2',
   },
   statLbl: {
-    fontSize: '0.75rem',
+    fontSize: '0.72rem',
     color: '#64748b',
     fontWeight: 500,
   },
   sectionPadding: {
-    padding: '4.5rem 0',
+    padding: '2.5rem 0',
   },
   sectionHeaderCenter: {
     textAlign: 'center',
-    marginBottom: '3rem',
+    marginBottom: '1.75rem',
   },
   sectionTitle: {
-    fontSize: '2rem',
+    fontSize: '1.85rem',
     fontWeight: 900,
     color: '#0f172a',
     letterSpacing: '0.04em',
-    marginBottom: '0.35rem',
+    marginBottom: '0.25rem',
     fontFamily: 'var(--font-heading)',
   },
   goldLine: {
-    width: '60px',
-    height: '4px',
+    width: '50px',
+    height: '3px',
     background: '#f59e0b',
-    margin: '0 auto 0.75rem auto',
+    margin: '0 auto 0.5rem auto',
     borderRadius: '2px',
   },
   sectionSubtitle: {
-    fontSize: '1rem',
+    fontSize: '0.95rem',
     color: '#64748b',
+  },
+  initiativesGridHome: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+    gap: '1.25rem',
+    maxWidth: '960px',
+    margin: '0 auto',
+  },
+  initiativeCardPrideHome: {
+    background: 'linear-gradient(180deg, #ffffff 0%, #fffbeb 100%)',
+    border: '1px solid #fde68a',
+    borderRadius: '20px',
+    padding: '1.5rem 1.25rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    gap: '0.75rem',
+    boxShadow: '0 8px 25px -8px rgba(217, 119, 6, 0.12)',
+    transition: 'transform 0.3s ease, boxShadow 0.3s ease',
+  },
+  initiativeCardOlympiadHome: {
+    background: 'linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%)',
+    border: '1px solid #bae6fd',
+    borderRadius: '20px',
+    padding: '1.5rem 1.25rem',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    gap: '0.75rem',
+    boxShadow: '0 8px 25px -8px rgba(37, 99, 235, 0.12)',
+    transition: 'transform 0.3s ease, boxShadow 0.3s ease',
+  },
+  img3DWrapperHome: {
+    width: '100px',
+    height: '100px',
+    borderRadius: '50%',
+    background: '#ffffff',
+    padding: 0,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 6px 18px rgba(0, 0, 0, 0.1)',
+    border: '2px solid #ffffff',
+    overflow: 'hidden',
+    flexShrink: 0,
+  },
+  initCardTitleGoldHome: {
+    fontSize: '1.1rem',
+    fontWeight: 900,
+    color: '#78350f',
+    fontFamily: 'var(--font-heading)',
+    letterSpacing: '0.01em',
+  },
+  initCardTitleBlueHome: {
+    fontSize: '1.1rem',
+    fontWeight: 900,
+    color: '#1e3a8a',
+    fontFamily: 'var(--font-heading)',
+    letterSpacing: '0.01em',
+  },
+  initCardDescHome: {
+    fontSize: '0.88rem',
+    color: '#475569',
+    lineHeight: '1.45',
+    fontWeight: 500,
+    flexGrow: 1,
+  },
+  initBtnGoldHome: {
+    width: '100%',
+    background: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)',
+    color: '#ffffff',
+    padding: '0.65rem 1.1rem',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.82rem',
+    textDecoration: 'none',
+    boxShadow: '0 4px 12px rgba(217, 119, 6, 0.25)',
+    display: 'inline-block',
+    fontFamily: 'var(--font-heading)',
+    textAlign: 'center',
+  },
+  initBtnBlueHome: {
+    width: '100%',
+    background: 'linear-gradient(135deg, #1e3a8a 0%, #04102d 100%)',
+    color: '#ffffff',
+    padding: '0.65rem 1.1rem',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.82rem',
+    textDecoration: 'none',
+    boxShadow: '0 4px 12px rgba(4, 16, 45, 0.25)',
+    display: 'inline-block',
+    fontFamily: 'var(--font-heading)',
+    textAlign: 'center',
+  },
+  statsBarSection: {
+    background: '#ffffff',
+    borderBottom: '1px solid #e2e8f0',
+    padding: '0.85rem 0',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+  },
+  statsGridBar: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))',
+    gap: '1rem',
+    alignItems: 'center',
+  },
+  statCardBar: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    padding: '0.35rem',
+  },
+  statIconCircleBar: {
+    width: '42px',
+    height: '42px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  statTitleBar: {
+    fontSize: '0.92rem',
+    fontWeight: 800,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.1rem',
+  },
+  statSubBar: {
+    fontSize: '0.78rem',
+    color: '#64748b',
+  },
+  actionCardsSection: {
+    padding: '1.5rem 0 1rem 0',
+  },
+  threeActionGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '1.25rem',
+    alignItems: 'stretch',
+  },
+  actionCardSchools: {
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '1.75rem 1.5rem',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.04)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    transition: 'transform 0.3s ease, boxShadow 0.3s ease',
+  },
+  actionCardPartner: {
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '1.75rem 1.5rem',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.04)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    transition: 'transform 0.3s ease, boxShadow 0.3s ease',
+  },
+  actionCardResult: {
+    background: '#ffffff',
+    borderRadius: '20px',
+    padding: '1.75rem 1.5rem',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 8px 25px rgba(0,0,0,0.04)',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    transition: 'transform 0.3s ease, boxShadow 0.3s ease',
+  },
+  schoolsTitle: {
+    fontSize: '1.3rem',
+    fontWeight: 900,
+    color: '#15803d',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.3rem',
+    letterSpacing: '0.01em',
+  },
+  partnerTitle: {
+    fontSize: '1.3rem',
+    fontWeight: 900,
+    color: '#ea580c',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.3rem',
+    letterSpacing: '0.01em',
+  },
+  resultTitle: {
+    fontSize: '1.3rem',
+    fontWeight: 900,
+    color: '#2563eb',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.3rem',
+    letterSpacing: '0.01em',
+  },
+  actionSub: {
+    fontSize: '0.85rem',
+    color: '#64748b',
+    marginBottom: '1rem',
+    lineHeight: '1.45',
+    minHeight: '2.5rem',
+  },
+  cardMiddleBody: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    flex: '1 1 auto',
+    marginBottom: '1.25rem',
+  },
+  checkListAction: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.6rem',
+    flex: '1 1 auto',
+  },
+  checkItemAction: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.55rem',
+    fontSize: '0.86rem',
+    fontWeight: 600,
+    color: '#334155',
+    lineHeight: '1.3',
+  },
+  actionCardImgCol: {
+    flex: '0 0 105px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  cardBuildingImg: {
+    width: '105px',
+    height: '95px',
+    objectFit: 'cover',
+    borderRadius: '14px',
+    border: '1px solid #cbd5e1',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+  },
+  cardHandshakeImg: {
+    width: '105px',
+    height: '95px',
+    objectFit: 'cover',
+    borderRadius: '14px',
+    border: '1px solid #cbd5e1',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+  },
+  cardMedalImg: {
+    width: '105px',
+    height: '105px',
+    objectFit: 'contain',
+    borderRadius: '14px',
+    background: '#ffffff',
+    padding: '4px',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.12)',
+  },
+  actionCardMedalCol: {
+    flex: '0 0 105px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  goldMedalWrapper: {
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  medalRibbon: {
+    width: '28px',
+    height: '36px',
+    background: 'linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%)',
+    clipPath: 'polygon(0 0, 100% 0, 100% 85%, 50% 100%, 0 85%)',
+    marginBottom: '-10px',
+    zIndex: 1,
+  },
+  goldMedalCircle: {
+    width: '70px',
+    height: '70px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #fef08a 0%, #fbbf24 50%, #d97706 100%)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 6px 16px rgba(217, 119, 6, 0.35)',
+    border: '3px solid #fde047',
+    zIndex: 2,
+  },
+  medalInnerCircle: {
+    width: '50px',
+    height: '50px',
+    borderRadius: '50%',
+    border: '2px dashed #b45309',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  medalTLogo: {
+    fontSize: '1.5rem',
+    fontWeight: 900,
+    color: '#78350f',
+    fontFamily: 'var(--font-heading)',
+  },
+  cardFooterArea: {
+    marginTop: 'auto',
+    width: '100%',
+  },
+  btnGreenAction: {
+    width: '100%',
+    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+    color: '#ffffff',
+    padding: '0.75rem 1rem',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.85rem',
+    textDecoration: 'none',
+    display: 'block',
+    textAlign: 'center',
+    fontFamily: 'var(--font-heading)',
+    boxShadow: '0 4px 14px rgba(21, 128, 61, 0.25)',
+    boxSizing: 'border-box',
+  },
+  btnOrangeAction: {
+    width: '100%',
+    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    color: '#ffffff',
+    padding: '0.75rem 1rem',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.85rem',
+    textDecoration: 'none',
+    display: 'block',
+    textAlign: 'center',
+    fontFamily: 'var(--font-heading)',
+    boxShadow: '0 4px 14px rgba(234, 88, 12, 0.25)',
+    boxSizing: 'border-box',
+  },
+  btnBlueAction: {
+    width: '100%',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+    color: '#ffffff',
+    padding: '0.75rem 1rem',
+    borderRadius: '10px',
+    fontWeight: 800,
+    fontSize: '0.85rem',
+    textDecoration: 'none',
+    display: 'block',
+    textAlign: 'center',
+    fontFamily: 'var(--font-heading)',
+    boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)',
+    boxSizing: 'border-box',
+  },
+
+  /* EVENTS, NEWS & FOCUS STYLES */
+  eventsNewsFocusSection: {
+    padding: '1.5rem 0 2.5rem 0',
+  },
+  threeGridRow: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '1.5rem',
+  },
+  gridCardBox: {
+    background: '#ffffff',
+    borderRadius: '16px',
+    padding: '1.5rem',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 4px 16px rgba(0,0,0,0.03)',
+  },
+  cardHeaderRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: '1.25rem',
+  },
+  gridCardHeaderTitle: {
+    fontSize: '1.1rem',
+    fontWeight: 900,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+  },
+  viewAllLink: {
+    fontSize: '0.82rem',
+    fontWeight: 700,
+    color: '#2563eb',
+    textDecoration: 'none',
+  },
+  launchedSoonBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    padding: '1.75rem 1rem',
+    background: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
+    borderRadius: '14px',
+    border: '1px dashed #bfdbfe',
+    gap: '0.75rem',
+  },
+  launchedIconCircle: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '50%',
+    background: '#dbeafe',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.15)',
+  },
+  launchedTitle: {
+    fontSize: '1.15rem',
+    fontWeight: 900,
+    color: '#1e3a8a',
+    fontFamily: 'var(--font-heading)',
+    letterSpacing: '0.04em',
+  },
+  launchedDesc: {
+    fontSize: '0.85rem',
+    color: '#64748b',
+    lineHeight: '1.5',
+    maxWidth: '260px',
+  },
+  badgeComingSoonLarge: {
+    fontSize: '0.78rem',
+    fontWeight: 800,
+    color: '#ea580c',
+    background: '#fff7ed',
+    border: '1px solid #ffedd5',
+    padding: '0.35rem 0.85rem',
+    borderRadius: '9999px',
+  },
+  newsList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1rem',
+  },
+  newsRowItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.85rem',
+  },
+  newsThumbImg: {
+    width: '60px',
+    height: '50px',
+    objectFit: 'cover',
+    borderRadius: '8px',
+    flexShrink: 0,
+  },
+  newsItemTitle: {
+    fontSize: '0.86rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.15rem',
+    lineHeight: '1.3',
+  },
+  newsItemDate: {
+    fontSize: '0.75rem',
+    color: '#94a3b8',
+  },
+  focusMetricsGrid: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 1fr',
+    gap: '1.25rem',
+  },
+  focusMetricItem: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    gap: '0.4rem',
+    padding: '0.5rem',
+  },
+  metricBigVal: {
+    fontSize: '1.25rem',
+    fontWeight: 900,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+  },
+  metricSubLabel: {
+    fontSize: '0.78rem',
+    color: '#64748b',
+  },
+
+  /* TRUST FEATURES BAR STYLES */
+  trustFeaturesSection: {
+    background: '#ffffff',
+    borderTop: '1px solid #e2e8f0',
+    padding: '1.5rem 0',
+  },
+  trustFeaturesRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1.25rem',
+    flexWrap: 'wrap',
+  },
+  trustFeatureCol: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    flex: '1 1 180px',
+  },
+  trustIconCircle: {
+    width: '42px',
+    height: '42px',
+    borderRadius: '50%',
+    background: '#eff6ff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  trustTextGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  trustTitle: {
+    fontSize: '0.85rem',
+    fontWeight: 800,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+  },
+  trustSub: {
+    fontSize: '0.82rem',
+    fontWeight: 800,
+    color: '#2563eb',
+    fontFamily: 'var(--font-heading)',
   },
   olympiadGrid: {
     display: 'grid',

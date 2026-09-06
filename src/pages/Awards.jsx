@@ -1,412 +1,540 @@
-import React, { useState } from 'react';
-import { Trophy, Award, Gift, Star, ArrowRight, ShieldCheck, Search, FileSignature, Calendar, Building2, User, AlertCircle, Sparkles } from 'lucide-react';
+import React from 'react';
 import { Link } from 'react-router-dom';
+import exactHeroBoyImg from '../assets/exact_hero_boy.jpg';
+import prideTrophyHighres from '../assets/pride_trophy_highres.jpg';
+import aiRobot1080p from '../assets/ai_robot_1080p.jpg';
+import kalamSpeechPhoto from '../assets/kalam_speech_photo.jpg';
+import ctaStudentImg from '../assets/cta_student_hero.jpg';
+import certGraphic from '../assets/cert_graphic.jpg';
+import prideBookGraphic from '../assets/pride_book_graphic.jpg';
+import specialHonoursGraphic from '../assets/special_honours_graphic.jpg';
+import schoolCardImg from '../assets/school_card_img.jpg';
+import handshakeCardImg from '../assets/handshake_card_img.jpg';
+import news1Img from '../assets/news1.jpg';
+import news2Img from '../assets/news2.jpg';
+import news3Img from '../assets/news3.jpg';
+import {
+  Trophy,
+  Award,
+  Star,
+  ArrowRight,
+  Users,
+  Building2,
+  MapPin,
+  Lightbulb,
+  Target,
+  Medal,
+  GraduationCap,
+  FileText,
+  TrendingUp,
+  Sparkles,
+  Shield
+} from 'lucide-react';
 
-export default function Awards({ registrations = [] }) {
-  // Main sub-tab toggle: 'prizes' vs 'verification'
-  const [activeSubTab, setActiveSubTab] = useState('prizes');
-  
-  // Track selection state for prizes view
-  const [selectedTrack, setSelectedTrack] = useState("Coding & Algorithms");
-
-  // Verification state for lookup terminal
-  const [searchId, setSearchId] = useState("");
-  const [searchResult, setSearchResult] = useState(null);
-  const [searched, setSearched] = useState(false);
-
-  const handleVerify = (e) => {
-    e.preventDefault();
-    const query = searchId.trim().toUpperCase();
-    if (!query) return;
-
-    // Search in registrations state
-    const match = registrations.find(reg => reg.id.toUpperCase() === query);
-    setSearchResult(match || null);
-    setSearched(true);
-  };
-
-  const getStageTitle = (stageNum) => {
-    switch (stageNum) {
-      case 1: return "School Qualifier - Merit Level";
-      case 2: return "District Finalist - Distinction Level";
-      case 3: return "State Champion - Honors Level";
-      case 4: return "National Champion - Elite Level";
-      default: return "Registered Candidate";
-    }
-  };
-
-  const activeIds = registrations.map(reg => reg.id);
-
-  const tracks = [
-    "Abacus Championship",
-    "Mental Math Arena",
-    "Coding & Algorithms",
-    "Robotics & Hardware",
-    "English & Creative Writing",
-    "Digital & Classical Art",
-    "AI & Machine Learning",
-    "Public Speaking & Debate"
-  ];
-
-  const prizes = [
-    {
-      level: "School Qualifier",
-      rank: "Top 20% in School",
-      reward: "Merit Certificate + Silver Badge",
-      details: "Official digital qualification certificate validating logical skills, plus entry into the District stage.",
-      icon: Award,
-      badgeStyle: "badge-indigo",
-      color: "var(--accent)"
-    },
-    {
-      level: "District Championship",
-      rank: "Top 3 in District",
-      reward: "Silver Medal + Merit Certificate",
-      details: "Prestigious physical silver medal shipped to school, alongside a printed Certificate of Distinction.",
-      icon: Star,
-      badgeStyle: "badge-purple",
-      color: "var(--secondary)"
-    },
-    {
-      level: "State Finals",
-      rank: "Rank 1 in State",
-      reward: "₹5,000 Cash + Gold Medal + Shield",
-      details: "A cash scholarship of ₹5,000, physical Gold Medal, and State Champion Shield presented by delegates.",
-      icon: Gift,
-      badgeStyle: "badge-gold",
-      color: "var(--gold)"
-    },
-    {
-      level: "National Grand Arena",
-      rank: "National Rank 1",
-      reward: "₹50,000 + Champion Trophy + Travel",
-      details: "Grand prize of ₹50,000, physical gold champion cup, and fully funded travel to the national awards ceremony.",
-      icon: Trophy,
-      badgeStyle: "badge-gold",
-      color: "#b45309"
-    }
-  ];
-
-  const trackCustomDetails = {
-    "Abacus Championship": {
-      focus: "Mental visualization & bead arithmetic speed",
-      difficulty: "Expert",
-      perk: "Specialist speed calculator badge & kit"
-    },
-    "Mental Math Arena": {
-      focus: "Rapid non-device calculation & multiplication limits",
-      difficulty: "Advanced",
-      perk: "Mental Math master certificate endorsement"
-    },
-    "Coding & Algorithms": {
-      focus: "Computational problem solving, syntax, & JS/Python efficiency",
-      difficulty: "Advanced",
-      perk: "Premium programming IDE credits and tech internship referals"
-    },
-    "Robotics & Hardware": {
-      focus: "Autonomous sensor logic, breadboards & microprocessor circuits",
-      difficulty: "Intermediate to Advanced",
-      perk: "Technik Robotics Explorer Kit & microcontroller box"
-    },
-    "English & Creative Writing": {
-      focus: "Syntactic structure, vocabulary, and creative story plotting",
-      difficulty: "Advanced",
-      perk: "Publication of winning essays in the Annual Technik Journal"
-    },
-    "Digital & Classical Art": {
-      focus: "Digital graphics rendering, spatial layout, and structural illustration",
-      difficulty: "Beginner to Expert",
-      perk: "Drawing tablet discount coupons & public gallery display"
-    },
-    "AI & Machine Learning": {
-      focus: "Neural logic, dataset training models, and transformer ethics",
-      difficulty: "Advanced/Expert Only",
-      perk: "Free access to AI GPU compute cloud and model mentorship"
-    },
-    "Public Speaking & Debate": {
-      focus: "Impromptu argumentation, debate structure, and vocal modulation",
-      difficulty: "Advanced",
-      perk: "Elite Debate Council honorary membership badge"
-    }
-  };
-
-  const custom = trackCustomDetails[selectedTrack] || trackCustomDetails["Coding & Algorithms"];
-
+export default function Awards() {
   return (
     <div style={styles.page}>
-      <header className="container" style={styles.header}>
-        <span className="badge badge-gold" style={{ marginBottom: '1rem' }}>OFFICIAL HUB</span>
-        <h1 style={styles.title}>Olympiad <span className="text-gradient">Awards & Verification</span></h1>
-        <p style={styles.subtitle}>
-          Explore official trophies, prizes, and physical medals per competition, or verify authentic credentials using a Certificate ID.
-        </p>
 
-        {/* Sub-Tab Navigation Bar */}
-        <div style={styles.mainSubTabNav}>
-          <button 
-            onClick={() => setActiveSubTab('prizes')}
-            style={{
-              ...styles.mainSubTabBtn,
-              background: activeSubTab === 'prizes' ? 'var(--primary)' : 'transparent',
-              color: activeSubTab === 'prizes' ? '#ffffff' : 'var(--text-secondary)',
-              borderColor: activeSubTab === 'prizes' ? 'var(--primary)' : 'var(--border-subtle)',
-            }}
-          >
-            <Trophy size={16} />
-            Prize Tiers & Medals
-          </button>
+      {/* 1. HERO BANNER SECTION (Blue Background with Horizontal Stage Floor, Center Spotlight & Confetti) */}
+      <section style={styles.heroSection} className="stage-hero-bg">
 
-          <button 
-            onClick={() => setActiveSubTab('verification')}
-            style={{
-              ...styles.mainSubTabBtn,
-              background: activeSubTab === 'verification' ? 'var(--primary)' : 'transparent',
-              color: activeSubTab === 'verification' ? '#ffffff' : 'var(--text-secondary)',
-              borderColor: activeSubTab === 'verification' ? 'var(--primary)' : 'var(--border-subtle)',
-            }}
-          >
-            <ShieldCheck size={16} />
-            Verify Award Credentials
-          </button>
+        {/* Celebratory Confetti Shower */}
+        <div className="confetti-container">
+          <div className="confetti-piece" style={{ left: '4%', background: '#fbbf24', animationDelay: '0s' }} />
+          <div className="confetti-piece" style={{ left: '12%', background: '#38bdf8', animationDelay: '0.8s' }} />
+          <div className="confetti-piece" style={{ left: '22%', background: '#f43f5e', animationDelay: '1.6s' }} />
+          <div className="confetti-piece" style={{ left: '32%', background: '#4ade80', animationDelay: '0.4s' }} />
+          <div className="confetti-piece" style={{ left: '44%', background: '#c084fc', animationDelay: '2.2s' }} />
+          <div className="confetti-piece" style={{ left: '54%', background: '#fbbf24', animationDelay: '1.1s' }} />
+          <div className="confetti-piece" style={{ left: '65%', background: '#f59e0b', animationDelay: '2.8s' }} />
+          <div className="confetti-piece" style={{ left: '76%', background: '#38bdf8', animationDelay: '0.5s' }} />
+          <div className="confetti-piece" style={{ left: '86%', background: '#f43f5e', animationDelay: '1.9s' }} />
+          <div className="confetti-piece" style={{ left: '94%', background: '#4ade80', animationDelay: '3.2s' }} />
         </div>
-      </header>
 
-      {/* SUB-TAB 1: PRIZE TIERS & MEDALS GALLERY */}
-      {activeSubTab === 'prizes' && (
-        <>
-          {/* Competition Track Selector Bar */}
-          <section className="container" style={styles.selectorBar}>
-            <div style={styles.selectorTabs}>
-              {tracks.map((track) => (
-                <button
-                  key={track}
-                  onClick={() => setSelectedTrack(track)}
-                  style={{
-                    ...styles.selectorTab,
-                    borderColor: selectedTrack === track ? 'var(--secondary)' : 'var(--border-subtle)',
-                    background: selectedTrack === track ? 'rgba(249, 115, 22, 0.05)' : '#ffffff',
-                    color: selectedTrack === track ? 'var(--secondary)' : 'var(--text-primary)',
-                  }}
-                >
-                  {track}
-                </button>
-              ))}
-            </div>
-          </section>
-
-          {/* Gallery Main Container */}
-          <main className="container" style={styles.mainContainer} className="awards-main-container">
-            {/* Left Panel: Track specifics */}
-            <div className="glass-card" style={styles.detailsCard}>
-              <span className="badge badge-indigo" style={{ marginBottom: '1rem' }}>TRACK HIGHLIGHT</span>
-              <h2 style={styles.detailsTitle}>{selectedTrack}</h2>
-              
-              <div style={styles.specList}>
-                <div style={styles.specItem}>
-                  <span style={styles.specLabel}>Evaluated Skills:</span>
-                  <span style={styles.specValue}>{custom.focus}</span>
-                </div>
-                
-                <div style={styles.specItem}>
-                  <span style={styles.specLabel}>Complexity:</span>
-                  <span style={styles.specValue}>{custom.difficulty}</span>
-                </div>
-
-                <div style={styles.specItem}>
-                  <span style={styles.specLabel}>Exclusive Track Perks:</span>
-                  <span style={{ ...styles.specValue, color: 'var(--secondary)', fontWeight: 600 }}>{custom.perk}</span>
-                </div>
-              </div>
-
-              <div style={styles.adCard}>
-                <Sparkles size={16} color="var(--gold)" />
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                  Top scoring students are invited to the National Gala in New Delhi to receive awards directly from international scientists.
-                </p>
-              </div>
-
-              <Link to="/register" className="btn btn-orange" style={{ marginTop: '1.5rem', width: '100%' }}>
-                Register for this Track
-                <ArrowRight size={16} />
-              </Link>
+        <div className="container" style={styles.heroContainer}>
+          
+          {/* Left Hero Text Block */}
+          <div style={styles.heroLeft}>
+            <div style={styles.heroEyebrowRow}>
+              <span style={styles.heroEyebrowGold}>EVERY STUDENT</span>
             </div>
 
-            {/* Right Panel: Awards Tier Grid */}
-            <div style={styles.tierSection}>
-              <div style={styles.tierGrid} className="awards-tier-grid">
-                {prizes.map((prize, idx) => {
-                  const PrizeIcon = prize.icon;
-                  return (
-                    <div key={idx} className="glass-card" style={styles.prizeCard}>
-                      <div style={styles.prizeCardTop}>
-                        <div style={{
-                          ...styles.iconWrapper,
-                          borderColor: prize.color,
-                          background: `rgba(${prize.color === 'var(--accent)' ? '37,99,235' : prize.color === 'var(--secondary)' ? '249,115,22' : '217,119,6'}, 0.06)`
-                        }}>
-                          <PrizeIcon size={20} style={{ color: prize.color }} />
-                        </div>
-                        
-                        <span className={`badge ${prize.badgeStyle}`}>
-                          {prize.level}
-                        </span>
-                      </div>
+            <h1 style={styles.heroMainHeading}>
+              <span style={{ color: '#ffffff', display: 'block' }}>DESERVES A</span>
+              <span style={{ color: '#fbbf24', display: 'block' }}>MOMENT OF PRIDE.</span>
+            </h1>
 
-                      <h3 style={styles.prizeTitle}>{prize.reward}</h3>
-                      <p style={styles.prizeRank}>Requirement: <strong>{prize.rank}</strong></p>
-                      <p style={styles.prizeDesc}>{prize.details}</p>
-                    </div>
-                  );
-                })}
-              </div>
+            <div style={styles.heroValuesTagline}>
+              <span style={{ color: '#38bdf8', fontWeight: 800 }}>Innovate. </span>
+              <span style={{ color: '#fbbf24', fontWeight: 800 }}>Compete. </span>
+              <span style={{ color: '#4ade80', fontWeight: 800 }}>Achieve. </span>
+              <span style={{ color: '#ffffff', fontWeight: 800 }}>Be Recognised.</span>
             </div>
-          </main>
-        </>
-      )}
 
-      {/* SUB-TAB 2: CERTIFICATE VERIFICATION TERMINAL */}
-      {activeSubTab === 'verification' && (
-        <main className="container" style={styles.verifContainer}>
-          <div className="glass-card" style={styles.searchCard}>
-            <h2 style={styles.searchCardTitle}>Certificate Validation Terminal</h2>
-            <p style={styles.searchCardDesc}>
-              Enter the 10-character Certificate ID (e.g., <strong>REG-528491</strong>) located on the bottom right of the student credentials sheet.
+            <p style={styles.heroDesc}>
+              Technik Olympiad is an educational initiative committed to identifying, encouraging and celebrating the unique talents and achievements of school students.
             </p>
+          </div>
 
-            <form onSubmit={handleVerify} style={styles.searchForm}>
-              <div style={styles.inputWrapper}>
-                <Search size={18} style={styles.searchIcon} />
-                <input 
-                  type="text" 
-                  className="form-control" 
-                  style={styles.searchInput}
-                  value={searchId}
-                  onChange={(e) => setSearchId(e.target.value)}
-                  placeholder="e.g. REG-528491"
-                />
+          {/* Center Horizontal Fixed 3-Star Stage Display & Accents */}
+          <div style={styles.heroCenter3dStage}>
+            {/* Left Tech Accent */}
+            <div style={styles.heroLeftDesignAccent}>
+              <div style={styles.techNodeBlue} />
+              <div style={styles.techLineCyan} />
+              <Sparkles size={18} color="#38bdf8" className="sparkle-particle" />
+            </div>
+
+            {/* 3 Horizontal Fixed Gold Stars Setup */}
+            <div style={styles.threeStarsGroup}>
+              {/* Left Star */}
+              <div style={styles.starLeftWrapper} className="star-side-horizontal">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="url(#starGoldGrad)">
+                  <defs>
+                    <linearGradient id="starGoldGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#fef08a" />
+                      <stop offset="50%" stopColor="#fbbf24" />
+                      <stop offset="100%" stopColor="#d97706" />
+                    </linearGradient>
+                  </defs>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
               </div>
-              
-              <button type="submit" className="btn btn-primary" style={styles.searchBtn}>
-                <ShieldCheck size={18} />
-                Verify Credentials
-              </button>
-            </form>
 
-            <div style={styles.helperSection}>
-              <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)' }}>TEST SUGGESTIONS:</span>
-              {activeIds.length > 0 ? (
-                <div style={styles.testIds}>
-                  {activeIds.map(id => (
-                    <button 
-                      key={id} 
-                      onClick={() => { setSearchId(id); setSearchResult(null); setSearched(false); }}
-                      style={styles.idChip}
-                    >
-                      {id}
-                    </button>
-                  ))}
-                </div>
-              ) : (
-                <p style={styles.noIdsText}>
-                  No registration records found locally. Please go to the <strong>Dashboard</strong> and click <strong>Load Demo Data</strong> or fill out the <strong>Register</strong> form to create verifyable certificate records!
-                </p>
-              )}
+              {/* Center Main Star */}
+              <div style={styles.starMainWrapper} className="star-main-horizontal">
+                <svg width="96" height="96" viewBox="0 0 24 24" fill="url(#starGoldMainGrad)">
+                  <defs>
+                    <linearGradient id="starGoldMainGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stopColor="#ffffff" />
+                      <stop offset="30%" stopColor="#fde047" />
+                      <stop offset="65%" stopColor="#f59e0b" />
+                      <stop offset="100%" stopColor="#b45309" />
+                    </linearGradient>
+                  </defs>
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+
+              {/* Right Star */}
+              <div style={styles.starRightWrapper} className="star-side-horizontal">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="url(#starGoldGrad)">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Right Tech Accent */}
+            <div style={styles.heroRightDesignAccent}>
+              <Sparkles size={20} color="#fbbf24" className="sparkle-particle" />
+              <div style={styles.techLineGold} />
+              <div style={styles.techNodeGold} />
             </div>
           </div>
 
-          {/* Result Sheet */}
-          {searched && (
-            <div style={styles.resultContainer} className="verification-result-container">
-              {searchResult ? (
-                <div className="glass-card" style={styles.successSheet}>
-                  <div style={styles.successHeader}>
-                    <div style={styles.badgeWrapper}>
-                      <ShieldCheck size={28} color="var(--success)" />
-                      <div style={{ textAlign: 'left' }}>
-                        <h3 style={styles.verifBadgeTitle}>VERIFIED GENUINE</h3>
-                        <p style={styles.verifBadgeSub}>Official Technik Olympiad Registry Record</p>
-                      </div>
-                    </div>
-                    <span style={styles.verifCode}>{searchResult.id}</span>
-                  </div>
-
-                  <div style={styles.sheetDivider} />
-
-                  <div style={styles.sheetBody}>
-                    <div style={styles.sheetHeaderGroup}>
-                      <h4 style={styles.sheetTitle}>Certificate of Accomplishment</h4>
-                      <p style={styles.sheetSubtitle}>This document confirms that the credentials issued under Registry ID <strong>{searchResult.id}</strong> are authentic and officially recorded in the Technik Olympiad database.</p>
-                    </div>
-
-                    <div style={styles.sheetGrid} className="verification-sheet-grid">
-                      <div style={styles.sheetItem}>
-                        <span style={styles.sheetLabel}>
-                          <User size={14} style={{ marginRight: '0.35rem' }} />
-                          Recipient Student
-                        </span>
-                        <span style={styles.sheetValue}>{searchResult.studentName}</span>
-                      </div>
-
-                      <div style={styles.sheetItem}>
-                        <span style={styles.sheetLabel}>
-                          <Building2 size={14} style={{ marginRight: '0.35rem' }} />
-                          School affiliation
-                        </span>
-                        <span style={styles.sheetValue}>{searchResult.school}, {searchResult.city}</span>
-                      </div>
-
-                      <div style={styles.sheetItem}>
-                        <span style={styles.sheetLabel}>
-                          <Trophy size={14} style={{ marginRight: '0.35rem' }} />
-                          Olympiad Track
-                        </span>
-                        <span style={styles.sheetValue}>{searchResult.track} ({searchResult.grade})</span>
-                      </div>
-
-                      <div style={styles.sheetItem}>
-                        <span style={styles.sheetLabel}>
-                          <FileSignature size={14} style={{ marginRight: '0.35rem' }} />
-                          Distinction Unlocked
-                        </span>
-                        <span style={{ ...styles.sheetValue, color: 'var(--success)', fontWeight: 700 }}>
-                          {getStageTitle(searchResult.stage)}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div style={styles.sheetDivider} />
-
-                  <div style={styles.sheetFooter}>
-                    <div style={styles.signatureBlock}>
-                      <div style={styles.signatureLine}>Technik Registry</div>
-                      <span style={styles.signatureSub}>Database Registrar</span>
-                    </div>
-                    
-                    <div style={styles.dateBlock}>
-                      <Calendar size={14} />
-                      <span>Verified on: {searchResult.date}</span>
-                    </div>
-                  </div>
+          {/* Right Hero Stack of 4 Badges & Handwritten Script */}
+          <div style={styles.heroRight}>
+            <div style={styles.badgesColumn}>
+              <div style={styles.badgeRow}>
+                <div style={styles.badgeCircleIcon}>
+                  <Shield size={18} color="#ffffff" />
                 </div>
-              ) : (
-                <div className="glass-card" style={styles.errorSheet}>
-                  <div style={styles.errorIconWrapper}>
-                    <AlertCircle size={32} color="#dc2626" />
-                  </div>
-                  <h3 style={styles.errorTitle}>Verification Failed</h3>
-                  <p style={styles.errorDesc}>
-                    The Certificate ID <strong>"{searchId}"</strong> could not be validated. The code is either expired, input incorrectly, or not yet registered.
-                  </p>
-                  <div style={styles.errorTip}>
-                    <strong>Tips:</strong> Ensure the formatting matches `REG-XXXXXX` exactly. If you haven't done so, click one of the suggested chips above to test.
-                  </div>
+                <div style={styles.badgeTextGroup}>
+                  <span style={styles.badgeTitle}>Discover</span>
+                  <span style={styles.badgeSub}>Potential</span>
                 </div>
-              )}
+              </div>
+
+              <div style={styles.badgeRow}>
+                <div style={styles.badgeCircleIcon}>
+                  <Users size={18} color="#ffffff" />
+                </div>
+                <div style={styles.badgeTextGroup}>
+                  <span style={styles.badgeTitle}>Compete</span>
+                  <span style={styles.badgeSub}>With Confidence</span>
+                </div>
+              </div>
+
+              <div style={styles.badgeRow}>
+                <div style={styles.badgeCircleIcon}>
+                  <Target size={18} color="#ffffff" />
+                </div>
+                <div style={styles.badgeTextGroup}>
+                  <span style={styles.badgeTitle}>Achieve</span>
+                  <span style={styles.badgeSub}>Excellence</span>
+                </div>
+              </div>
+
+              <div style={styles.badgeRow}>
+                <div style={styles.badgeCircleIcon}>
+                  <Trophy size={18} color="#ffffff" />
+                </div>
+                <div style={styles.badgeTextGroup}>
+                  <span style={styles.badgeTitle}>Be Recognised</span>
+                  <span style={styles.badgeSub}>Always</span>
+                </div>
+              </div>
             </div>
-          )}
-        </main>
-      )}
+
+            {/* Handwritten Script Tag */}
+            <div style={styles.heroHandwrittenScript}>
+              <span style={styles.scriptGoldMain}>A Brighter</span>
+              <br />
+              <span style={styles.scriptGoldSub}>Tomorrow</span>
+              <br />
+              <span style={styles.scriptGoldTag}>Begins Here!</span>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* 2. HIGHLIGHT STATS BAR (4 Columns) */}
+      <section style={styles.statsBarSection}>
+        <div className="container">
+          <div style={styles.statsBarBox}>
+            {/* Stat 1 */}
+            <div style={styles.statCol}>
+              <div style={styles.statIconBadge}>
+                <Users size={26} color="#2563eb" />
+              </div>
+              <div>
+                <h4 style={styles.statMainTitle}>Play School to Class 12</h4>
+                <p style={styles.statSubText}>All Boards Welcome</p>
+                <p style={styles.statSmallText}>(Matric, CBSE, ICSE, IB and others)</p>
+              </div>
+            </div>
+
+            <div style={styles.statDivider} />
+
+            {/* Stat 2 */}
+            <div style={styles.statCol}>
+              <div style={styles.statIconBadge}>
+                <Building2 size={26} color="#2563eb" />
+              </div>
+              <div>
+                <h4 style={styles.statMainTitle}>Nominated by Schools</h4>
+                <p style={styles.statSubText}>Max 2 Students / School / Year</p>
+              </div>
+            </div>
+
+            <div style={styles.statDivider} />
+
+            {/* Stat 3 */}
+            <div style={styles.statCol}>
+              <div style={styles.statIconBadge}>
+                <Users size={26} color="#2563eb" />
+              </div>
+              <div>
+                <h4 style={styles.statMainTitle}>Recognise Every Talent</h4>
+                <p style={styles.statSubText}>Academics, Creativity, Leadership and More</p>
+              </div>
+            </div>
+
+            <div style={styles.statDivider} />
+
+            {/* Stat 4 */}
+            <div style={styles.statCol}>
+              <div style={styles.statIconBadge}>
+                <MapPin size={26} color="#2563eb" />
+              </div>
+              <div>
+                <h4 style={styles.statMainTitle}>Across 5 States + 1 UT</h4>
+                <p style={styles.statSubText}>Building a Brighter Generation</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 3. ABOUT, KALAM CARD & OBJECTIVES GRID */}
+      <section style={styles.mainGridSection}>
+        <div className="container">
+          <div style={styles.threeColGrid}>
+            
+            {/* Col 1: ABOUT TECHNIK PRIDE AWARD */}
+            <div style={styles.aboutCol}>
+              <div style={styles.eyebrowRow}>
+                <div style={styles.eyebrowLine} />
+                <span style={styles.eyebrowText}>ABOUT TECHNIK PRIDE AWARD</span>
+              </div>
+
+              <h2 style={styles.aboutHeading}>
+                Recognition<br />Creates Lifelong Impact.
+              </h2>
+
+              <p style={styles.aboutPara}>
+                Technik Pride Award is a prestigious initiative to celebrate the achievements, talents and potential of school students from Play School to Class 12 across all boards (Matric, CBSE, ICSE, IB and others). Schools nominate students who present their achievements through a brief presentation to a panel of eminent jury members. The best students are recognised at a grand award function with certificates, special honours and state-level recognition.
+              </p>
+            </div>
+
+            {/* Col 2: DR. A.P.J. ABDUL KALAM QUOTE CARD */}
+            <div style={styles.kalamCardWrapper}>
+              <div style={styles.kalamCardContainer}>
+                {/* Upper Quote & Portrait Area */}
+                <div style={styles.kalamTopContent}>
+                  <div style={styles.kalamQuoteSide}>
+                    <p style={styles.kalamQuoteText}>
+                      “Dream, Dream, Dream. Dreams transform into thoughts and thoughts result in action.”
+                    </p>
+                    <span style={styles.kalamAuthorText}>— Dr. A.P.J. Abdul Kalam</span>
+                  </div>
+                  <div style={styles.kalamImgSide}>
+                    <img
+                      src={kalamSpeechPhoto}
+                      alt="Dr. A.P.J. Abdul Kalam"
+                      style={styles.kalamPortraitImg}
+                    />
+                  </div>
+                </div>
+
+                {/* Bottom Bronze/Gold Banner */}
+                <div style={styles.kalamBottomBanner}>
+                  <div style={styles.kalamInspiredText}>Inspired by the vision of</div>
+                  <div style={styles.kalamNameTitle}>Dr. A.P.J. Abdul Kalam</div>
+                  <div style={styles.kalamSubTitle}>Celebrating Young Achievers</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Col 3: OUR OBJECTIVES */}
+            <div style={styles.objectivesCol}>
+              <div style={styles.eyebrowRow}>
+                <div style={styles.eyebrowLine} />
+                <span style={styles.eyebrowText}>OUR OBJECTIVES</span>
+              </div>
+
+              <div style={styles.objectivesList}>
+                <div style={styles.objectiveItem}>
+                  <div style={styles.objIconCircle}>
+                    <Trophy size={18} color="#2563eb" />
+                  </div>
+                  <span style={styles.objText}>Recognise and celebrate student achievements</span>
+                </div>
+
+                <div style={styles.objectiveItem}>
+                  <div style={styles.objIconCircle}>
+                    <Lightbulb size={18} color="#2563eb" />
+                  </div>
+                  <span style={styles.objText}>Encourage innovation, creativity and leadership</span>
+                </div>
+
+                <div style={styles.objectiveItem}>
+                  <div style={styles.objIconCircle}>
+                    <Target size={18} color="#2563eb" />
+                  </div>
+                  <span style={styles.objText}>Build confidence and inspire greater goals</span>
+                </div>
+
+                <div style={styles.objectiveItem}>
+                  <div style={styles.objIconCircle}>
+                    <Users size={18} color="#2563eb" />
+                  </div>
+                  <span style={styles.objText}>Provide a platform for holistic development</span>
+                </div>
+
+                <div style={styles.objectiveItem}>
+                  <div style={styles.objIconCircle}>
+                    <Star size={18} color="#2563eb" />
+                  </div>
+                  <span style={styles.objText}>Create role models for future generations</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
+      {/* 4. THE SELECTION PROCESS */}
+      <section style={styles.processSection}>
+        <div className="container">
+          <div style={styles.eyebrowRow}>
+            <div style={styles.eyebrowLine} />
+            <span style={styles.eyebrowText}>THE SELECTION PROCESS</span>
+          </div>
+
+          <div style={styles.processFlexRow}>
+            {/* Step 1: School Nominations */}
+            <div style={styles.processStepCard}>
+              <div style={{ ...styles.stepCircleIcon, background: '#ffe4e6', border: '2.5px solid #f43f5e' }}>
+                <Building2 size={30} color="#e11d48" />
+              </div>
+              <div style={styles.stepTitleBox}>
+                <span style={styles.stepMainTitle}>School</span>
+                <span style={styles.stepSubTitle}>Nominations</span>
+              </div>
+            </div>
+
+            <div style={styles.processArrow}>
+              <ArrowRight size={22} color="#38bdf8" />
+            </div>
+
+            {/* Step 2: Presentation */}
+            <div style={styles.processStepCard}>
+              <div style={{ ...styles.stepCircleIcon, background: '#dbeafe', border: '2.5px solid #3b82f6' }}>
+                <FileText size={30} color="#2563eb" />
+              </div>
+              <div style={styles.stepTitleBox}>
+                <span style={styles.stepMainTitle}>Presentation</span>
+              </div>
+            </div>
+
+            <div style={styles.processArrow}>
+              <ArrowRight size={22} color="#38bdf8" />
+            </div>
+
+            {/* Step 3: Evaluation */}
+            <div style={styles.processStepCard}>
+              <div style={{ ...styles.stepCircleIcon, background: '#dcfce7', border: '2.5px solid #22c55e' }}>
+                <Users size={30} color="#16a34a" />
+              </div>
+              <div style={styles.stepTitleBox}>
+                <span style={styles.stepMainTitle}>Evaluation</span>
+              </div>
+            </div>
+
+            <div style={styles.processArrow}>
+              <ArrowRight size={22} color="#38bdf8" />
+            </div>
+
+            {/* Step 4: Winners */}
+            <div style={styles.processStepCard}>
+              <div style={{ ...styles.stepCircleIcon, background: '#f3e8ff', border: '2.5px solid #a855f7' }}>
+                <Medal size={30} color="#9333ea" />
+              </div>
+              <div style={styles.stepTitleBox}>
+                <span style={styles.stepMainTitle}>Winners</span>
+              </div>
+            </div>
+
+            <div style={styles.processArrow}>
+              <ArrowRight size={22} color="#38bdf8" />
+            </div>
+
+            {/* Step 5: Award Function */}
+            <div style={styles.processStepCard}>
+              <div style={{ ...styles.stepCircleIcon, background: '#fef3c7', border: '2.5px solid #f59e0b' }}>
+                <Users size={30} color="#d97706" />
+              </div>
+              <div style={styles.stepTitleBox}>
+                <span style={styles.stepMainTitle}>Award Function</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. AWARDS & RECOGNITION AND KEY BENEFITS */}
+      <section style={styles.bottomGridSection}>
+        <div className="container">
+          <div style={styles.twoColBottomGrid}>
+
+            {/* Left Box: AWARDS & RECOGNITION */}
+            <div style={styles.awardsCol}>
+              <div style={styles.eyebrowRow}>
+                <div style={styles.eyebrowLine} />
+                <span style={styles.eyebrowText}>AWARDS & RECOGNITION</span>
+              </div>
+
+              <div style={styles.awardsCardContainer}>
+                <div style={styles.awardsThreeGrid}>
+                  {/* Item 1: Certificate */}
+                  <div style={styles.awardItemBox}>
+                    <div style={styles.awardGraphicWrap}>
+                      <Award size={34} color="#d97706" />
+                    </div>
+                    <h4 style={styles.awardItemTitle}>Certificate</h4>
+                    <p style={styles.awardItemSub}>Recognised Certificate for All Participants</p>
+                  </div>
+
+                  <div style={styles.awardItemDivider} />
+
+                  {/* Item 2: Pride Book */}
+                  <div style={styles.awardItemBox}>
+                    <div style={styles.awardGraphicWrap}>
+                      <Star size={34} color="#d97706" />
+                    </div>
+                    <h4 style={styles.awardItemTitle}>Pride Book</h4>
+                    <p style={styles.awardItemSub}>Half-page feature with photo & write-up</p>
+                  </div>
+
+                  <div style={styles.awardItemDivider} />
+
+                  {/* Item 3: Special Honours */}
+                  <div style={styles.awardItemBox}>
+                    <div style={{ ...styles.awardGraphicWrap, background: '#eff6ff', border: '1px solid #dbeafe' }}>
+                      <Medal size={34} color="#2563eb" />
+                    </div>
+                    <h4 style={styles.awardItemTitle}>Special Honours</h4>
+                    <p style={styles.awardItemSub}>From Eminent Chief Guests</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Box: KEY BENEFITS */}
+            <div style={styles.benefitsCol}>
+              <div style={styles.eyebrowRow}>
+                <div style={styles.eyebrowLine} />
+                <span style={styles.eyebrowText}>KEY BENEFITS</span>
+              </div>
+
+              <div style={styles.benefitsCardContainer}>
+                <div style={styles.benefitsFlexRow}>
+                  {/* Left list */}
+                  <div style={styles.benefitsListGroup}>
+                    <div style={styles.benefitRow}>
+                      <div style={styles.benefitIconCircle}>
+                        <GraduationCap size={16} color="#2563eb" />
+                      </div>
+                      <span style={styles.benefitText}>Boosts confidence and self-esteem</span>
+                    </div>
+
+                    <div style={styles.benefitRow}>
+                      <div style={styles.benefitIconCircle}>
+                        <Medal size={16} color="#2563eb" />
+                      </div>
+                      <span style={styles.benefitText}>Encourages overall personality development</span>
+                    </div>
+
+                    <div style={styles.benefitRow}>
+                      <div style={styles.benefitIconCircle}>
+                        <TrendingUp size={16} color="#2563eb" />
+                      </div>
+                      <span style={styles.benefitText}>Recognition at state-level platform</span>
+                    </div>
+
+                    <div style={styles.benefitRow}>
+                      <div style={styles.benefitIconCircle}>
+                        <Users size={16} color="#2563eb" />
+                      </div>
+                      <span style={styles.benefitText}>Inspires students to achieve greater goals</span>
+                    </div>
+
+                    <div style={styles.benefitRow}>
+                      <div style={styles.benefitIconCircle}>
+                        <Star size={16} color="#2563eb" />
+                      </div>
+                      <span style={styles.benefitText}>Builds a culture of excellence in schools</span>
+                    </div>
+                  </div>
+
+                  {/* Right script text without border box */}
+                  <div style={styles.scriptBadgeGroup}>
+                    <span style={styles.scriptTextMain}>Every</span>
+                    <span style={styles.scriptTextMiddle}>Achievement</span>
+                    <span style={styles.scriptTextBottom}>Matters</span>
+                    <div style={styles.scriptUnderline} />
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </section>
 
     </div>
   );
@@ -414,407 +542,638 @@ export default function Awards({ registrations = [] }) {
 
 const styles = {
   page: {
-    padding: '3rem 0',
-  },
-  header: {
-    textAlign: 'center',
-    marginBottom: '2.5rem',
-  },
-  title: {
-    fontSize: '2.75rem',
-    marginBottom: '0.75rem',
-  },
-  subtitle: {
-    color: 'var(--text-secondary)',
-    maxWidth: '650px',
-    margin: '0 auto 2rem auto',
-    fontSize: '1.05rem',
-  },
-  mainSubTabNav: {
-    display: 'inline-flex',
-    gap: '0.5rem',
-    background: '#ffffff',
-    border: '1px solid var(--border-subtle)',
-    padding: '0.35rem',
-    borderRadius: '50px',
-    boxShadow: '0 4px 10px rgba(0,0,0,0.02)',
-  },
-  mainSubTabBtn: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    padding: '0.6rem 1.5rem',
-    borderRadius: '50px',
-    border: '1px solid transparent',
-    fontSize: '0.9rem',
-    fontWeight: 600,
-    fontFamily: 'var(--font-heading)',
-    cursor: 'pointer',
-    transition: 'all var(--transition-fast)',
-  },
-  selectorBar: {
-    marginBottom: '2.5rem',
-  },
-  selectorTabs: {
-    display: 'flex',
-    gap: '0.5rem',
-    overflowX: 'auto',
-    paddingBottom: '0.5rem',
-  },
-  selectorTab: {
-    padding: '0.6rem 1.25rem',
-    borderRadius: '50px',
-    border: '1px solid',
-    fontWeight: 600,
-    fontFamily: 'var(--font-heading)',
-    fontSize: '0.85rem',
-    cursor: 'pointer',
-    whiteSpace: 'nowrap',
-    transition: 'all var(--transition-fast)',
-  },
-  mainContainer: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '2rem',
-    alignItems: 'start',
-  },
-  detailsCard: {
-    border: '1px solid var(--border-subtle)',
-    background: '#ffffff',
-    padding: '2.5rem',
-  },
-  detailsTitle: {
-    fontSize: '1.75rem',
-    fontWeight: 800,
-    marginBottom: '1.5rem',
-  },
-  specList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.25rem',
-    marginBottom: '2rem',
-    borderBottom: '1px solid var(--border-subtle)',
-    paddingBottom: '1.5rem',
-  },
-  specItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.25rem',
-  },
-  specLabel: {
-    fontSize: '0.75rem',
-    textTransform: 'uppercase',
-    color: 'var(--text-muted)',
-    fontWeight: 700,
-    letterSpacing: '0.05em',
-  },
-  specValue: {
-    fontSize: '0.95rem',
-    color: 'var(--text-primary)',
-    lineHeight: '1.4',
-  },
-  adCard: {
-    display: 'flex',
-    alignItems: 'flex-start',
-    gap: '0.75rem',
-    background: 'rgba(217, 119, 6, 0.05)',
-    border: '1px solid rgba(217, 119, 6, 0.15)',
-    borderRadius: '10px',
-    padding: '1rem',
-  },
-  tierSection: {
-    flexGrow: 1,
-  },
-  tierGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '1.5rem',
-  },
-  prizeCard: {
-    background: '#ffffff',
-    padding: '1.75rem',
-    border: '1px solid var(--border-subtle)',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-    minHeight: '220px',
-  },
-  prizeCardTop: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.25rem',
-  },
-  iconWrapper: {
-    width: '40px',
-    height: '40px',
-    borderRadius: '8px',
-    border: '1px solid',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  prizeTitle: {
-    fontSize: '1.3rem',
-    fontWeight: 800,
-    color: 'var(--text-primary)',
-    marginBottom: '0.25rem',
-  },
-  prizeRank: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    marginBottom: '0.75rem',
-  },
-  prizeDesc: {
-    fontSize: '0.85rem',
-    color: 'var(--text-muted)',
-    lineHeight: '1.4',
+    backgroundColor: '#f8fafc',
+    color: '#0f172a',
+    paddingBottom: '1.25rem',
   },
 
-  /* Verification Sub-Tab Styles */
-  verifContainer: {
-    maxWidth: '700px',
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '2rem',
-    margin: '0 auto',
-  },
-  searchCard: {
-    padding: '2.5rem',
-    border: '1px solid var(--border-subtle)',
-    background: '#ffffff',
-    textAlign: 'left',
-  },
-  searchCardTitle: {
-    fontSize: '1.4rem',
-    marginBottom: '0.5rem',
-    fontFamily: 'var(--font-heading)',
-    fontWeight: 700,
-  },
-  searchCardDesc: {
-    fontSize: '0.9rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-    marginBottom: '1.75rem',
-  },
-  searchForm: {
-    display: 'flex',
-    gap: '1rem',
-    flexWrap: 'wrap',
-  },
-  inputWrapper: {
+  /* HERO STYLES */
+  heroSection: {
+    background: 'linear-gradient(135deg, #020b24 0%, #061742 100%)',
+    color: '#ffffff',
+    padding: '1.75rem 0 1rem 0',
     position: 'relative',
-    flexGrow: 1,
+    overflow: 'hidden',
+  },
+  heroContainer: {
     display: 'flex',
     alignItems: 'center',
-    minWidth: '240px',
-  },
-  searchIcon: {
-    position: 'absolute',
-    left: '1rem',
-    color: 'var(--text-muted)',
-  },
-  searchInput: {
-    paddingLeft: '2.5rem',
-    width: '100%',
-  },
-  searchBtn: {
-    padding: '0 1.5rem',
-  },
-  helperSection: {
-    marginTop: '1.5rem',
-    paddingTop: '1.25rem',
-    borderTop: '1px solid var(--border-subtle)',
-  },
-  testIds: {
-    display: 'flex',
-    gap: '0.5rem',
-    flexWrap: 'wrap',
-    marginTop: '0.5rem',
-  },
-  idChip: {
-    padding: '0.3rem 0.75rem',
-    borderRadius: '4px',
-    background: '#f1f5f9',
-    border: '1px solid var(--border-subtle)',
-    fontSize: '0.8rem',
-    fontWeight: 600,
-    color: '#475569',
-    cursor: 'pointer',
-    fontFamily: 'var(--font-heading)',
-  },
-  noIdsText: {
-    fontSize: '0.8rem',
-    color: 'var(--text-muted)',
-    marginTop: '0.4rem',
-    lineHeight: '1.4',
-  },
-  resultContainer: {
-    animation: 'fadeIn 0.3s ease-out',
-  },
-  successSheet: {
-    border: '1px solid var(--success)',
-    background: '#ffffff',
-    padding: '2.5rem',
-    boxShadow: '0 10px 30px -10px rgba(5, 150, 105, 0.08)',
-  },
-  successHeader: {
-    display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: '1rem',
-  },
-  badgeWrapper: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.75rem',
-  },
-  verifBadgeTitle: {
-    fontSize: '1.1rem',
-    fontWeight: 800,
-    color: 'var(--success)',
-    lineHeight: '1.2',
-  },
-  verifBadgeSub: {
-    fontSize: '0.75rem',
-    color: 'var(--text-muted)',
-  },
-  verifCode: {
-    fontSize: '0.85rem',
-    fontWeight: 700,
-    fontFamily: 'var(--font-heading)',
-    padding: '0.35rem 0.75rem',
-    borderRadius: '6px',
-    background: 'rgba(5, 150, 105, 0.06)',
-    color: 'var(--success)',
-    border: '1px solid rgba(5, 150, 105, 0.2)',
-  },
-  sheetDivider: {
-    height: '1px',
-    background: 'var(--border-subtle)',
-    margin: '1.5rem 0',
-  },
-  sheetBody: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '1.75rem',
-    textAlign: 'left',
-  },
-  sheetHeaderGroup: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.5rem',
-  },
-  sheetTitle: {
-    fontSize: '1.35rem',
-    fontWeight: 800,
-    fontFamily: 'var(--font-heading)',
-  },
-  sheetSubtitle: {
-    fontSize: '0.85rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-  },
-  sheetGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(1, 1fr)',
-    gap: '1.25rem',
-  },
-  sheetItem: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.25rem',
-    textAlign: 'left',
-  },
-  sheetLabel: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    color: 'var(--text-muted)',
-    textTransform: 'uppercase',
-    letterSpacing: '0.05em',
-  },
-  sheetValue: {
-    fontSize: '1rem',
-    color: 'var(--text-primary)',
-    fontWeight: 600,
-  },
-  sheetFooter: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
     gap: '1.5rem',
+    flexWrap: 'wrap',
   },
-  signatureBlock: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.25rem',
+  heroLeft: {
+    flex: '1 1 520px',
+    maxWidth: '650px',
   },
-  signatureLine: {
+  heroEyebrowRow: {
+    marginBottom: '0.3rem',
+  },
+  heroEyebrowGold: {
+    fontSize: '0.95rem',
+    fontWeight: 900,
+    color: '#fbbf24',
+    letterSpacing: '0.08em',
+  },
+  heroMainHeading: {
+    fontSize: '2.8rem',
+    fontWeight: 900,
+    lineHeight: '1.1',
     fontFamily: 'var(--font-heading)',
-    fontSize: '1rem',
-    fontWeight: 700,
-    borderBottom: '1px solid var(--text-primary)',
-    paddingBottom: '0.25rem',
-    fontStyle: 'italic',
+    marginBottom: '0.75rem',
   },
-  signatureSub: {
-    fontSize: '0.7rem',
-    color: 'var(--text-muted)',
-    textTransform: 'uppercase',
-    fontWeight: 600,
+  heroValuesTagline: {
+    fontSize: '1.15rem',
+    marginBottom: '0.75rem',
   },
-  dateBlock: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    fontSize: '0.8rem',
-    color: 'var(--text-secondary)',
+  heroDesc: {
+    fontSize: '0.92rem',
+    color: '#cbd5e1',
+    lineHeight: '1.55',
   },
-  errorSheet: {
-    border: '1px solid #fca5a5',
-    background: '#ffffff',
-    padding: '2.5rem',
-    textAlign: 'center',
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-  },
-  errorIconWrapper: {
-    width: '54px',
-    height: '54px',
-    borderRadius: '50%',
-    background: 'rgba(220, 38, 38, 0.08)',
+
+  heroCenter3dStage: {
+    flex: '1 1 320px',
+    maxWidth: '360px',
+    height: '240px',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: '1.25rem',
+    position: 'relative',
   },
-  errorTitle: {
-    fontSize: '1.35rem',
-    color: '#dc2626',
+  threeStarsGroup: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '1.25rem',
+    zIndex: 3,
+    position: 'relative',
+  },
+  starLeftWrapper: {
+    display: 'inline-block',
+  },
+  starMainWrapper: {
+    display: 'inline-block',
+  },
+  starRightWrapper: {
+    display: 'inline-block',
+  },
+  heroLeftDesignAccent: {
+    position: 'absolute',
+    left: '10px',
+    top: '30%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem',
+    zIndex: 1,
+  },
+  heroRightDesignAccent: {
+    position: 'absolute',
+    right: '10px',
+    bottom: '30%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: '0.5rem',
+    zIndex: 1,
+  },
+  techNodeBlue: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#38bdf8',
+    boxShadow: '0 0 10px #38bdf8',
+  },
+  techLineCyan: {
+    width: '2px',
+    height: '30px',
+    background: 'linear-gradient(to bottom, #38bdf8, transparent)',
+  },
+  techNodeGold: {
+    width: '8px',
+    height: '8px',
+    borderRadius: '50%',
+    background: '#fbbf24',
+    boxShadow: '0 0 10px #fbbf24',
+  },
+  techLineGold: {
+    width: '2px',
+    height: '30px',
+    background: 'linear-gradient(to top, #fbbf24, transparent)',
+  },
+
+  heroRight: {
+    flex: '1 1 240px',
+    maxWidth: '260px',
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '1.5rem',
+    alignItems: 'flex-end',
+  },
+  badgesColumn: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.7rem',
+    width: '100%',
+  },
+  badgeRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    justifyContent: 'flex-end',
+  },
+  badgeCircleIcon: {
+    width: '34px',
+    height: '34px',
+    borderRadius: '50%',
+    border: '1.5px solid rgba(255, 255, 255, 0.4)',
+    background: 'rgba(255, 255, 255, 0.1)',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  badgeTextGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    textAlign: 'right',
+  },
+  badgeTitle: {
+    fontSize: '0.9rem',
+    fontWeight: 800,
+    color: '#ffffff',
+    fontFamily: 'var(--font-heading)',
+  },
+  badgeSub: {
+    fontSize: '0.72rem',
+    color: '#94a3b8',
+  },
+
+  heroHandwrittenScript: {
+    fontFamily: '"Georgia", cursive, serif',
+    fontStyle: 'italic',
+    textAlign: 'right',
+    lineHeight: '1.2',
+  },
+  scriptGoldMain: {
+    fontSize: '1.2rem',
+    color: '#fbbf24',
+    fontWeight: 700,
+  },
+  scriptGoldSub: {
+    fontSize: '1.3rem',
+    color: '#fbbf24',
+    fontWeight: 700,
+  },
+  scriptGoldTag: {
+    fontSize: '1.2rem',
+    color: '#fbbf24',
+    fontWeight: 700,
+  },
+
+  /* 2. STATS HIGHLIGHT BAR */
+  statsBarSection: {
+    background: '#ffffff',
+    padding: '0.75rem 0',
+    borderBottom: '1px solid #e2e8f0',
+    boxShadow: '0 2px 10px rgba(0, 0, 0, 0.02)',
+  },
+  statsBarBox: {
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
+    borderRadius: '12px',
+    padding: '0.6rem 1.25rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1rem',
+    flexWrap: 'wrap',
+  },
+  statCol: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+    flex: '1 1 180px',
+  },
+  statIconBadge: {
+    width: '40px',
+    height: '40px',
+    borderRadius: '50%',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  statMainTitle: {
+    fontSize: '0.92rem',
+    fontWeight: 800,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.1rem',
+  },
+  statSubText: {
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    color: '#475569',
+  },
+  statSmallText: {
+    fontSize: '0.7rem',
+    color: '#64748b',
+  },
+  statDivider: {
+    width: '1px',
+    height: '36px',
+    background: '#cbd5e1',
+  },
+
+  /* 3. MAIN 3-COLUMN SECTION */
+  mainGridSection: {
+    padding: '1.5rem 0 1rem 0',
+  },
+  threeColGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+    gap: '1.5rem',
+    alignItems: 'stretch',
+  },
+  aboutCol: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  eyebrowRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+    marginBottom: '0.5rem',
+  },
+  eyebrowLine: {
+    width: '20px',
+    height: '3px',
+    background: '#fbbf24',
+    borderRadius: '2px',
+  },
+  eyebrowText: {
+    fontSize: '0.78rem',
+    fontWeight: 900,
+    color: '#d97706',
+    letterSpacing: '0.08em',
+    fontFamily: 'var(--font-heading)',
+  },
+  aboutHeading: {
+    fontSize: '2rem',
+    fontWeight: 900,
+    color: '#1e3a8a',
+    fontFamily: 'var(--font-heading)',
+    lineHeight: '1.15',
+    marginBottom: '0.65rem',
+  },
+  aboutPara: {
+    fontSize: '0.92rem',
+    color: '#475569',
+    lineHeight: '1.55',
+  },
+
+  /* KALAM QUOTE CARD */
+  kalamCardWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  kalamCardContainer: {
+    borderRadius: '16px',
+    overflow: 'hidden',
+    border: '1px solid #d1d5db',
+    boxShadow: '0 6px 18px rgba(0,0,0,0.06)',
+    background: '#ffffff',
+    width: '100%',
+    maxWidth: '400px',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+  },
+  kalamTopContent: {
+    background: '#f6f3ed',
+    padding: '1.1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '0.85rem',
+  },
+  kalamQuoteSide: {
+    flex: '1 1 auto',
+  },
+  kalamQuoteText: {
+    fontFamily: '"Georgia", serif',
+    fontStyle: 'italic',
+    fontSize: '0.92rem',
+    color: '#1e293b',
+    lineHeight: '1.4',
     fontWeight: 700,
     marginBottom: '0.5rem',
   },
-  errorDesc: {
-    fontSize: '0.9rem',
-    color: 'var(--text-secondary)',
-    lineHeight: '1.5',
-    maxWidth: '420px',
-    marginBottom: '1.5rem',
+  kalamAuthorText: {
+    fontSize: '0.82rem',
+    fontWeight: 800,
+    color: '#475569',
+    display: 'block',
   },
-  errorTip: {
+  kalamImgSide: {
+    width: '125px',
+    height: '145px',
+    flexShrink: 0,
+    borderRadius: '12px',
+    overflow: 'hidden',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+  },
+  kalamPortraitImg: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
+  },
+  kalamBottomBanner: {
+    background: 'linear-gradient(180deg, #4a2c0d 0%, #311c06 100%)',
+    padding: '0.65rem 0.85rem',
+    textAlign: 'center',
+    color: '#ffffff',
+  },
+  kalamInspiredText: {
     fontSize: '0.8rem',
-    color: 'var(--text-muted)',
-    background: '#fef2f2',
-    border: '1px solid #fee2e2',
-    borderRadius: '8px',
-    padding: '0.75rem 1rem',
-    maxWidth: '460px',
-    lineHeight: '1.4',
-  }
+    color: '#fef08a',
+    fontWeight: 600,
+    fontFamily: '"Georgia", serif',
+    fontStyle: 'italic',
+  },
+  kalamNameTitle: {
+    fontSize: '1.15rem',
+    fontWeight: 900,
+    color: '#fbbf24',
+    fontFamily: 'var(--font-heading)',
+    margin: '0.1rem 0',
+  },
+  kalamSubTitle: {
+    fontSize: '0.82rem',
+    color: '#ffffff',
+    fontWeight: 600,
+  },
+
+  /* OBJECTIVES */
+  objectivesCol: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
+  },
+  objectivesList: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.6rem',
+    marginTop: '0.35rem',
+  },
+  objectiveItem: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    background: '#ffffff',
+    padding: '0.6rem 0.85rem',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.02)',
+  },
+  objIconCircle: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    background: '#eff6ff',
+    border: '1px solid #bfdbfe',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  objText: {
+    fontSize: '0.88rem',
+    fontWeight: 700,
+    color: '#1e293b',
+    fontFamily: 'var(--font-heading)',
+  },
+
+  /* 4. THE SELECTION PROCESS */
+  processSection: {
+    padding: '1.5rem 0',
+    background: '#ffffff',
+    borderTop: '1px solid #e2e8f0',
+    borderBottom: '1px solid #e2e8f0',
+  },
+  processFlexRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '0.5rem',
+    marginTop: '1rem',
+    flexWrap: 'wrap',
+  },
+  processStepCard: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    gap: '0.6rem',
+    flex: '1 1 120px',
+  },
+  stepCircleIcon: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '50%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+  },
+  stepTitleBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
+  stepMainTitle: {
+    fontSize: '0.92rem',
+    fontWeight: 900,
+    color: '#1e293b',
+    fontFamily: 'var(--font-heading)',
+  },
+  stepSubTitle: {
+    fontSize: '0.92rem',
+    fontWeight: 900,
+    color: '#1e293b',
+    fontFamily: 'var(--font-heading)',
+  },
+  processArrow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#38bdf8',
+  },
+
+  /* 5. AWARDS & RECOGNITION AND KEY BENEFITS */
+  bottomGridSection: {
+    padding: '1.25rem 0 1rem 0',
+  },
+  twoColBottomGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))',
+    gap: '1.5rem',
+  },
+  awardsCol: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  awardsCardContainer: {
+    background: '#ffffff',
+    borderRadius: '16px',
+    padding: '1.25rem 1.5rem',
+    border: '1px solid #e2e8f0',
+    boxShadow: '0 4px 16px rgba(0, 0, 0, 0.04)',
+    marginTop: '0.35rem',
+    flex: 1,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  awardsThreeGrid: {
+    display: 'flex',
+    alignItems: 'stretch',
+    justifyContent: 'space-between',
+    gap: '1.25rem',
+    width: '100%',
+  },
+  awardItemBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    textAlign: 'center',
+    flex: '1 1 100px',
+    justifyContent: 'flex-start',
+  },
+  awardGraphicWrap: {
+    width: '56px',
+    height: '56px',
+    borderRadius: '12px',
+    background: '#fffbeb',
+    border: '1px solid #fef3c7',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '0.6rem',
+    flexShrink: 0,
+  },
+  awardItemTitle: {
+    fontSize: '0.95rem',
+    fontWeight: 900,
+    color: '#0c1e45',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.25rem',
+    minHeight: '22px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  awardItemSub: {
+    fontSize: '0.76rem',
+    color: '#64748b',
+    lineHeight: '1.3',
+    margin: 0,
+    maxWidth: '130px',
+  },
+  awardItemDivider: {
+    width: '1px',
+    alignSelf: 'stretch',
+    background: '#e2e8f0',
+  },
+
+  benefitsCol: {
+    display: 'flex',
+    flexDirection: 'column',
+  },
+  benefitsCardContainer: {
+    background: '#fffdf5',
+    borderRadius: '16px',
+    padding: '1.25rem 1.5rem',
+    border: '1px solid #fef08a',
+    boxShadow: '0 4px 16px rgba(245, 158, 11, 0.04)',
+    marginTop: '0.35rem',
+    flex: 1,
+  },
+  benefitsFlexRow: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: '1.25rem',
+    flexWrap: 'wrap',
+    height: '100%',
+  },
+  benefitsListGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.6rem',
+    flex: '1 1 190px',
+  },
+  benefitRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.65rem',
+  },
+  benefitIconCircle: {
+    width: '26px',
+    height: '26px',
+    borderRadius: '50%',
+    background: '#dbeafe',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexShrink: 0,
+  },
+  benefitText: {
+    fontSize: '0.86rem',
+    fontWeight: 700,
+    color: '#1e293b',
+    fontFamily: 'var(--font-heading)',
+  },
+  scriptBadgeGroup: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    fontFamily: '"Georgia", serif',
+    fontStyle: 'italic',
+    textAlign: 'right',
+    paddingRight: '0.35rem',
+    flexShrink: 0,
+  },
+  scriptTextMain: {
+    fontSize: '1.5rem',
+    fontWeight: 900,
+    lineHeight: 1.15,
+    color: '#1e3a8a',
+  },
+  scriptTextMiddle: {
+    fontSize: '1.6rem',
+    fontWeight: 900,
+    lineHeight: 1.15,
+    color: '#d97706',
+  },
+  scriptTextBottom: {
+    fontSize: '1.7rem',
+    fontWeight: 900,
+    lineHeight: 1.15,
+    color: '#1e3a8a',
+  },
+  scriptUnderline: {
+    width: '95px',
+    height: '3px',
+    background: '#f59e0b',
+    borderRadius: '2px',
+    marginTop: '3px',
+  },
 };

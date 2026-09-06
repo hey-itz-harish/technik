@@ -14,15 +14,16 @@ import {
   Globe
 } from 'lucide-react';
 
-export default function ComingSoon() {
+export default function ComingSoon({ title: customTitle, subtitle: customSubtitle, forceRegisterTheme = false }) {
   const location = useLocation();
 
   // Determine section name based on current path
   const getPageTitle = (path) => {
+    if (customTitle) return customTitle;
     switch (path) {
       case '/catalog': return 'Olympiad Programs & Catalog';
       case '/skill-compass': return 'Student Skill Compass';
-      case '/register': return 'School & Student Registration';
+      case '/register': return 'Student Portal';
       case '/awards': return 'Technik Pride Award Portal';
       case '/schools': return 'School Partnership Portal';
       case '/verify': return 'Certificate Verification Engine';
@@ -38,7 +39,7 @@ export default function ComingSoon() {
   };
 
   const pageTitle = getPageTitle(location.pathname);
-  const isRegister = location.pathname === '/register';
+  const isRegister = forceRegisterTheme || location.pathname === '/register';
 
   // Theme palettes: register (white + 3D yellow) and default (white + 3D blue)
   const theme = isRegister ? {
@@ -187,7 +188,7 @@ export default function ComingSoon() {
         </h1>
 
         <p style={{ ...styles.description, color: theme.descColor }}>
-          Our team is currently putting the final touches on this portal to bring you a world-class, future-ready Olympiad experience. Stay tuned!
+          {customSubtitle || "Our team is currently putting the final touches on this portal to bring you a world-class, future-ready Olympiad experience. Stay tuned!"}
         </p>
 
         {/* Navigation Action Buttons */}

@@ -461,3 +461,156 @@ a {
 .pulse-glowing {
   animation: pulse-glow 2s infinite ease-in-out;
 }
+
+/* 3D Star & Award Stage CSS System */
+.stage-hero-bg {
+  position: relative;
+  background: 
+    radial-gradient(ellipse at 50% 40%, rgba(30, 58, 138, 0.95) 0%, rgba(6, 23, 66, 0.98) 65%, rgba(2, 11, 36, 1) 100%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.015) 0px, rgba(255, 255, 255, 0.015) 2px, transparent 2px, transparent 24px);
+  overflow: hidden;
+}
+
+/* Full-Width Horizontal Stage Platform spanning below all text and content */
+.stage-full-width-platform {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 44px;
+  pointer-events: none;
+  z-index: 3;
+}
+
+.stage-platform-top-glow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  background: linear-gradient(90deg, 
+    rgba(251, 191, 36, 0.2) 0%, 
+    #f59e0b 20%, 
+    #fbbf24 38%, 
+    #ffffff 50%, 
+    #fbbf24 62%, 
+    #f59e0b 80%, 
+    rgba(251, 191, 36, 0.2) 100%
+  );
+  box-shadow: 0 -4px 25px rgba(251, 191, 36, 0.9), 0 -8px 45px rgba(245, 158, 11, 0.6);
+}
+
+.stage-platform-base {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(180deg, #b45309 0%, #78350f 45%, #0f172a 100%);
+  border-top: 1px solid #fef08a;
+  box-shadow: inset 0 2px 6px rgba(255, 255, 255, 0.4);
+}
+
+
+
+
+/* Horizontal 3-Star Float Animations */
+@keyframes starHorizontalFloatMain {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    filter: drop-shadow(0 0 35px rgba(251, 191, 36, 1)) drop-shadow(0 0 70px rgba(245, 158, 11, 0.6));
+  }
+  50% {
+    transform: translateY(-8px) scale(1.06);
+    filter: drop-shadow(0 0 50px rgba(251, 191, 36, 1)) drop-shadow(0 0 90px rgba(245, 158, 11, 0.8));
+  }
+}
+
+@keyframes starHorizontalFloatSide {
+  0%, 100% {
+    transform: translateY(0) scale(0.92);
+    filter: drop-shadow(0 0 25px rgba(251, 191, 36, 0.85));
+  }
+  50% {
+    transform: translateY(-6px) scale(0.98);
+    filter: drop-shadow(0 0 40px rgba(251, 191, 36, 1));
+  }
+}
+
+@keyframes sparkPulse {
+  0%, 100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3);
+  }
+}
+
+.star-main-horizontal {
+  animation: starHorizontalFloatMain 3.5s ease-in-out infinite;
+}
+
+.star-side-horizontal {
+  animation: starHorizontalFloatSide 4s ease-in-out infinite 0.4s;
+}
+
+.sparkle-particle {
+  animation: sparkPulse 2.5s infinite ease-in-out;
+}
+
+/* Confetti Rain & Twirl Animation System */
+.confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  opacity: 0.85;
+  border-radius: 2px;
+  animation: confettiFall 4.5s linear infinite;
+}
+
+@keyframes confettiFall {
+  0% {
+    top: -20px;
+    transform: translateX(0) rotate(0deg) rotateY(0deg);
+    opacity: 0.95;
+  }
+  50% {
+    transform: translateX(25px) rotate(180deg) rotateY(180deg);
+    opacity: 1;
+  }
+  100% {
+    top: 105%;
+    transform: translateX(-15px) rotate(360deg) rotateY(360deg);
+    opacity: 0.15;
+  }
+}
+
+/* 3D Floating Icon Animation */
+@keyframes float3DAnimation {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+    filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.12));
+  }
+  50% {
+    transform: translateY(-8px) scale(1.04);
+    filter: drop-shadow(0 14px 22px rgba(0, 0, 0, 0.2));
+  }
+}
+
+.float-3d-img {
+  animation: float3DAnimation 3.5s ease-in-out infinite;
+}

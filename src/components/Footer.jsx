@@ -65,8 +65,8 @@ export default function Footer() {
             <div style={styles.linkList}>
               <Link to="/about" style={styles.linkItem}>About Us</Link>
               <Link to="/catalog" style={styles.linkItem}>Olympiads</Link>
-              <Link to="/awards" style={styles.linkItem}>Technik Pride Award</Link>
-              <Link to="/dashboard" style={styles.linkItem}>Results</Link>
+              <Link to="/awards" style={styles.linkItem}>Technik Awards</Link>
+              <Link to="/results" style={styles.linkItem}>Results</Link>
               <Link to="/dashboard" style={styles.linkItem}>Certificates</Link>
             </div>
           </div>
@@ -89,7 +89,7 @@ export default function Footer() {
             <div style={styles.linkList}>
               <Link to="/register" style={styles.linkItem}>Olympiad Registration</Link>
               <Link to="/catalog" style={styles.linkItem}>Exam Schedule</Link>
-              <Link to="/dashboard" style={styles.linkItem}>Results</Link>
+              <Link to="/results" style={styles.linkItem}>Results</Link>
               <Link to="/dashboard" style={styles.linkItem}>Hall Ticket</Link>
               <Link to="/dashboard" style={styles.linkItem}>Student Login</Link>
             </div>

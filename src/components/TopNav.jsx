@@ -40,14 +40,14 @@ export default function TopNav() {
           </div>
 
           <div style={styles.topRightActions}>
-            <Link to="/dashboard" style={styles.topAuthLink}>
+            <Link to="/register?level=school" style={styles.topAuthLink}>
               <GraduationCap size={13} color="#fbbf24" />
-              <span>School Login</span>
+              <span>School Portal</span>
             </Link>
             <span style={styles.topDivider}>|</span>
-            <Link to="/dashboard" style={styles.topAuthLink}>
+            <Link to="/register?level=student" style={styles.topAuthLink}>
               <UserCheck size={13} color="#38bdf8" />
-              <span>Student Login</span>
+              <span>Student Portal</span>
             </Link>
             <span style={styles.topDivider}>|</span>
             <div style={styles.topSocials}>
@@ -107,142 +107,53 @@ export default function TopNav() {
               HOME
             </Link>
 
-            {/* About Us Dropdown */}
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('about')}
-              onMouseLeave={() => setActiveDropdown(null)}
+            <Link
+              to="/about"
+              className={`nav-item-link ${isActive('/about') ? 'active-link' : ''}`}
+              style={{
+                ...styles.navLink,
+                color: isActive('/about') ? '#f97316' : '#0f172a',
+                fontWeight: isActive('/about') ? 700 : 600,
+              }}
             >
-              <Link
-                to="/about"
-                className={`nav-item-link dropdown-trigger ${isActive('/about') ? 'active-link' : ''}`}
-                style={{
-                  ...styles.navLink,
-                  color: isActive('/about') ? '#f97316' : '#0f172a',
-                  fontWeight: isActive('/about') ? 700 : 600,
-                }}
-              >
-                <span>ABOUT US</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'about' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/about" style={styles.dropdownItem}>About Technik</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Our Journey</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Vision & Mission</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Leadership</Link>
-                  <Link to="/about" style={styles.dropdownItem}>Why Technik</Link>
-                </div>
-              )}
-            </div>
+              ABOUT US
+            </Link>
 
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('olympiads')}
-              onMouseLeave={() => setActiveDropdown(null)}
+            <Link
+              to="/awards"
+              className={`nav-item-link ${isActive('/awards') ? 'active-link' : ''}`}
+              style={{
+                ...styles.navLink,
+                color: isActive('/awards') ? '#f97316' : '#0f172a',
+                fontWeight: isActive('/awards') ? 700 : 600,
+              }}
             >
-              <Link
-                to="/catalog"
-                className={`nav-item-link dropdown-trigger ${isActive('/catalog') ? 'active-link' : ''}`}
-                style={{
-                  ...styles.navLink,
-                  color: isActive('/catalog') ? '#f97316' : '#0f172a',
-                  fontWeight: isActive('/catalog') ? 700 : 600,
-                }}
-              >
-                <span>OLYMPIADS</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'olympiads' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/catalog" style={styles.dropdownItem}>Robotics Olympiad</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>Generative AI Olympiad</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>Coding Olympiad</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>Technik Art Olympiad</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>English Olympiad</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>Mental Maths Olympiad</Link>
-                </div>
-              )}
-            </div>
+              TECHNIK PRIDE AWARD
+            </Link>
 
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('awards')}
-              onMouseLeave={() => setActiveDropdown(null)}
+            <Link
+              to="/catalog"
+              className={`nav-item-link ${isActive('/catalog') ? 'active-link' : ''}`}
+              style={{
+                ...styles.navLink,
+                color: isActive('/catalog') ? '#f97316' : '#0f172a',
+                fontWeight: isActive('/catalog') ? 700 : 600,
+              }}
             >
-              <Link
-                to="/awards"
-                className={`nav-item-link dropdown-trigger ${isActive('/awards') ? 'active-link' : ''}`}
-                style={{
-                  ...styles.navLink,
-                  color: isActive('/awards') ? '#f97316' : '#0f172a',
-                  fontWeight: isActive('/awards') ? 700 : 600,
-                }}
-              >
-                <span>TECHNIK PRIDE AWARD</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'awards' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/awards" style={styles.dropdownItem}>Award Overview</Link>
-                  <Link to="/awards" style={styles.dropdownItem}>Recognition Levels</Link>
-                  <Link to="/awards" style={styles.dropdownItem}>Apply for Award</Link>
-                </div>
-              )}
-            </div>
+              TECHNIK OLYMPIAD
+            </Link>
 
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('schools')}
-              onMouseLeave={() => setActiveDropdown(null)}
+            <Link
+              to="/results"
+              className={`nav-item-link ${isActive('/results') || isActive('/verification') ? 'active-link' : ''}`}
+              style={{
+                ...styles.navLink,
+                color: (isActive('/results') || isActive('/verification')) ? '#f97316' : '#0f172a',
+                fontWeight: (isActive('/results') || isActive('/verification')) ? 700 : 600,
+              }}
             >
-              <Link
-                to="/schools"
-                className={`nav-item-link dropdown-trigger ${isActive('/schools') ? 'active-link' : ''}`}
-                style={{
-                  ...styles.navLink,
-                  color: isActive('/schools') ? '#f97316' : '#0f172a',
-                  fontWeight: isActive('/schools') ? 700 : 600,
-                }}
-              >
-                <span>FOR SCHOOLS</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'schools' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/schools" style={styles.dropdownItem}>School Registration</Link>
-                  <Link to="/schools" style={styles.dropdownItem}>Hosting Partner</Link>
-                  <Link to="/schools" style={styles.dropdownItem}>School Benefits</Link>
-                </div>
-              )}
-            </div>
-
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('students')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <Link
-                to="/skill-compass"
-                className="nav-item-link dropdown-trigger"
-                style={styles.navLink}
-              >
-                <span>FOR STUDENTS</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'students' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/skill-compass" style={styles.dropdownItem}>Skill Compass Test</Link>
-                  <Link to="/catalog" style={styles.dropdownItem}>Track Selection</Link>
-                  <Link to="/dashboard" style={styles.dropdownItem}>Student Portal</Link>
-                </div>
-              )}
-            </div>
+              RESULT
+            </Link>
 
             <div
               className="dropdown-wrapper"
@@ -261,8 +172,7 @@ export default function TopNav() {
               {activeDropdown === 'media' && (
                 <div style={styles.dropdownMenu}>
                   <Link to="/media" style={styles.dropdownItem}>Press Releases</Link>
-                  <Link to="/media" style={styles.dropdownItem}>Photo Gallery</Link>
-                  <Link to="/media" style={styles.dropdownItem}>Event Highlights</Link>
+                  <Link to="/media" style={styles.dropdownItem}>Gallery</Link>
                 </div>
               )}
             </div>
@@ -294,11 +204,11 @@ export default function TopNav() {
         {isOpen && (
           <div style={styles.mobileDrawer}>
             <div style={styles.mobileAuthRow}>
-              <Link to="/dashboard" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
-                <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Login
+              <Link to="/register?level=school" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
+                <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Portal
               </Link>
-              <Link to="/dashboard" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
-                <UserCheck size={14} style={{ marginRight: '0.35rem' }} /> Student Login
+              <Link to="/register?level=student" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
+                <UserCheck size={14} style={{ marginRight: '0.35rem' }} /> Student Portal
               </Link>
             </div>
 
@@ -306,8 +216,7 @@ export default function TopNav() {
               <Link to="/" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>HOME</Link>
               <Link to="/about" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>ABOUT US</Link>
               <Link to="/catalog" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>OLYMPIADS</Link>
-              <Link to="/awards" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>TECHNIK PRIDE AWARD</Link>
-              <Link to="/schools" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR SCHOOLS</Link>
+              <Link to="/awards" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>TECHNIK AWARDS</Link>
               <Link to="/skill-compass" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR STUDENTS</Link>
               <Link to="/dashboard" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>DASHBOARD</Link>
               <Link
