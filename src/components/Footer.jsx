@@ -85,13 +85,13 @@ export default function Footer() {
 
           {/* Col 3 */}
           <div style={styles.col}>
-            <h4 style={styles.colTitle}>FOR STUDENTS</h4>
+            <h4 style={styles.colTitle}>PORTALS & ADMIN</h4>
             <div style={styles.linkList}>
-              <Link to="/register" style={styles.linkItem}>Olympiad Registration</Link>
-              <Link to="/catalog" style={styles.linkItem}>Exam Schedule</Link>
-              <Link to="/results" style={styles.linkItem}>Results</Link>
-              <Link to="/dashboard" style={styles.linkItem}>Hall Ticket</Link>
-              <Link to="/dashboard" style={styles.linkItem}>Student Login</Link>
+              <Link to="/schools" style={styles.linkItem}>School Portal</Link>
+              <Link to="/admin" style={styles.linkItem}>Technik Admin Portal</Link>
+              <Link to="/catalog" style={styles.linkItem}>Olympiad Tracks</Link>
+              <Link to="/results" style={styles.linkItem}>Results & Verification</Link>
+              <Link to="/awards" style={styles.linkItem}>Pride Award Info</Link>
             </div>
           </div>
 

@@ -149,42 +149,27 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   return (
     <div style={styles.pageContainer}>
       
-      {/* Top Banner & Level Switcher Header */}
+      {/* Top Banner Header */}
       <div style={styles.topBarSection}>
         <div style={styles.levelSwitcherContainer}>
-          <button
-            type="button"
-            onClick={() => setActiveLevel('school')}
+          <div
             style={{
               ...styles.levelTab,
-              ...(activeLevel === 'school' ? styles.levelTabActiveSchool : {})
+              ...styles.levelTabActiveSchool,
+              cursor: 'default'
             }}
           >
             <Building2 size={18} />
-            <span>School Portal Registration</span>
-            {activeLevel === 'school' && <span style={styles.activeDotSchool} />}
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setActiveLevel('student')}
-            style={{
-              ...styles.levelTab,
-              ...(activeLevel === 'student' ? styles.levelTabActiveStudent : {})
-            }}
-          >
-            <GraduationCap size={18} />
-            <span>Student Portal Registration</span>
-            <span style={styles.comingSoonPill}>Coming Soon</span>
-          </button>
+            <span>School & Coordinator Registration</span>
+            <span style={styles.activeDotSchool} />
+          </div>
         </div>
       </div>
 
-      {activeLevel === 'school' ? (
-        /* ======================================================== */
-        /* SCHOOL REGISTRATION FLOW                                 */
-        /* ======================================================== */
-        <>
+      {/* ======================================================== */}
+      {/* SCHOOL REGISTRATION FLOW                                 */}
+      {/* ======================================================== */}
+      <>
           {/* Step Indicator Bar (1, 2, 3) */}
           <div style={styles.stepBarWrapper}>
             <div style={styles.stepBarContainer}>
@@ -514,11 +499,6 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
             </form>
           </main>
         </>
-      ) : (
-        <main style={{ width: '100%', margin: 0, padding: 0 }}>
-          <ComingSoon title="Student Portal" forceRegisterTheme={true} />
-        </main>
-      )}
 
       {/* CONFIRMATION / SUCCESS MODAL */}
       {showModal && (

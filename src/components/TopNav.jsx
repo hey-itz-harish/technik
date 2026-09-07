@@ -10,7 +10,8 @@ import {
   GraduationCap,
   UserCheck,
   ChevronDown,
-  Sparkles
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 
 export default function TopNav() {
@@ -45,9 +46,9 @@ export default function TopNav() {
               <span>School Portal</span>
             </Link>
             <span style={styles.topDivider}>|</span>
-            <Link to="/register?level=student" style={styles.topAuthLink}>
-              <UserCheck size={13} color="#38bdf8" />
-              <span>Student Portal</span>
+            <Link to="/admin" style={styles.topAuthLink}>
+              <ShieldCheck size={13} color="#38bdf8" />
+              <span>Technik Portal</span>
             </Link>
             <span style={styles.topDivider}>|</span>
             <div style={styles.topSocials}>
@@ -155,28 +156,6 @@ export default function TopNav() {
               RESULT
             </Link>
 
-            <div
-              className="dropdown-wrapper"
-              style={styles.dropdownWrapper}
-              onMouseEnter={() => setActiveDropdown('media')}
-              onMouseLeave={() => setActiveDropdown(null)}
-            >
-              <Link
-                to="/media"
-                className={`nav-item-link dropdown-trigger ${isActive('/media') ? 'active-link' : ''}`}
-                style={styles.navLink}
-              >
-                <span>MEDIA</span>
-                <ChevronDown size={13} className="chevron-icon" style={{ marginLeft: '2px' }} />
-              </Link>
-              {activeDropdown === 'media' && (
-                <div style={styles.dropdownMenu}>
-                  <Link to="/media" style={styles.dropdownItem}>Press Releases</Link>
-                  <Link to="/media" style={styles.dropdownItem}>Gallery</Link>
-                </div>
-              )}
-            </div>
-
             <Link
               to="/contact"
               className={`nav-item-link ${isActive('/contact') ? 'active-link' : ''}`}
@@ -207,8 +186,8 @@ export default function TopNav() {
               <Link to="/schools" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
                 <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Portal
               </Link>
-              <Link to="/register?level=student" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
-                <UserCheck size={14} style={{ marginRight: '0.35rem' }} /> Student Portal
+              <Link to="/admin" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
+                <ShieldCheck size={14} style={{ marginRight: '0.35rem' }} /> Technik Portal
               </Link>
             </div>
 

@@ -326,7 +326,18 @@ export default function Schools() {
               onClick={() => setActiveTab('roster')}
             >
               <Users size={16} />
-              <span>Students List ({submittedRoster.length})</span>
+              <span>All Students ({submittedRoster.length})</span>
+            </button>
+
+            <button 
+              style={{
+                ...styles.tabNavBtn,
+                ...(activeTab === 'pride-nominated-list' ? styles.tabNavBtnActiveGold : {})
+              }}
+              onClick={() => setActiveTab('pride-nominated-list')}
+            >
+              <Trophy size={16} color="#f59e0b" />
+              <span>Nominated for Pride Award ({submittedRoster.filter(r => r.track.includes('Pride')).length})</span>
             </button>
 
             <button 
@@ -337,7 +348,7 @@ export default function Schools() {
               onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }}
             >
               <Trophy size={16} />
-              <span>Nominate Students for Pride Award</span>
+              <span>+ Nominate Student</span>
             </button>
 
             <button 
@@ -359,7 +370,7 @@ export default function Schools() {
               onClick={() => setActiveTab('directory')}
             >
               <Building size={16} />
-              <span>Partner Schools Directory ({schoolsList.length})</span>
+              <span>Partner Directory ({schoolsList.length})</span>
             </button>
           </div>
 
@@ -480,6 +491,103 @@ export default function Schools() {
 
             </div>
 
+          </div>
+        </section>
+      )}
+
+      {/* ========================================================================= */}
+      {/* PRIDE AWARD NOMINATED STUDENTS LIST VIEW                                  */}
+      {/* ========================================================================= */}
+      {activeTab === 'pride-nominated-list' && (
+        <section style={styles.sectionPadding}>
+          <div className="container">
+            <div style={styles.rosterCardWrapper}>
+              
+              <div style={{ ...styles.rosterHeaderRow, background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)', padding: '1.25rem 1.5rem', borderRadius: '12px', border: '1px solid #fde047', marginBottom: '1.5rem' }}>
+                <div>
+                  <h2 style={{ ...styles.rosterTitle, color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <Trophy size={22} color="#d97706" />
+                    Students Nominated for Technik Pride Award
+                  </h2>
+                  <p style={{ ...styles.rosterSub, color: '#b45309' }}>
+                    List of students nominated by St. Xavier International School. Submitted for review by Technik Super Admin & Olympiad Committee.
+                  </p>
+                </div>
+                <div>
+                  <button 
+                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }} 
+                    style={styles.actionBtnGold}
+                  >
+                    <Trophy size={15} /> + Nominate Student
+                  </button>
+                </div>
+              </div>
+
+              {/* Roster Table */}
+              <div style={styles.tableResponsive}>
+                <table style={styles.rosterTable}>
+                  <thead>
+                    <tr style={styles.tableHeaderRow}>
+                      <th style={styles.thCell}>Student Name</th>
+                      <th style={styles.thCell}>Class / Level</th>
+                      <th style={styles.thCell}>Nominated Category</th>
+                      <th style={styles.thCell}>Date Submitted</th>
+                      <th style={styles.thCell}>Nomination Status</th>
+                      <th style={styles.thCell}>Admin Status</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {submittedRoster.filter(st => st.track.includes('Pride')).length === 0 ? (
+                      <tr>
+                        <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                          No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
+                        </td>
+                      </tr>
+                    ) : (
+                      submittedRoster.filter(st => st.track.includes('Pride')).map((st, i) => (
+                        <tr key={i} style={styles.tableBodyRow}>
+                          <td style={styles.tdCellBold}>
+                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <div style={{ ...styles.avatarCircle, background: '#f59e0b', color: '#ffffff' }}>{st.name.charAt(0)}</div>
+                              <span>{st.name}</span>
+                            </div>
+                          </td>
+                          <td style={styles.tdCell}>{st.grade}</td>
+                          <td style={styles.tdCell}>
+                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#b45309' }}>
+                              Technik Pride Award Nomination
+                            </span>
+                          </td>
+                          <td style={styles.tdCell}>{st.date}</td>
+                          <td style={styles.tdCell}>
+                            <span style={{
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              padding: '0.25rem 0.65rem',
+                              borderRadius: '20px',
+                              fontSize: '0.75rem',
+                              fontWeight: 700,
+                              background: '#fef3c7',
+                              color: '#d97706',
+                              border: '1px solid #fde047'
+                            }}>
+                              <Clock size={12} style={{ marginRight: '4px' }} />
+                              Submitted &amp; Under Review
+                            </span>
+                          </td>
+                          <td style={styles.tdCell}>
+                            <span style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 600 }}>
+                              Forwarded to Technik Super Admin
+                            </span>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+
+            </div>
           </div>
         </section>
       )}
