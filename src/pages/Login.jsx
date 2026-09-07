@@ -82,7 +82,7 @@ export default function Login() {
           </div>
 
           <h1 style={styles.mainTitle}>
-            School Portal <span style={{ color: '#fbbf24' }}>Login</span>
+            School Portal <span style={{ color: '#0284c7' }}>Login</span>
           </h1>
           <p style={styles.mainSub}>
             Sign in to manage your school's registered students, track Technik Pride Award nominations, and download official certificates.
@@ -236,34 +236,34 @@ export default function Login() {
 
 const styles = {
   pageContainer: {
-    background: '#041026',
+    background: '#ffffff',
     minHeight: 'calc(100vh - 80px)',
-    color: '#ffffff',
+    color: '#0f172a',
     position: 'relative',
     overflow: 'hidden',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '3rem 1rem'
+    padding: '3.5rem 1rem'
   },
   bgGradientBlob1: {
     position: 'absolute',
     top: '-10%',
     left: '15%',
-    width: '400px',
-    height: '400px',
+    width: '450px',
+    height: '450px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(2, 132, 199, 0.25) 0%, rgba(0,0,0,0) 70%)',
+    background: 'radial-gradient(circle, rgba(2, 132, 199, 0.08) 0%, rgba(255,255,255,0) 70%)',
     pointerEvents: 'none'
   },
   bgGradientBlob2: {
     position: 'absolute',
     bottom: '-10%',
     right: '15%',
-    width: '450px',
-    height: '450px',
+    width: '500px',
+    height: '500px',
     borderRadius: '50%',
-    background: 'radial-gradient(circle, rgba(217, 119, 6, 0.2) 0%, rgba(0,0,0,0) 70%)',
+    background: 'radial-gradient(circle, rgba(217, 119, 6, 0.07) 0%, rgba(255,255,255,0) 70%)',
     pointerEvents: 'none'
   },
   contentWrapper: {
@@ -281,9 +281,9 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.4rem',
-    background: 'rgba(2, 132, 199, 0.15)',
-    border: '1px solid rgba(56, 189, 248, 0.3)',
-    color: '#38bdf8',
+    background: 'rgba(2, 132, 199, 0.08)',
+    border: '1px solid rgba(2, 132, 199, 0.25)',
+    color: '#0284c7',
     fontSize: '0.78rem',
     fontWeight: 700,
     letterSpacing: '0.05em',
@@ -296,30 +296,30 @@ const styles = {
     fontWeight: 800,
     margin: '0 0 0.5rem 0',
     letterSpacing: '-0.02em',
-    color: '#ffffff'
+    color: '#0f172a'
   },
   mainSub: {
     fontSize: '0.92rem',
-    color: '#94a3b8',
-    lineHeight: 1.5,
+    color: '#475569',
+    lineHeight: 1.55,
     margin: 0
   },
   registeredBanner: {
-    background: 'linear-gradient(135deg, rgba(22, 163, 74, 0.2) 0%, rgba(20, 83, 45, 0.3) 100%)',
-    border: '1.5px solid rgba(34, 197, 94, 0.5)',
+    background: '#f0fdf4',
+    border: '1.5px solid #86efac',
     borderRadius: '16px',
     padding: '1.1rem 1.3rem',
     marginBottom: '1.5rem',
     display: 'flex',
     alignItems: 'flex-start',
     gap: '0.9rem',
-    backdropFilter: 'blur(8px)'
+    boxShadow: '0 4px 12px rgba(22, 163, 74, 0.06)'
   },
   bannerIconSquare: {
     width: '40px',
     height: '40px',
     borderRadius: '10px',
-    background: 'rgba(22, 163, 74, 0.2)',
+    background: '#dcfce7',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -329,21 +329,20 @@ const styles = {
     margin: '0 0 4px 0',
     fontSize: '0.98rem',
     fontWeight: 800,
-    color: '#4ade80'
+    color: '#15803d'
   },
   bannerSub: {
     margin: 0,
     fontSize: '0.85rem',
-    color: '#cbd5e1',
+    color: '#166534',
     lineHeight: 1.45
   },
   loginCard: {
-    background: '#0a1a3a',
-    border: '1px solid rgba(255, 255, 255, 0.12)',
+    background: '#ffffff',
+    border: '1px solid #e2e8f0',
     borderRadius: '24px',
     padding: '2.2rem',
-    boxShadow: '0 20px 50px rgba(0, 0, 0, 0.5)',
-    backdropFilter: 'blur(12px)'
+    boxShadow: '0 20px 45px -10px rgba(15, 23, 42, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05)',
   },
   cardHeaderBox: {
     display: 'flex',
@@ -351,15 +350,15 @@ const styles = {
     gap: '0.85rem',
     marginBottom: '1.8rem',
     paddingBottom: '1.2rem',
-    borderBottom: '1px solid rgba(255, 255, 255, 0.08)',
+    borderBottom: '1px solid #f1f5f9',
     position: 'relative'
   },
   cardHeaderIconCircle: {
     width: '46px',
     height: '46px',
     borderRadius: '14px',
-    background: 'rgba(2, 132, 199, 0.15)',
-    border: '1px solid rgba(56, 189, 248, 0.3)',
+    background: 'rgba(2, 132, 199, 0.1)',
+    border: '1px solid rgba(2, 132, 199, 0.2)',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
@@ -369,18 +368,18 @@ const styles = {
     fontSize: '1.25rem',
     fontWeight: 800,
     margin: '0 0 2px 0',
-    color: '#ffffff'
+    color: '#0f172a'
   },
   cardSub: {
     fontSize: '0.82rem',
-    color: '#94a3b8',
+    color: '#64748b',
     margin: 0
   },
   demoFillBtn: {
     marginLeft: 'auto',
-    background: 'rgba(251, 191, 36, 0.12)',
-    border: '1px solid rgba(251, 191, 36, 0.4)',
-    color: '#fbbf24',
+    background: '#fffbe6',
+    border: '1px solid #fde047',
+    color: '#b45309',
     padding: '0.4rem 0.75rem',
     borderRadius: '8px',
     fontSize: '0.76rem',
@@ -389,7 +388,8 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '5px',
-    transition: 'all 0.2s'
+    transition: 'all 0.2s',
+    boxShadow: '0 2px 6px rgba(217, 119, 6, 0.1)'
   },
   formStack: {
     display: 'flex',
@@ -397,9 +397,9 @@ const styles = {
     gap: '1.2rem'
   },
   errorAlert: {
-    background: 'rgba(220, 38, 38, 0.15)',
-    border: '1px solid rgba(239, 68, 68, 0.4)',
-    color: '#fca5a5',
+    background: '#fef2f2',
+    border: '1px solid #fca5a5',
+    color: '#991b1b',
     padding: '0.75rem 1rem',
     borderRadius: '10px',
     fontSize: '0.85rem',
@@ -415,7 +415,7 @@ const styles = {
   fieldLabel: {
     fontSize: '0.85rem',
     fontWeight: 700,
-    color: '#cbd5e1'
+    color: '#1e293b'
   },
   reqStar: {
     color: '#ef4444',
@@ -433,18 +433,18 @@ const styles = {
   },
   textInput: {
     width: '100%',
-    background: 'rgba(2, 6, 23, 0.6)',
-    border: '1px solid rgba(255, 255, 255, 0.15)',
+    background: '#f8fafc',
+    border: '1px solid #cbd5e1',
     borderRadius: '12px',
     padding: '0.85rem 1rem 0.85rem 2.8rem',
-    color: '#ffffff',
+    color: '#0f172a',
     fontSize: '0.92rem',
     outline: 'none',
     boxSizing: 'border-box',
     transition: 'all 0.2s'
   },
   forgotLink: {
-    color: '#38bdf8',
+    color: '#0284c7',
     fontSize: '0.8rem',
     fontWeight: 600,
     textDecoration: 'none'
@@ -460,7 +460,7 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     gap: '0.45rem',
-    color: '#94a3b8',
+    color: '#475569',
     cursor: 'pointer'
   },
   checkboxInput: {
@@ -470,7 +470,7 @@ const styles = {
     cursor: 'pointer'
   },
   mfaNoticePill: {
-    color: '#38bdf8',
+    color: '#0284c7',
     fontSize: '0.78rem',
     fontWeight: 600,
     display: 'flex',
@@ -479,11 +479,11 @@ const styles = {
   },
   submitBtnGold: {
     width: '100%',
-    background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
+    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
     border: 'none',
     borderRadius: '12px',
     padding: '0.95rem 1.5rem',
-    color: '#041026',
+    color: '#ffffff',
     fontSize: '0.98rem',
     fontWeight: 800,
     cursor: 'pointer',
@@ -491,23 +491,23 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     gap: '0.6rem',
-    boxShadow: '0 6px 20px rgba(217, 119, 6, 0.35)',
+    boxShadow: '0 6px 20px rgba(2, 132, 199, 0.35)',
     marginTop: '0.5rem',
     transition: 'all 0.2s'
   },
   cardFooter: {
     marginTop: '1.8rem',
     paddingTop: '1.2rem',
-    borderTop: '1px solid rgba(255, 255, 255, 0.08)',
+    borderTop: '1px solid #f1f5f9',
     textAlign: 'center'
   },
   footerText: {
     fontSize: '0.85rem',
-    color: '#94a3b8',
+    color: '#64748b',
     margin: 0
   },
   registerLink: {
-    color: '#fbbf24',
+    color: '#0284c7',
     fontWeight: 700,
     textDecoration: 'none'
   },

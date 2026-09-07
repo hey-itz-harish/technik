@@ -40,7 +40,7 @@ export default function TopNav() {
           </div>
 
           <div style={styles.topRightActions}>
-            <Link to="/register?level=school" style={styles.topAuthLink}>
+            <Link to="/schools" style={styles.topAuthLink}>
               <GraduationCap size={13} color="#fbbf24" />
               <span>School Portal</span>
             </Link>
@@ -204,7 +204,7 @@ export default function TopNav() {
         {isOpen && (
           <div style={styles.mobileDrawer}>
             <div style={styles.mobileAuthRow}>
-              <Link to="/register?level=school" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
+              <Link to="/schools" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
                 <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Portal
               </Link>
               <Link to="/register?level=student" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
