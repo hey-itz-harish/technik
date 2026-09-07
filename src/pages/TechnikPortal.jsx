@@ -59,6 +59,7 @@ export default function TechnikPortal() {
   const [gradeFilter, setGradeFilter] = useState('All');
   const [statusFilter, setStatusFilter] = useState('All');
   const [trackFilter, setTrackFilter] = useState('All');
+  const [yearFilter, setYearFilter] = useState('All');
 
   // Modal State for "+ Add User"
   const [showAddUserModal, setShowAddUserModal] = useState(false);
@@ -353,7 +354,8 @@ export default function TechnikPortal() {
       item.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGrade = gradeFilter === 'All' || item.grade === gradeFilter;
     const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
-    return matchesSearch && matchesGrade && matchesStatus;
+    const matchesYear = yearFilter === 'All' || item.submissionDate.includes(yearFilter);
+    return matchesSearch && matchesGrade && matchesStatus && matchesYear;
   });
 
   const filteredOlympiad = olympiadRegistrations.filter(item => {
@@ -363,7 +365,8 @@ export default function TechnikPortal() {
       item.rollNo.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGrade = gradeFilter === 'All' || item.grade === gradeFilter;
     const matchesTrack = trackFilter === 'All' || item.track.includes(trackFilter);
-    return matchesSearch && matchesGrade && matchesTrack;
+    const matchesYear = yearFilter === 'All' || item.registeredDate.includes(yearFilter);
+    return matchesSearch && matchesGrade && matchesTrack && matchesYear;
   });
 
   const totalPrideCount = prideNominations.length;
@@ -660,6 +663,18 @@ export default function TechnikPortal() {
               <option value="Grade 6">Grade 6</option>
               <option value="Grade 7">Grade 7</option>
               <option value="Grade 8">Grade 8</option>
+            </select>
+
+            <span style={styles.filterLabel}>Year:</span>
+            <select 
+              value={yearFilter} 
+              onChange={(e) => setYearFilter(e.target.value)}
+              style={styles.selectInput}
+            >
+              <option value="All">All Years</option>
+              <option value="2026">2026</option>
+              <option value="2025">2025</option>
+              <option value="2024">2024</option>
             </select>
 
             {activeTab === 'pride-nominations' ? (
