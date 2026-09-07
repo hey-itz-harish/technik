@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import ComingSoon from './ComingSoon';
+import { registerSchoolApi } from '../services/api';
 import { 
   Building2, 
   User, 
@@ -109,13 +110,17 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
     }
 
     setDeclarationError(false);
-    const regId = 'SCH-' + Math.floor(100000 + Math.random() * 900000);
-    setRegistrationId(regId);
     setIsProcessing(true);
     setShowModal(true);
 
-    setTimeout(() => {
+    registerSchoolApi({
+      schoolDetails,
+      coordinatorDetails
+    }).then((res) => {
+      const regId = res?.school?.id || res?.student?.id || ('SCH-' + Math.floor(100000 + Math.random() * 900000));
+      setRegistrationId(regId);
       setIsProcessing(false);
+
       if (onRegisterSuccess) {
         onRegisterSuccess({
           id: regId,
@@ -127,7 +132,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
         });
       }
       if (clearSelectedTrack) clearSelectedTrack();
-    }, 1500);
+    });
   };
 
   const handleFinishModal = () => {
