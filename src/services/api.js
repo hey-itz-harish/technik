@@ -1,7 +1,6 @@
 // Technik School Portal API Service
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-const SCHOOL_REGISTER_ENDPOINT = import.meta.env.VITE_SCHOOL_REGISTER_ENDPOINT || '/api/school/register';
 
 /**
  * Register a school by sending POST request to http://localhost:8080/api/school/register
@@ -10,7 +9,7 @@ const SCHOOL_REGISTER_ENDPOINT = import.meta.env.VITE_SCHOOL_REGISTER_ENDPOINT |
  * @returns {Promise<Object>} API Response object
  */
 export async function registerSchoolApi(payload) {
-  const fullUrl = `${API_BASE_URL}${SCHOOL_REGISTER_ENDPOINT}`;
+  const fullUrl = `${API_BASE_URL}/api/school/register`;
 
   const school = payload.schoolDetails || payload;
   const coordinator = payload.coordinatorDetails || payload;
