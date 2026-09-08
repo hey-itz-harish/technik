@@ -504,9 +504,27 @@ export default function Home() {
 
               {/* Footer Zone (Full Width Button) */}
               <div style={styles.cardFooterArea}>
-                <Link to="/register?tab=partner" style={styles.btnOrangeAction}>
-                  BECOME A PARTNER &rarr;
-                </Link>
+                <button
+                  type="button"
+                  disabled
+                  style={{
+                    ...styles.btnOrangeAction,
+                    background: '#cbd5e1',
+                    color: '#475569',
+                    cursor: 'not-allowed',
+                    opacity: 0.8,
+                    boxShadow: 'none',
+                    border: '1px solid #cbd5e1',
+                    pointerEvents: 'none',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    width: '100%',
+                    fontWeight: 700
+                  }}
+                >
+                  BECOME A PARTNER (COMING SOON)
+                </button>
               </div>
             </div>
 
