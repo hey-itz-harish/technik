@@ -35,9 +35,9 @@ export default function About() {
           <div style={styles.heroBgOverlay} />
         </div>
 
-        <div className="container" style={styles.heroContainer}>
+        <div className="container about-hero-container" style={styles.heroContainer}>
           {/* Left Text & Values Block (Right side left completely open for background image) */}
-          <div style={styles.heroLeftContent}>
+          <div style={styles.heroLeftContent} className="about-hero-left">
             {/* Eyebrow */}
             <div style={styles.eyebrowRowHero}>
               <div style={styles.eyebrowLineHero} />
@@ -45,7 +45,7 @@ export default function About() {
             </div>
 
             {/* Title */}
-            <h1 style={styles.heroTitle}>
+            <h1 style={styles.heroTitle} className="about-hero-title">
               <span style={{ color: '#fbbf24', display: 'block' }}>Empowering</span>
               <span style={{ color: '#ffffff', display: 'block' }}>Young Minds</span>
             </h1>
@@ -82,7 +82,7 @@ export default function About() {
           </div>
 
           {/* Right Bottom Taglines Block */}
-          <div style={styles.heroRightBottom}>
+          <div style={styles.heroRightBottom} className="about-hero-right">
             <div style={styles.heroTaglinePill}>
               <span style={styles.heroTaglineSparkle}>✦</span>
               <span style={styles.heroTaglineText}>A Brighter Tomorrow Begins Here!</span>
@@ -98,7 +98,7 @@ export default function About() {
       {/* 2. ABOUT TECHNIK SECTION */}
       <section style={styles.sectionPadding}>
         <div className="container">
-          <div style={styles.aboutTechnikGrid}>
+          <div style={styles.aboutTechnikGrid} className="about-technik-grid">
             {/* Left Narrative */}
             <div style={styles.narrativeCol}>
               <div style={styles.eyebrowRowVertical}>
@@ -968,4 +968,40 @@ const styles = {
     lineHeight: '1.3',
   },
 };
+
+// Add responsive CSS styling
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @media (max-width: 991px) {
+    .about-hero-container {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 1.5rem !important;
+      padding: 0 1rem !important;
+    }
+    .about-hero-left {
+      margin-left: 0 !important;
+      max-width: 100% !important;
+    }
+    .about-hero-title {
+      font-size: clamp(2rem, 6vw, 2.4rem) !important;
+    }
+    .about-hero-right {
+      align-items: flex-start !important;
+      width: 100% !important;
+    }
+    .about-technik-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  @media (max-width: 640px) {
+    .about-hero-title {
+      font-size: clamp(1.75rem, 7vw, 2.1rem) !important;
+    }
+    .about-technik-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);
 

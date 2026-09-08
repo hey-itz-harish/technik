@@ -11,7 +11,14 @@ import {
   UserCheck,
   ChevronDown,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  Award,
+  BookOpen,
+  FileCheck2,
+  Headset,
+  Home as HomeIcon,
+  Info,
+  ArrowRight
 } from 'lucide-react';
 
 export default function TopNav() {
@@ -29,14 +36,14 @@ export default function TopNav() {
       <div style={styles.topUtilityBar} className="top-utility-bar">
         <div style={styles.topUtilityContainer}>
           <div style={styles.topContacts}>
-            <a href="mailto:info@technikolympiad.com" style={styles.topContactItem}>
+            <a href="mailto:support@technikolympaid.com" style={styles.topContactItem}>
               <Mail size={13} color="#38bdf8" />
-              <span>info@technikolympiad.com</span>
+              <span>support@technikolympaid.com</span>
             </a>
             <span style={styles.topDivider}>|</span>
-            <a href="tel:+919876543210" style={styles.topContactItem}>
+            <a href="tel:+919500428800" style={styles.topContactItem}>
               <Phone size={13} color="#38bdf8" />
-              <span>+91 98765 43210</span>
+              <span>+91 95004 28800</span>
             </a>
           </div>
 
@@ -174,37 +181,133 @@ export default function TopNav() {
           </div>
 
           {/* Mobile Toggle */}
-          <button style={styles.mobileMenuButton} onClick={() => setIsOpen(!isOpen)} id="mobile-nav-toggle">
-            {isOpen ? <X size={24} color="#0f172a" /> : <Menu size={24} color="#0f172a" />}
+          <button 
+            style={styles.mobileMenuButton} 
+            onClick={() => setIsOpen(!isOpen)} 
+            id="mobile-nav-toggle"
+            aria-label={isOpen ? "Close menu" : "Open menu"}
+          >
+            {isOpen ? <X size={26} color="#0f172a" /> : <Menu size={26} color="#0f172a" />}
           </button>
         </div>
 
         {/* Mobile Drawer */}
         {isOpen && (
-          <div style={styles.mobileDrawer}>
+          <div style={styles.mobileDrawer} className="mobile-drawer-animated">
             <div style={styles.mobileAuthRow}>
               <Link to="/schools" style={styles.mobileAuthBtnGold} onClick={() => setIsOpen(false)}>
-                <GraduationCap size={14} style={{ marginRight: '0.35rem' }} /> School Portal
+                <GraduationCap size={15} style={{ marginRight: '0.4rem' }} /> School Portal
               </Link>
               <Link to="/admin" style={styles.mobileAuthBtnBlue} onClick={() => setIsOpen(false)}>
-                <ShieldCheck size={14} style={{ marginRight: '0.35rem' }} /> Technik Portal
+                <ShieldCheck size={15} style={{ marginRight: '0.4rem' }} /> Technik Portal
               </Link>
             </div>
 
             <div style={styles.mobileLinks}>
-              <Link to="/" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>HOME</Link>
-              <Link to="/about" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>ABOUT US</Link>
-              <Link to="/catalog" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>OLYMPIADS</Link>
-              <Link to="/awards" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>TECHNIK AWARDS</Link>
-              <Link to="/skill-compass" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>FOR STUDENTS</Link>
-              <Link to="/dashboard" style={styles.mobileNavLink} onClick={() => setIsOpen(false)}>DASHBOARD</Link>
+              <Link 
+                to="/" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/') ? '#f97316' : '#0f172a',
+                  background: isActive('/') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <HomeIcon size={18} color={isActive('/') ? '#f97316' : '#64748b'} />
+                <span>HOME</span>
+              </Link>
+              
+              <Link 
+                to="/about" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/about') ? '#f97316' : '#0f172a',
+                  background: isActive('/about') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/about') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <Info size={18} color={isActive('/about') ? '#f97316' : '#64748b'} />
+                <span>ABOUT US</span>
+              </Link>
+
+              <Link 
+                to="/awards" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/awards') ? '#f97316' : '#0f172a',
+                  background: isActive('/awards') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/awards') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <Award size={18} color={isActive('/awards') ? '#f97316' : '#64748b'} />
+                <span>TECHNIK PRIDE AWARD</span>
+              </Link>
+
+              <Link 
+                to="/catalog" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/catalog') ? '#f97316' : '#0f172a',
+                  background: isActive('/catalog') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/catalog') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <BookOpen size={18} color={isActive('/catalog') ? '#f97316' : '#64748b'} />
+                <span>TECHNIK OLYMPIAD</span>
+              </Link>
+
+              <Link 
+                to="/results" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: (isActive('/results') || isActive('/verification')) ? '#f97316' : '#0f172a',
+                  background: (isActive('/results') || isActive('/verification')) ? '#fff7ed' : 'transparent',
+                  fontWeight: (isActive('/results') || isActive('/verification')) ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <FileCheck2 size={18} color={(isActive('/results') || isActive('/verification')) ? '#f97316' : '#64748b'} />
+                <span>RESULT</span>
+              </Link>
+
+              <Link 
+                to="/contact" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/contact') ? '#f97316' : '#0f172a',
+                  background: isActive('/contact') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/contact') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <Headset size={18} color={isActive('/contact') ? '#f97316' : '#64748b'} />
+                <span>CONTACT US</span>
+              </Link>
+
               <Link
                 to="/register"
                 style={styles.mobileRegisterBtn}
                 onClick={() => setIsOpen(false)}
               >
-                REGISTER NOW
+                <span>REGISTER NOW</span>
+                <ArrowRight size={16} />
               </Link>
+            </div>
+
+            {/* Mobile Contact Bar in Drawer */}
+            <div style={styles.mobileDrawerFooter}>
+              <a href="tel:+919500428800" style={styles.mobileContactChip}>
+                <Phone size={13} color="#2563eb" />
+                <span>+91 95004 28800</span>
+              </a>
+              <a href="mailto:support@technikolympaid.com" style={styles.mobileContactChip}>
+                <Mail size={13} color="#ea580c" />
+                <span>support@technikolympaid.com</span>
+              </a>
             </div>
           </div>
         )}
@@ -410,15 +513,17 @@ const styles = {
     right: 0,
     background: '#ffffff',
     borderBottom: '3px solid #f97316',
-    padding: '1.25rem',
+    padding: '1.15rem 1.25rem 1.4rem',
     zIndex: 999,
-    boxShadow: '0 15px 30px rgba(0,0,0,0.15)',
+    boxShadow: '0 20px 40px rgba(0,0,0,0.18)',
+    maxHeight: 'calc(100vh - 70px)',
+    overflowY: 'auto',
   },
   mobileAuthRow: {
     display: 'flex',
-    gap: '0.75rem',
-    marginBottom: '1rem',
-    paddingBottom: '1rem',
+    gap: '0.65rem',
+    marginBottom: '0.85rem',
+    paddingBottom: '0.85rem',
     borderBottom: '1px solid #f1f5f9',
   },
   mobileAuthBtnGold: {
@@ -426,55 +531,103 @@ const styles = {
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#fbbf24',
+    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
     color: '#0f172a',
-    fontWeight: 700,
+    fontWeight: 800,
     fontSize: '0.8rem',
-    padding: '0.6rem',
-    borderRadius: '6px',
+    padding: '0.65rem 0.5rem',
+    borderRadius: '8px',
     textDecoration: 'none',
+    boxShadow: '0 2px 8px rgba(245, 158, 11, 0.25)',
   },
   mobileAuthBtnBlue: {
     flex: 1,
     display: 'inline-flex',
     alignItems: 'center',
     justifyContent: 'center',
-    background: '#2563eb',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
     color: '#ffffff',
-    fontWeight: 700,
+    fontWeight: 800,
     fontSize: '0.8rem',
-    padding: '0.6rem',
-    borderRadius: '6px',
+    padding: '0.65rem 0.5rem',
+    borderRadius: '8px',
     textDecoration: 'none',
+    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
   },
   mobileLinks: {
     display: 'flex',
     flexDirection: 'column',
-    gap: '0.75rem',
+    gap: '0.35rem',
   },
   mobileNavLink: {
-    fontSize: '0.9rem',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    fontSize: '0.88rem',
     fontWeight: 700,
     color: '#0f172a',
     textDecoration: 'none',
-    padding: '0.5rem 0',
-    borderBottom: '1px solid #f1f5f9',
+    padding: '0.65rem 0.75rem',
+    borderRadius: '8px',
+    transition: 'all 0.2s ease',
   },
   mobileRegisterBtn: {
-    background: '#f97316',
+    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
     color: '#ffffff',
     fontWeight: 800,
-    textAlign: 'center',
-    padding: '0.75rem',
-    borderRadius: '6px',
+    fontSize: '0.9rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: '0.5rem',
+    padding: '0.8rem',
+    borderRadius: '8px',
     textDecoration: 'none',
-    marginTop: '0.5rem',
+    marginTop: '0.65rem',
+    boxShadow: '0 4px 14px rgba(249, 115, 22, 0.35)',
+    letterSpacing: '0.02em',
+  },
+  mobileDrawerFooter: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '0.5rem',
+    marginTop: '1rem',
+    paddingTop: '0.85rem',
+    borderTop: '1px solid #f1f5f9',
+  },
+  mobileContactChip: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.55rem',
+    background: '#f8fafc',
+    border: '1px solid #e2e8f0',
+    padding: '0.55rem 0.75rem',
+    borderRadius: '6px',
+    fontSize: '0.8rem',
+    fontWeight: 600,
+    color: '#334155',
+    textDecoration: 'none',
   }
 };
 
 // Add responsive CSS styling and animations
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
+  @keyframes drawerSlideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .mobile-drawer-animated {
+    animation: drawerSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
   @keyframes navSlideDown {
     from {
       transform: translateY(-100%);

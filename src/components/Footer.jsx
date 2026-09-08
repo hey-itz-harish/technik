@@ -14,7 +14,7 @@ export default function Footer() {
       <div className="container">
 
         {/* Top Brand Header */}
-        <div style={styles.brandHeader}>
+        <div style={styles.brandHeader} className="footer-brand-header">
           <Link to="/" style={styles.logo}>
             <div style={styles.logoGearBox}>
               <img
@@ -111,17 +111,17 @@ export default function Footer() {
           <div style={styles.col}>
             <h4 style={styles.colTitle}>CONTACT US</h4>
             <div style={styles.contactList}>
-              <div style={styles.contactItem}>
-                <Phone size={14} color="#38bdf8" />
-                <span>+91 98765 43210</span>
-              </div>
-              <div style={styles.contactItem}>
-                <Mail size={14} color="#38bdf8" />
-                <span>info@technikolympiad.com</span>
-              </div>
+              <a href="tel:+919500428800" style={{ ...styles.contactItem, textDecoration: 'none', color: '#cbd5e1' }}>
+                <Phone size={14} color="#38bdf8" style={{ flexShrink: 0 }} />
+                <span>+91 95004 28800</span>
+              </a>
+              <a href="mailto:support@technikolympaid.com" style={{ ...styles.contactItem, textDecoration: 'none', color: '#cbd5e1' }}>
+                <Mail size={14} color="#38bdf8" style={{ flexShrink: 0 }} />
+                <span>support@technikolympaid.com</span>
+              </a>
               <div style={styles.contactItem}>
                 <MapPin size={16} color="#f97316" style={{ flexShrink: 0, marginTop: '2px' }} />
-                <span>Technik Olympiad Pvt. Ltd. Chennai, Tamil Nadu, India</span>
+                <span>Technik Olympiad Pvt. Ltd. Vijayawada, Andhra Pradesh, India</span>
               </div>
             </div>
           </div>
@@ -263,12 +263,19 @@ const styleSheet = document.createElement("style");
 styleSheet.innerText = `
   @media (max-width: 991px) {
     .footer-columns-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 2rem 1.5rem !important;
     }
   }
   @media (max-width: 600px) {
     .footer-columns-grid {
       grid-template-columns: 1fr !important;
+      gap: 1.75rem !important;
+    }
+    .footer-brand-header {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: 1.25rem !important;
     }
   }
   footer a:hover {

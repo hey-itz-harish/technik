@@ -173,14 +173,14 @@ export default function Catalog({ onSelectTrack }) {
       {/* 1. HERO BANNER SECTION */}
       <section style={styles.heroSection}>
         <div className="container" style={styles.heroContainer}>
-          <div style={styles.heroGrid}>
+          <div style={styles.heroGrid} className="catalog-hero-grid">
             
             {/* Left Hero Content */}
             <div style={styles.heroLeftCol}>
               <span style={styles.heroEyebrow}>
                 India's Emerging Student Talent Platform
               </span>
-              <h1 style={styles.heroMainTitle}>
+              <h1 style={styles.heroMainTitle} className="catalog-hero-title">
                 TECHNIK <br />
                 <span style={{ color: '#fbbf24' }}>OLYMPIAD</span>
               </h1>
@@ -1249,3 +1249,23 @@ const styles = {
     gap: '0.35rem',
   },
 };
+
+// Add responsive CSS styling
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @media (max-width: 991px) {
+    .catalog-hero-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.75rem !important;
+    }
+    .catalog-hero-title {
+      font-size: clamp(2.2rem, 7vw, 2.8rem) !important;
+    }
+  }
+  @media (max-width: 640px) {
+    .catalog-hero-title {
+      font-size: clamp(1.85rem, 8vw, 2.2rem) !important;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);

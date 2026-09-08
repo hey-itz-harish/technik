@@ -69,7 +69,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
       city: 'Vijayawada',
       address: 'Plot 42, Executive Campus, Ring Road, Vijayawada - 520008',
       email: 'principal@stxaviers.edu.in',
-      mobile: '+91 98765 43210',
+      mobile: '+91 95004 28800',
       principalName: 'Dr. Ramesh Verma'
     });
 

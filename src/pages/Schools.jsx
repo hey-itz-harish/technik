@@ -27,7 +27,8 @@ import {
   FileCheck,
   Download,
   Filter,
-  LogOut
+  LogOut,
+  Clock
 } from 'lucide-react';
 
 export default function Schools() {

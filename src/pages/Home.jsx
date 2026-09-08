@@ -190,7 +190,7 @@ export default function Home() {
       {/* HERO SECTION */}
       <section style={styles.heroSection}>
         <div className="container home-hero-container" style={styles.heroContainer}>
-          <div style={styles.heroLeft}>
+          <div style={styles.heroLeft} className="home-hero-left">
             <div style={styles.heroEyebrow} className="hero-stagger-1">
               <span style={styles.eyebrowYellow}>EVERY STUDENT</span>
             </div>
@@ -214,7 +214,7 @@ export default function Home() {
               For Students from Play School to Class 12
             </div>
 
-            <div style={styles.heroActions} className="hero-stagger-7">
+            <div style={styles.heroActions} className="hero-stagger-7 home-hero-actions">
               <Link to="/register" className="btn-hero-gold">
                 REGISTER YOUR SCHOOL
               </Link>
@@ -234,6 +234,7 @@ export default function Home() {
             ref={heroVisualRef}
             onMouseMove={handleMouseMoveHero}
             onMouseLeave={handleMouseLeaveHero}
+            className="home-hero-right-col"
           >
             <div
               style={{
@@ -241,7 +242,7 @@ export default function Home() {
                 transform: `perspective(1000px) rotateY(${mouseTilt.x}deg) rotateX(${mouseTilt.y}deg)`,
                 transition: mouseTilt.x === 0 ? 'transform 0.6s ease' : 'transform 0.1s ease-out',
               }}
-              className="hero-badge-card-frame"
+              className="hero-badge-card-frame home-hero-visual-frame"
             >
               <div style={styles.orbitRing} className="orbit-ring-pulse"></div>
 
@@ -329,7 +330,7 @@ export default function Home() {
       {/* HIGHLIGHT STATS BAR (Image 2 Banner replacing Image 1 Banner) */}
       <section style={styles.statsBarSection}>
         <div className="container">
-          <div style={styles.statsGridBar}>
+          <div style={styles.statsGridBar} className="home-stats-grid">
             {/* Stat 1 */}
             <div style={styles.statCardBar}>
               <div style={{ ...styles.statIconCircleBar, background: '#eff6ff' }}>
@@ -380,7 +381,7 @@ export default function Home() {
       {/* KEY INITIATIVES SECTION (TECHNIK PRIDE AWARD & TECHNIK OLYMPIAD) */}
       <section style={{ padding: '1.75rem 0 1rem 0' }} className="reveal-on-scroll">
         <div className="container">
-          <div style={styles.initiativesGridHome}>
+          <div style={styles.initiativesGridHome} className="home-initiatives-grid">
             {/* Technik Pride Award Card */}
             <div style={styles.initiativeCardPrideHome}>
               <div style={styles.img3DWrapperHome}>
@@ -424,7 +425,7 @@ export default function Home() {
       {/* THREE ACTION CARDS (FOR SCHOOLS, HOSTING PARTNER, FOR RESULT) */}
       <section style={styles.actionCardsSection}>
         <div className="container">
-          <div style={styles.threeActionGrid}>
+          <div style={styles.threeActionGrid} className="home-action-cards-grid">
 
             {/* Card 1: FOR SCHOOLS */}
             <div style={styles.actionCardSchools}>
@@ -435,7 +436,7 @@ export default function Home() {
               </div>
 
               {/* Middle Body Zone (Checklist + Image) */}
-              <div style={styles.cardMiddleBody}>
+              <div style={styles.cardMiddleBody} className="home-action-middle-body">
                 <div style={styles.checkListAction}>
                   <div style={styles.checkItemAction}>
                     <CheckCircle2 size={17} color="#16a34a" style={{ flexShrink: 0 }} />
@@ -455,7 +456,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div style={styles.actionCardImgCol}>
+                <div style={styles.actionCardImgCol} className="home-action-img-col">
                   <img src={schoolCardImg} alt="School Building" style={styles.cardBuildingImg} />
                 </div>
               </div>
@@ -477,7 +478,7 @@ export default function Home() {
               </div>
 
               {/* Middle Body Zone (Checklist + Image) */}
-              <div style={styles.cardMiddleBody}>
+              <div style={styles.cardMiddleBody} className="home-action-middle-body">
                 <div style={styles.checkListAction}>
                   <div style={styles.checkItemAction}>
                     <CheckCircle2 size={17} color="#ea580c" style={{ flexShrink: 0 }} />
@@ -497,7 +498,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div style={styles.actionCardImgCol}>
+                <div style={styles.actionCardImgCol} className="home-action-img-col">
                   <img src={handshakeCardImg} alt="Handshake Partnership" style={styles.cardHandshakeImg} />
                 </div>
               </div>
@@ -537,7 +538,7 @@ export default function Home() {
               </div>
 
               {/* Middle Body Zone (Checklist + Medal Graphic) */}
-              <div style={styles.cardMiddleBody}>
+              <div style={styles.cardMiddleBody} className="home-action-middle-body">
                 <div style={styles.checkListAction}>
                   <div style={styles.checkItemAction}>
                     <FileText size={17} color="#2563eb" style={{ flexShrink: 0 }} />
@@ -553,7 +554,7 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div style={styles.actionCardImgCol}>
+                <div style={styles.actionCardImgCol} className="home-action-img-col">
                   <img src={resultMedalImg} alt="Winner Gold Medal" style={styles.cardMedalImg} />
                 </div>
               </div>
@@ -573,7 +574,7 @@ export default function Home() {
       {/* UPCOMING EVENTS, LATEST NEWS & OUR FOCUS SECTION */}
       <section style={styles.eventsNewsFocusSection}>
         <div className="container">
-          <div style={styles.threeGridRow}>
+          <div style={styles.threeGridRow} className="home-events-news-grid">
 
             {/* UPCOMING EVENTS */}
             <div style={styles.gridCardBox}>
@@ -674,7 +675,7 @@ export default function Home() {
       {/* TRUST FEATURES BAR */}
       <section style={styles.trustFeaturesSection}>
         <div className="container">
-          <div style={styles.trustFeaturesRow}>
+          <div style={styles.trustFeaturesRow} className="home-trust-features-grid">
 
             {/* Feature 1 */}
             <div style={styles.trustFeatureCol}>
@@ -1802,7 +1803,7 @@ const styles = {
     textDecoration: 'none',
     letterSpacing: '0.04em',
   },
-  newsList: {
+  newsListSecondary: {
     display: 'flex',
     flexDirection: 'column',
     gap: '1rem',
@@ -2223,60 +2224,129 @@ styleSheet.innerText = `
     background: #09204a;
   }
 
-  @media (max-width: 1024px) {
-    .home-award-banner {
-      grid-template-columns: 1fr !important;
-      gap: 1.5rem !important;
-      padding: 2rem 1.25rem !important;
-    }
-    .award-center-col {
-      align-items: center !important;
-      text-align: center !important;
-    }
-    .award-center-col .badge {
-      align-self: center !important;
-    }
-    .award-center-col .award-cta-btn {
-      align-self: center !important;
-    }
-    .award-right-col {
-      display: flex !important;
-      flex-direction: row !important;
-      flex-wrap: wrap !important;
-      justify-content: center !important;
-      gap: 0.75rem !important;
-    }
-  }
-
+  /* RESPONSIVE BREAKPOINTS */
   @media (max-width: 991px) {
     .home-hero-container {
       grid-template-columns: 1fr !important;
-      gap: 2.5rem !important;
+      gap: 2rem !important;
+    }
+    .home-hero-left {
+      align-items: center !important;
+      text-align: center !important;
+    }
+    .home-hero-left .hero-stagger-1 {
+      align-self: center !important;
     }
     .home-hero-title {
-      font-size: 2.15rem !important;
+      font-size: clamp(2rem, 5.5vw, 2.5rem) !important;
       line-height: 1.15 !important;
+      text-align: center !important;
+    }
+    .home-hero-actions {
+      justify-content: center !important;
+      width: 100% !important;
+    }
+    .home-hero-right-col {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      margin-top: 0.5rem !important;
     }
     .home-stats-grid {
       grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
     }
-    .home-olympiad-grid, .home-segment-grid, .home-bottom-grid3 {
+    .home-initiatives-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.25rem !important;
+    }
+    .home-action-cards-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.25rem !important;
+    }
+    .home-events-news-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.25rem !important;
+    }
+    .home-trust-features-grid {
+      display: grid !important;
       grid-template-columns: repeat(2, 1fr) !important;
-    }
-    .home-trust-grid {
-      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1rem !important;
     }
   }
-  @media (max-width: 600px) {
-    .home-stats-grid {
-      grid-template-columns: 1fr !important;
+
+  @media (max-width: 640px) {
+    .home-hero-container {
+      padding: 0 1rem !important;
+      gap: 1.5rem !important;
     }
-    .home-olympiad-grid, .home-segment-grid, .home-bottom-grid3, .home-trust-grid {
-      grid-template-columns: 1fr !important;
+    .home-hero-title {
+      font-size: clamp(1.75rem, 7vw, 2.15rem) !important;
+      line-height: 1.18 !important;
     }
-    .award-right-col {
+    .home-hero-actions {
       flex-direction: column !important;
       width: 100% !important;
+      gap: 0.65rem !important;
+    }
+    .home-hero-actions a {
+      width: 100% !important;
+      justify-content: center !important;
+      box-sizing: border-box !important;
+      padding: 0.75rem 1rem !important;
+      text-align: center !important;
+    }
+    .home-hero-visual-frame {
+      width: min(290px, 86vw) !important;
+      height: min(290px, 86vw) !important;
+      margin: 0 auto !important;
+    }
+    .home-hero-visual-frame .achiever-box-floating {
+      width: min(230px, 72vw) !important;
+      padding: 1rem 0.75rem !important;
+    }
+    .home-hero-visual-frame .shield-logo-wrapper {
+      width: 110px !important;
+      height: 110px !important;
+      padding: 8px !important;
+    }
+    .home-hero-visual-frame .shield-logo-img {
+      width: 90px !important;
+      height: 90px !important;
+    }
+    .home-hero-visual-frame .orbit-badge-item {
+      width: 36px !important;
+      height: 36px !important;
+    }
+    .home-hero-visual-frame .orbit-badge-1 { top: 2% !important; left: 2% !important; }
+    .home-hero-visual-frame .orbit-badge-2 { top: 22% !important; right: 0% !important; }
+    .home-hero-visual-frame .orbit-badge-3 { bottom: 22% !important; left: 0% !important; }
+    .home-hero-visual-frame .orbit-badge-4 { bottom: 2% !important; right: 2% !important; }
+
+    .home-stats-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0.6rem !important;
+    }
+    .home-action-middle-body {
+      flex-direction: column-reverse !important;
+      align-items: flex-start !important;
+      gap: 1rem !important;
+    }
+    .home-action-img-col {
+      width: 100% !important;
+      display: flex !important;
+      justify-content: center !important;
+      margin-bottom: 0.25rem !important;
+    }
+    .home-action-img-col img {
+      width: 100% !important;
+      max-width: 220px !important;
+      height: 120px !important;
+      object-fit: cover !important;
+    }
+    .home-trust-features-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0.85rem !important;
     }
   }
 `;

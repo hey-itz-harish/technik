@@ -52,15 +52,15 @@ export default function Awards() {
           <div className="confetti-piece" style={{ left: '94%', background: '#4ade80', animationDelay: '3.2s' }} />
         </div>
 
-        <div className="container" style={styles.heroContainer}>
+        <div className="container awards-hero-container" style={styles.heroContainer}>
           
           {/* Left Hero Text Block */}
-          <div style={styles.heroLeft}>
+          <div style={styles.heroLeft} className="awards-hero-left">
             <div style={styles.heroEyebrowRow}>
               <span style={styles.heroEyebrowGold}>EVERY STUDENT</span>
             </div>
 
-            <h1 style={styles.heroMainHeading}>
+            <h1 style={styles.heroMainHeading} className="awards-hero-heading">
               <span style={{ color: '#ffffff', display: 'block' }}>DESERVES A</span>
               <span style={{ color: '#fbbf24', display: 'block' }}>MOMENT OF PRIDE.</span>
             </h1>
@@ -78,7 +78,7 @@ export default function Awards() {
           </div>
 
           {/* Center Horizontal Fixed 3-Star Stage Display & Accents */}
-          <div style={styles.heroCenter3dStage}>
+          <div style={styles.heroCenter3dStage} className="awards-hero-center">
             {/* Left Tech Accent */}
             <div style={styles.heroLeftDesignAccent}>
               <div style={styles.techNodeBlue} />
@@ -134,8 +134,8 @@ export default function Awards() {
           </div>
 
           {/* Right Hero Stack of 4 Badges & Handwritten Script */}
-          <div style={styles.heroRight}>
-            <div style={styles.badgesColumn}>
+          <div style={styles.heroRight} className="awards-hero-right">
+            <div style={styles.badgesColumn} className="awards-badges-col">
               <div style={styles.badgeRow}>
                 <div style={styles.badgeCircleIcon}>
                   <Shield size={18} color="#ffffff" />
@@ -178,7 +178,7 @@ export default function Awards() {
             </div>
 
             {/* Handwritten Script Tag */}
-            <div style={styles.heroHandwrittenScript}>
+            <div style={styles.heroHandwrittenScript} className="awards-script-text">
               <span style={styles.scriptGoldMain}>A Brighter</span>
               <br />
               <span style={styles.scriptGoldSub}>Tomorrow</span>
@@ -193,7 +193,7 @@ export default function Awards() {
       {/* 2. HIGHLIGHT STATS BAR (4 Columns) */}
       <section style={styles.statsBarSection}>
         <div className="container">
-          <div style={styles.statsBarBox}>
+          <div style={styles.statsBarBox} className="awards-stats-box">
             {/* Stat 1 */}
             <div style={styles.statCol}>
               <div style={styles.statIconBadge}>
@@ -206,7 +206,7 @@ export default function Awards() {
               </div>
             </div>
 
-            <div style={styles.statDivider} />
+            <div style={styles.statDivider} className="awards-stat-divider" />
 
             {/* Stat 2 */}
             <div style={styles.statCol}>
@@ -219,7 +219,7 @@ export default function Awards() {
               </div>
             </div>
 
-            <div style={styles.statDivider} />
+            <div style={styles.statDivider} className="awards-stat-divider" />
 
             {/* Stat 3 */}
             <div style={styles.statCol}>
@@ -232,7 +232,7 @@ export default function Awards() {
               </div>
             </div>
 
-            <div style={styles.statDivider} />
+            <div style={styles.statDivider} className="awards-stat-divider" />
 
             {/* Stat 4 */}
             <div style={styles.statCol}>
@@ -251,7 +251,7 @@ export default function Awards() {
       {/* 3. ABOUT, KALAM CARD & OBJECTIVES GRID */}
       <section style={styles.mainGridSection}>
         <div className="container">
-          <div style={styles.threeColGrid}>
+          <div style={styles.threeColGrid} className="awards-three-col-grid">
             
             {/* Col 1: ABOUT TECHNIK PRIDE AWARD */}
             <div style={styles.aboutCol}>
@@ -1177,3 +1177,62 @@ const styles = {
     marginTop: '3px',
   },
 };
+
+// Add responsive CSS styling
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @media (max-width: 991px) {
+    .awards-hero-container {
+      flex-direction: column !important;
+      align-items: center !important;
+      text-align: center !important;
+      gap: 1.75rem !important;
+    }
+    .awards-hero-left {
+      flex: 1 1 100% !important;
+      max-width: 100% !important;
+      text-align: center !important;
+    }
+    .awards-hero-heading {
+      font-size: clamp(2rem, 6vw, 2.6rem) !important;
+    }
+    .awards-hero-center {
+      max-width: 100% !important;
+      margin: 0 auto !important;
+    }
+    .awards-hero-right {
+      max-width: 100% !important;
+      align-items: center !important;
+      text-align: center !important;
+    }
+    .awards-badges-col {
+      align-items: center !important;
+    }
+    .awards-badges-col .badgeRow {
+      justify-content: center !important;
+    }
+    .awards-script-text {
+      text-align: center !important;
+    }
+    .awards-three-col-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+  @media (max-width: 640px) {
+    .awards-hero-heading {
+      font-size: clamp(1.75rem, 7vw, 2.1rem) !important;
+    }
+    .awards-stats-box {
+      flex-direction: column !important;
+      align-items: stretch !important;
+      gap: 1rem !important;
+    }
+    .awards-stat-divider {
+      display: none !important;
+    }
+    .awards-three-col-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);

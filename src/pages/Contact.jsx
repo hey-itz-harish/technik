@@ -81,7 +81,7 @@ export default function Contact() {
     },
     {
       q: "Whom do I contact for media enquiries?",
-      a: "Press and media representatives can contact our communications team at info@technikolympiad.com or select 'Media Enquiries' in the contact form."
+      a: "Press and media representatives can contact our communications team at support@technikolympaid.com or select 'Media Enquiries' in the contact form."
     }
   ];
 
@@ -163,7 +163,7 @@ export default function Contact() {
       {/* 2. 4 TOP CONTACT INFO CARDS ROW */}
       <section style={styles.cardsSectionPadding}>
         <div className="container">
-          <div style={styles.topCardsGrid}>
+          <div style={styles.topCardsGrid} className="contact-top-cards-grid">
             
             {/* Card 1: Call Us */}
             <div style={styles.topInfoCard}>
@@ -185,8 +185,8 @@ export default function Contact() {
                 <Mail size={22} color="#ffffff" />
               </div>
               <h3 style={styles.cardTitle}>Email Us</h3>
-              <a href="mailto:info@technikolympiad.com" style={styles.cardHighlightText}>
-                info@technikolympiad.com
+              <a href="mailto:support@technikolympaid.com" style={styles.cardHighlightText}>
+                support@technikolympaid.com
               </a>
               <p style={styles.cardSubText}>
                 We usually respond within 24 hours.
@@ -224,7 +224,7 @@ export default function Contact() {
           </div>
 
           {/* 3. MIDDLE TWO-COLUMN SECTION (FORM + MAP) */}
-          <div style={styles.middleTwoColGrid}>
+          <div style={styles.middleTwoColGrid} className="contact-middle-grid">
             
             {/* LEFT COL: SEND US A MESSAGE FORM */}
             <div style={styles.formContainerCard}>
@@ -1017,3 +1017,25 @@ const styles = {
     lineHeight: '1.45',
   },
 };
+
+// Add responsive CSS styling
+const styleSheet = document.createElement("style");
+styleSheet.innerText = `
+  @media (max-width: 991px) {
+    .contact-top-cards-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 1rem !important;
+    }
+    .contact-middle-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.25rem !important;
+    }
+  }
+  @media (max-width: 640px) {
+    .contact-top-cards-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0.85rem !important;
+    }
+  }
+`;
+document.head.appendChild(styleSheet);
