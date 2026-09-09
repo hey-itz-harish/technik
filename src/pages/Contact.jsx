@@ -107,7 +107,7 @@ export default function Contact() {
             <span style={styles.breadcrumbCurrent}>Contact Us</span>
           </div>
 
-          <div style={styles.heroContentGrid}>
+          <div style={styles.heroContentGrid} className="contact-hero-grid">
             
             {/* Left Content */}
             <div style={styles.heroLeftCol}>
@@ -121,7 +121,7 @@ export default function Contact() {
             </div>
 
             {/* Right Action Icons Circle Column */}
-            <div style={styles.heroRightCol}>
+            <div style={styles.heroRightCol} className="contact-hero-right">
               <div style={styles.heroFeatureRow}>
                 <div style={styles.featureCircleIcon}>
                   <MessageCircle size={18} color="#38bdf8" />
@@ -161,7 +161,7 @@ export default function Contact() {
       </section>
 
       {/* 2. 4 TOP CONTACT INFO CARDS ROW */}
-      <section style={styles.cardsSectionPadding}>
+      <section style={styles.cardsSectionPadding} className="contact-cards-section">
         <div className="container">
           <div style={styles.topCardsGrid} className="contact-top-cards-grid">
             
@@ -254,7 +254,7 @@ export default function Contact() {
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} style={styles.contactForm}>
-                  <div style={styles.formRow2Col}>
+                  <div style={styles.formRow2Col} className="contact-form-row">
                     {/* Your Name */}
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>
@@ -286,7 +286,7 @@ export default function Contact() {
                     </div>
                   </div>
 
-                  <div style={styles.formRow2Col}>
+                  <div style={styles.formRow2Col} className="contact-form-row">
                     {/* Phone Number */}
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Phone Number</label>
@@ -389,7 +389,7 @@ export default function Contact() {
               </div>
             </div>
 
-            <div style={styles.quickPillsGrid}>
+            <div style={styles.quickPillsGrid} className="contact-quick-pills">
               
               {/* Category 1 */}
               <div 
@@ -1019,23 +1019,53 @@ const styles = {
 };
 
 // Add responsive CSS styling
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-  @media (max-width: 991px) {
-    .contact-top-cards-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 1rem !important;
-    }
-    .contact-middle-grid {
-      grid-template-columns: 1fr !important;
-      gap: 1.25rem !important;
-    }
+if (typeof document !== 'undefined') {
+  let styleSheet = document.getElementById('contact-responsive-styles');
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
+    styleSheet.id = 'contact-responsive-styles';
+    document.head.appendChild(styleSheet);
   }
-  @media (max-width: 640px) {
-    .contact-top-cards-grid {
-      grid-template-columns: 1fr !important;
-      gap: 0.85rem !important;
+  styleSheet.innerText = `
+    @media (max-width: 991px) {
+      .contact-top-cards-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1rem !important;
+      }
+      .contact-middle-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.25rem !important;
+      }
+      .contact-hero-right {
+        align-items: flex-start !important;
+        width: 100% !important;
+        margin-top: 0.75rem !important;
+      }
+      .contact-hero-right div[style*="textAlign: 'right'"],
+      .contact-hero-right div[style*="text-align: right"] {
+        text-align: left !important;
+      }
     }
-  }
-`;
-document.head.appendChild(styleSheet);
+    @media (max-width: 768px) {
+      .contact-cards-section {
+        margin-top: 1rem !important;
+      }
+      .contact-form-row {
+        grid-template-columns: 1fr !important;
+        gap: 0.75rem !important;
+      }
+      .contact-quick-pills {
+        grid-template-columns: 1fr !important;
+      }
+      .contact-faq-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+    @media (max-width: 640px) {
+      .contact-top-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+      }
+    }
+  `;
+}

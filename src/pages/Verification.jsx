@@ -255,12 +255,12 @@ export default function Verification({ registrations = [] }) {
       </section>
 
       {/* 2. FLOATING "CHECK YOUR RESULT" FORM CARD SECTION */}
-      <section style={styles.formSectionPadding}>
+      <section style={styles.formSectionPadding} className="verification-form-section">
         <div className="container">
-          <div style={styles.checkCardWrapper}>
+          <div style={styles.checkCardWrapper} className="verification-check-card">
             
             {/* Card Header */}
-            <div style={styles.cardHeaderRow}>
+            <div style={styles.cardHeaderRow} className="verification-card-header">
               <div style={styles.cardIconBox}>
                 <FileSearch size={26} color="#1d4ed8" />
               </div>
@@ -274,7 +274,7 @@ export default function Verification({ registrations = [] }) {
 
             {/* Search Form */}
             <form onSubmit={handleSearch} style={styles.searchForm}>
-              <div style={styles.formGrid}>
+              <div style={styles.formGrid} className="verification-form-grid">
                 
                 {/* Field 1: Reg Number */}
                 <div style={styles.fieldCol}>
@@ -344,8 +344,8 @@ export default function Verification({ registrations = [] }) {
                 </div>
 
                 {/* Submit Button */}
-                <div style={styles.btnCol}>
-                  <button type="submit" style={styles.viewResultBtn}>
+                <div style={styles.btnCol} className="verification-btn-col">
+                  <button type="submit" style={styles.viewResultBtn} className="verification-submit-btn">
                     <span>View Result</span>
                     <ArrowRight size={18} />
                   </button>
@@ -356,7 +356,7 @@ export default function Verification({ registrations = [] }) {
           </div>
 
           {/* 3. 4 FEATURE / STEP CARDS ROW */}
-          <div style={styles.stepsGrid}>
+          <div style={styles.stepsGrid} className="verification-steps-grid">
             
             {/* Step 1: View Your Score */}
             <div style={styles.stepCard}>
@@ -1539,5 +1539,50 @@ styleSheet.innerText = `
   .right-4 { right: 8%; bottom: 10%; width: 10px; height: 10px; background: #a855f7; animation: burstRightToCenter 3.1s cubic-bezier(0.22, 1, 0.36, 1) infinite 1.2s; }
   .right-5 { right: 4%; bottom: 55%; width: 7px; height: 12px; background: #fbbf24; animation: burstRightToCenter 3.6s cubic-bezier(0.22, 1, 0.36, 1) infinite 0.4s; }
   .right-6 { right: 9%; bottom: 35%; width: 11px; height: 11px; background: #ffffff; animation: burstRightToCenter 2.9s cubic-bezier(0.22, 1, 0.36, 1) infinite 0.9s; }
+
+  @media (max-width: 991px) {
+    .verification-lower-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1.5rem !important;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .verification-check-card {
+      margin-top: 1rem !important;
+      padding: 1.25rem 1rem !important;
+      border-radius: 12px !important;
+    }
+    .verification-card-header {
+      flex-wrap: wrap !important;
+      gap: 0.75rem !important;
+      margin-bottom: 1.25rem !important;
+    }
+    .verification-form-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0.85rem !important;
+    }
+    .verification-btn-col,
+    .verification-submit-btn {
+      width: 100% !important;
+    }
+    .verification-steps-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.75rem !important;
+      margin-top: 1.25rem !important;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .verification-steps-grid {
+      grid-template-columns: 1fr !important;
+    }
+  }
 `;
-document.head.appendChild(styleSheet);
+if (typeof document !== 'undefined') {
+  let styleEl = document.getElementById('verification-responsive-styles');
+  if (!styleEl) {
+    styleSheet.id = 'verification-responsive-styles';
+    document.head.appendChild(styleSheet);
+  }
+}

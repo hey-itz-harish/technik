@@ -172,42 +172,42 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
       <>
           {/* Step Indicator Bar (1, 2, 3) */}
           <div style={styles.stepBarWrapper}>
-            <div style={styles.stepBarContainer}>
+            <div style={styles.stepBarContainer} className="register-step-container">
               <div style={styles.stepItemActive}>
                 <div style={styles.stepNumberActive}>1</div>
                 <div style={styles.stepTextGroup}>
                   <div style={styles.stepTitleActive}>School Details</div>
-                  <div style={styles.stepSub}>Tell us about your school</div>
+                  <div style={styles.stepSub} className="register-step-sub">Tell us about your school</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
+              <div style={styles.stepDivider} className="register-step-divider" />
 
               <div style={styles.stepItem}>
                 <div style={styles.stepNumber}>2</div>
                 <div style={styles.stepTextGroup}>
                   <div style={styles.stepTitle}>Coordinator Details</div>
-                  <div style={styles.stepSub}>Add contact person</div>
+                  <div style={styles.stepSub} className="register-step-sub">Add contact person</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
+              <div style={styles.stepDivider} className="register-step-divider" />
 
               <div style={styles.stepItem}>
                 <div style={styles.stepNumber}>3</div>
                 <div style={styles.stepTextGroup}>
                   <div style={styles.stepTitle}>Review & Submit</div>
-                  <div style={styles.stepSub}>Confirm and submit</div>
+                  <div style={styles.stepSub} className="register-step-sub">Confirm and submit</div>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Main Form Body */}
-          <main style={styles.formMainContainer}>
+          <main style={styles.formMainContainer} className="register-main-container">
             <form onSubmit={handleSchoolRegisterSubmit} style={styles.formStack}>
 
               {/* CARD 1: SCHOOL DETAILS */}
-              <div style={styles.cardBox}>
-                <div style={styles.cardSectionHeader}>
+              <div style={styles.cardBox} className="register-card-box">
+                <div style={styles.cardSectionHeader} className="register-card-header">
                   <div style={styles.sectionIconSquare}>
                     <Building2 size={22} color="#0284c7" />
                   </div>
@@ -219,14 +219,15 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     type="button"
                     onClick={handleFillDemoData}
                     style={styles.demoFillBtn}
+                    className="register-demo-btn"
                     title="Auto-fill sample school & coordinator details"
                   >
                     <Sparkles size={14} color="#ea580c" /> Auto-Fill Demo Details
                   </button>
                 </div>
 
-                <div style={styles.formGrid3}>
-                  <div style={{ ...styles.fieldGroup, gridColumn: 'span 2' }}>
+                <div style={styles.formGrid3} className="register-form-grid">
+                  <div style={{ ...styles.fieldGroup, gridColumn: 'span 2' }} className="register-col-span-2">
                     <label style={styles.label}>School Name <span style={styles.req}>*</span></label>
                     <input
                       type="text"
@@ -308,7 +309,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     />
                   </div>
 
-                  <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }}>
+                  <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }} className="register-col-span-all">
                     <label style={styles.label}>School Address <span style={styles.req}>*</span></label>
                     <input
                       type="text"
@@ -360,8 +361,8 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
               </div>
 
               {/* CARD 2: COORDINATOR DETAILS */}
-              <div style={styles.cardBox}>
-                <div style={styles.cardSectionHeader}>
+              <div style={styles.cardBox} className="register-card-box">
+                <div style={styles.cardSectionHeader} className="register-card-header">
                   <div style={styles.sectionIconSquare}>
                     <User size={22} color="#0284c7" />
                   </div>
@@ -371,7 +372,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   </div>
                 </div>
 
-                <div style={styles.formGrid2}>
+                <div style={styles.formGrid2} className="register-form-grid">
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Coordinator Name <span style={styles.req}>*</span></label>
                     <input
@@ -429,8 +430,9 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   ...styles.cardBox,
                   ...(declarationError ? styles.cardBoxError : {})
                 }}
+                className="register-card-box"
               >
-                <div style={styles.cardSectionHeader}>
+                <div style={styles.cardSectionHeader} className="register-card-header">
                   <div style={{
                     ...styles.sectionIconSquare,
                     background: declarationError ? '#fee2e2' : '#e0f2fe'
@@ -479,11 +481,12 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
               </div>
 
               {/* FOOTER ACTIONS BAR */}
-              <div style={styles.actionsBar}>
+              <div style={styles.actionsBar} className="register-actions-bar">
                 <button
                   type="button"
                   onClick={() => navigate('/')}
                   style={styles.backBtn}
+                  className="register-back-btn"
                 >
                   <ArrowLeft size={16} /> Back
                 </button>
@@ -491,6 +494,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                 <button
                   type="submit"
                   style={styles.reviewSubmitBtn}
+                  className="register-submit-btn"
                 >
                   Review & Submit <ArrowRight size={18} />
                 </button>
@@ -979,8 +983,52 @@ if (typeof document !== 'undefined') {
       animation: errorShake 0.45s ease-in-out;
     }
     @media (max-width: 768px) {
+      .register-main-container {
+        padding: 0 0.85rem !important;
+        margin-top: 1.25rem !important;
+      }
+      .register-card-box {
+        padding: 1.25rem 1rem !important;
+        border-radius: 10px !important;
+      }
+      .register-card-header {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+        margin-bottom: 1.15rem !important;
+      }
+      .register-demo-btn {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .register-form-grid,
       div[style*="gridTemplateColumns"] {
         grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+      }
+      .register-col-span-2,
+      .register-col-span-all,
+      div[style*="gridColumn: span 2"],
+      div[style*="grid-column: span 2"] {
+        grid-column: 1 / -1 !important;
+      }
+      .register-step-sub {
+        display: none !important;
+      }
+      .register-step-divider {
+        height: 20px !important;
+      }
+      .register-step-container {
+        gap: 0.5rem !important;
+        justify-content: space-around !important;
+      }
+      .register-actions-bar {
+        flex-direction: column-reverse !important;
+        gap: 0.75rem !important;
+      }
+      .register-back-btn,
+      .register-submit-btn {
+        width: 100% !important;
+        justify-content: center !important;
       }
     }
   `;

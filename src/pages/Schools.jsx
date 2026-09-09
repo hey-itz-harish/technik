@@ -2365,3 +2365,51 @@ const styles = {
     cursor: 'pointer',
   }
 };
+
+// Add responsive styling for Schools portal
+if (typeof document !== 'undefined') {
+  let styleSheet = document.getElementById('schools-responsive-styles');
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
+    styleSheet.id = 'schools-responsive-styles';
+    document.head.appendChild(styleSheet);
+  }
+  styleSheet.innerText = `
+    @media (max-width: 991px) {
+      .schools-hero-grid,
+      div[style*="heroContentGrid"] {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
+    }
+    @media (max-width: 768px) {
+      div[style*="1fr 1.5fr 1fr"],
+      div[style*="gridTemplateColumns: '1fr 1.5fr 1fr'"],
+      div[style*="grid-template-columns: 1fr 1.5fr 1fr"],
+      div[style*="repeat(auto-fit, minmax(200px, 1fr))"],
+      div[style*="repeat(auto-fill, minmax(300px, 1fr))"],
+      div[style*="repeat(auto-fit, minmax(180px, 1fr))"] {
+        grid-template-columns: 1fr !important;
+        gap: 0.85rem !important;
+      }
+      div[style*="display: flex"][style*="justifyContent: 'space-between'"][style*="alignItems: 'center'"] {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+      }
+      div[style*="formCardSection"] {
+        padding: 1.25rem 1rem !important;
+      }
+      div[style*="studentEntryCard"] {
+        padding: 1rem 0.85rem !important;
+      }
+      div[style*="rosterControlRow"] {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 0.75rem !important;
+      }
+      div[style*="rosterSearchBox"] {
+        max-width: 100% !important;
+      }
+    }
+  `;
+}

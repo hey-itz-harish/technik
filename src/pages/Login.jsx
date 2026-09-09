@@ -107,7 +107,7 @@ export default function Login() {
         {/* MAIN LOGIN CARD */}
         <div style={styles.loginCard}>
           
-          <div style={styles.cardHeaderBox}>
+          <div style={styles.cardHeaderBox} className="login-card-header">
             <div style={styles.cardHeaderIconCircle}>
               <School size={24} color="#0284c7" />
             </div>
@@ -120,6 +120,7 @@ export default function Login() {
               type="button" 
               onClick={handleFillDemoCredentials}
               style={styles.demoFillBtn}
+              className="login-demo-btn"
             >
               <Sparkles size={14} /> Auto-Fill Demo Credentials
             </button>
@@ -142,7 +143,7 @@ export default function Login() {
               <div style={styles.inputWrapper}>
                 <Building2 size={18} color="#64748b" style={styles.inputIcon} />
                 <input 
-                  type="text"
+                  type="text" 
                   required
                   placeholder="e.g. SCH-2026-TXI or coordinator@stxaviers.edu.in"
                   value={emailOrCode}
@@ -165,7 +166,7 @@ export default function Login() {
               <div style={styles.inputWrapper}>
                 <Lock size={18} color="#64748b" style={styles.inputIcon} />
                 <input 
-                  type="password"
+                  type="password" 
                   required
                   placeholder="Enter password"
                   value={password}
@@ -176,7 +177,7 @@ export default function Login() {
             </div>
 
             {/* Remember Me & Help Row */}
-            <div style={styles.optionsRow}>
+            <div style={styles.optionsRow} className="login-options-row">
               <label style={styles.checkboxLabel}>
                 <input 
                   type="checkbox" 
@@ -528,3 +529,31 @@ const styles = {
     fontWeight: 600
   }
 };
+
+// Add responsive styling for Login
+if (typeof document !== 'undefined') {
+  let styleSheet = document.getElementById('login-responsive-styles');
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
+    styleSheet.id = 'login-responsive-styles';
+    document.head.appendChild(styleSheet);
+  }
+  styleSheet.innerText = `
+    @media (max-width: 540px) {
+      .login-card-header {
+        flex-wrap: wrap !important;
+        gap: 0.75rem !important;
+      }
+      .login-demo-btn {
+        margin-left: 0 !important;
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .login-options-row {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.65rem !important;
+      }
+    }
+  `;
+}

@@ -208,7 +208,7 @@ export default function Catalog({ onSelectTrack }) {
 
             {/* Right Hero Image Column */}
             <div style={styles.heroRightCol}>
-              <div style={styles.heroImgWrapper}>
+              <div style={styles.heroImgWrapper} className="catalog-hero-img-wrapper">
                 <img 
                   src={heroStudentsImg} 
                   alt="School children working on robotics lab" 
@@ -216,7 +216,7 @@ export default function Catalog({ onSelectTrack }) {
                 />
                 
                 {/* Floating Top-Right Feature Badges */}
-                <div style={styles.floatingBadgesCol}>
+                <div style={styles.floatingBadgesCol} className="catalog-floating-badges">
                   <div style={styles.floatingBadgePill}>
                     <div style={styles.badgeIconCircle}>
                       <Lightbulb size={14} color="#38bdf8" />
@@ -249,7 +249,7 @@ export default function Catalog({ onSelectTrack }) {
                 </div>
 
                 {/* Bottom Overlay Script Tagline */}
-                <div style={styles.heroQuoteBox}>
+                <div style={styles.heroQuoteBox} className="catalog-hero-quote">
                   <div style={styles.heroQuoteScript}>
                     "Today's Young Learners <br /> Tomorrow's Changemakers"
                   </div>
@@ -269,7 +269,7 @@ export default function Catalog({ onSelectTrack }) {
       <section style={styles.sectionPadding}>
         <div className="container">
           
-          <div style={styles.categoryHeaderRow}>
+          <div style={styles.categoryHeaderRow} className="catalog-category-header">
             <div>
               <div style={styles.eyebrowRow}>
                 <div style={styles.eyebrowLine} />
@@ -280,7 +280,7 @@ export default function Catalog({ onSelectTrack }) {
               </h2>
             </div>
             
-            <div style={styles.categoryHeaderRight}>
+            <div style={styles.categoryHeaderRight} className="catalog-category-right">
               <span style={styles.categoryHeaderSub}>
                 Multiple Domains. One Mission. A Brighter Tomorrow.
               </span>
@@ -292,13 +292,14 @@ export default function Catalog({ onSelectTrack }) {
           </div>
 
           {/* 8 Categories Grid */}
-          <div style={styles.categoriesGrid}>
+          <div style={styles.categoriesGrid} className="catalog-categories-grid">
             {categories.map((cat) => {
               const IconComp = cat.icon;
               return (
                 <div 
                   key={cat.id}
                   style={styles.categoryCard}
+                  className="catalog-category-card"
                   onClick={() => handleTrackClick(cat.name)}
                 >
                   <div style={{ ...styles.catIconBox, background: cat.iconBg }}>
@@ -317,10 +318,10 @@ export default function Catalog({ onSelectTrack }) {
       {/* 3. WHY TECHNIK OLYMPIAD? SECTION */}
       <section style={{ ...styles.sectionPadding, background: '#ffffff', borderTop: '1px solid #f1f5f9', borderBottom: '1px solid #f1f5f9' }}>
         <div className="container">
-          <div style={styles.whyGrid}>
+          <div style={styles.whyGrid} className="catalog-why-grid">
             
             {/* Left Image Card */}
-            <div style={styles.whyImgCard}>
+            <div style={styles.whyImgCard} className="catalog-why-img-card">
               <img 
                 src={studentLookingUpImg} 
                 alt="Smiling student looking up with backpack" 
@@ -340,7 +341,7 @@ export default function Catalog({ onSelectTrack }) {
                 More than a competition &ndash; a movement for young minds.
               </h2>
 
-              <div style={styles.benefitsGrid}>
+              <div style={styles.benefitsGrid} className="catalog-benefits-grid">
                 {benefits.map((b, idx) => {
                   const BIcon = b.icon;
                   return (
@@ -362,12 +363,12 @@ export default function Catalog({ onSelectTrack }) {
       {/* 4. STATS BAR & SCHOOL PARTNER BANNER */}
       <section style={styles.statsSection}>
         <div className="container">
-          <div style={styles.statsBannerGrid}>
+          <div style={styles.statsBannerGrid} className="catalog-stats-banner-grid">
             
             {/* Stats Items Row */}
-            <div style={styles.statsRowGrid}>
+            <div style={styles.statsRowGrid} className="catalog-stats-row-grid">
               
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="catalog-stat-item">
                 <Globe size={28} color="#2563eb" />
                 <div>
                   <div style={styles.statNumber}>5 States + 1 UT</div>
@@ -375,7 +376,7 @@ export default function Catalog({ onSelectTrack }) {
                 </div>
               </div>
 
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="catalog-stat-item">
                 <Building2 size={28} color="#2563eb" />
                 <div>
                   <div style={styles.statNumber}>Thousands</div>
@@ -383,7 +384,7 @@ export default function Catalog({ onSelectTrack }) {
                 </div>
               </div>
 
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="catalog-stat-item">
                 <Users size={28} color="#2563eb" />
                 <div>
                   <div style={styles.statNumber}>Lakh+ Students</div>
@@ -391,7 +392,7 @@ export default function Catalog({ onSelectTrack }) {
                 </div>
               </div>
 
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="catalog-stat-item">
                 <Award size={28} color="#2563eb" />
                 <div>
                   <div style={styles.statNumber}>8 Olympiad Categories</div>
@@ -402,7 +403,7 @@ export default function Catalog({ onSelectTrack }) {
             </div>
 
             {/* Right Yellow Partner Card */}
-            <Link to="/register?level=school" style={styles.yellowPartnerCard}>
+            <Link to="/register?level=school" style={styles.yellowPartnerCard} className="catalog-partner-card">
               <div style={styles.partnerCardLeft}>
                 <GraduationCap size={28} color="#0c1e45" />
                 <div>
@@ -427,28 +428,30 @@ export default function Catalog({ onSelectTrack }) {
           </div>
           <h2 style={styles.sectionMainTitle}>From Registration to Recognition</h2>
 
-          <div style={styles.howWorksGrid}>
+          <div style={styles.howWorksGrid} className="catalog-how-works-grid">
             
             {/* Left 5-Step Flow */}
-            <div style={styles.stepperContainer}>
-              <div style={styles.stepsRow}>
+            <div style={styles.stepperContainer} className="catalog-stepper-container">
+              <div style={styles.stepsRow} className="catalog-steps-row">
                 {steps.map((step, idx) => {
                   return (
-                    <div key={step.num} style={styles.stepCard}>
-                      <div style={styles.stepHeaderRow}>
-                        <div style={{ ...styles.stepNumCircle, background: step.color }}>
+                    <div key={step.num} style={styles.stepCard} className="catalog-step-card">
+                      <div style={styles.stepHeaderRow} className="catalog-step-header">
+                        <div style={{ ...styles.stepNumCircle, background: step.color }} className="catalog-step-num">
                           {step.num}
                         </div>
                         {idx < steps.length - 1 && (
-                          <span style={styles.stepArrowRight}>&rarr;</span>
+                          <span style={styles.stepArrowRight} className="catalog-step-arrow">&rarr;</span>
                         )}
                       </div>
 
-                      <div style={{ ...styles.stepIconBox, background: step.bg, borderColor: step.color }}>
+                      <div style={{ ...styles.stepIconBox, background: step.bg, borderColor: step.color }} className="catalog-step-icon">
                         <step.icon size={18} color={step.color} />
                       </div>
-                      <h4 style={styles.stepTitle}>{step.title}</h4>
-                      <p style={styles.stepDesc}>{step.desc}</p>
+                      <div className="catalog-step-text">
+                        <h4 style={styles.stepTitle}>{step.title}</h4>
+                        <p style={styles.stepDesc}>{step.desc}</p>
+                      </div>
                     </div>
                   );
                 })}
@@ -456,7 +459,7 @@ export default function Catalog({ onSelectTrack }) {
             </div>
 
             {/* Right APJ Abdul Kalam Quote Card */}
-            <div style={styles.kalamQuoteCard}>
+            <div style={styles.kalamQuoteCard} className="catalog-kalam-card">
               <div style={styles.kalamOverlay} />
               <img 
                 src={kalamImg} 
@@ -481,10 +484,10 @@ export default function Catalog({ onSelectTrack }) {
       {/* 6. LATEST NEWS & CELEBRATING ACHIEVERS BANNER */}
       <section style={{ ...styles.sectionPadding, paddingTop: '0' }}>
         <div className="container">
-          <div style={styles.newsAndAchieversGrid}>
+          <div style={styles.newsAndAchieversGrid} className="catalog-news-achievers-grid">
             
             {/* Left: Latest News */}
-            <div style={styles.newsCardWrapper}>
+            <div style={styles.newsCardWrapper} className="catalog-news-card">
               <div style={styles.newsHeaderRow}>
                 <div style={styles.eyebrowRow}>
                   <div style={styles.eyebrowLine} />
@@ -497,7 +500,7 @@ export default function Catalog({ onSelectTrack }) {
               </div>
 
               <div style={styles.newsList}>
-                <div style={styles.newsItemRow}>
+                <div style={styles.newsItemRow} className="catalog-news-item">
                   <div style={styles.newsItemTitleGroup}>
                     <ChevronRight size={14} color="#2563eb" />
                     <span style={styles.newsItemTitle}>Registrations for 2026 are now open!</span>
@@ -505,7 +508,7 @@ export default function Catalog({ onSelectTrack }) {
                   <span style={styles.newsItemDate}>Aug 15, 2026</span>
                 </div>
 
-                <div style={styles.newsItemRow}>
+                <div style={styles.newsItemRow} className="catalog-news-item">
                   <div style={styles.newsItemTitleGroup}>
                     <ChevronRight size={14} color="#2563eb" />
                     <span style={styles.newsItemTitle}>Technik Olympiad expands to 5 States + Puducherry</span>
@@ -513,7 +516,7 @@ export default function Catalog({ onSelectTrack }) {
                   <span style={styles.newsItemDate}>Jul 28, 2026</span>
                 </div>
 
-                <div style={styles.newsItemRow}>
+                <div style={styles.newsItemRow} className="catalog-news-item">
                   <div style={styles.newsItemTitleGroup}>
                     <ChevronRight size={14} color="#2563eb" />
                     <span style={styles.newsItemTitle}>New AI Olympiad category announced</span>
@@ -521,7 +524,7 @@ export default function Catalog({ onSelectTrack }) {
                   <span style={styles.newsItemDate}>Jul 10, 2026</span>
                 </div>
 
-                <div style={styles.newsItemRow}>
+                <div style={styles.newsItemRow} className="catalog-news-item">
                   <div style={styles.newsItemTitleGroup}>
                     <ChevronRight size={14} color="#2563eb" />
                     <span style={styles.newsItemTitle}>Partner with us &ndash; School Registration open</span>
@@ -532,7 +535,7 @@ export default function Catalog({ onSelectTrack }) {
             </div>
 
             {/* Right: Celebrating Young Achievers Banner */}
-            <div style={styles.achieverBannerCard}>
+            <div style={styles.achieverBannerCard} className="catalog-achiever-card">
               <img 
                 src={achieverTrophyImg} 
                 alt="Young girl student holding gold trophy" 
@@ -1251,21 +1254,122 @@ const styles = {
 };
 
 // Add responsive CSS styling
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-  @media (max-width: 991px) {
-    .catalog-hero-grid {
-      grid-template-columns: 1fr !important;
-      gap: 1.75rem !important;
-    }
-    .catalog-hero-title {
-      font-size: clamp(2.2rem, 7vw, 2.8rem) !important;
-    }
+if (typeof document !== 'undefined') {
+  let styleSheet = document.getElementById('catalog-responsive-styles');
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
+    styleSheet.id = 'catalog-responsive-styles';
+    document.head.appendChild(styleSheet);
   }
-  @media (max-width: 640px) {
-    .catalog-hero-title {
-      font-size: clamp(1.85rem, 8vw, 2.2rem) !important;
+  styleSheet.innerText = `
+    @media (max-width: 991px) {
+      .catalog-hero-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.75rem !important;
+      }
+      .catalog-hero-title {
+        font-size: clamp(2.2rem, 7vw, 2.8rem) !important;
+      }
+      .catalog-how-works-grid,
+      .catalog-news-achievers-grid,
+      .catalog-why-grid,
+      .catalog-stats-banner-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1.5rem !important;
+      }
     }
-  }
-`;
-document.head.appendChild(styleSheet);
+    @media (max-width: 768px) {
+      .catalog-hero-img-wrapper {
+        height: 260px !important;
+      }
+      .catalog-floating-badges {
+        top: 0.5rem !important;
+        right: 0.5rem !important;
+        gap: 0.3rem !important;
+        transform: scale(0.9);
+        transform-origin: top right;
+      }
+      .catalog-hero-quote {
+        bottom: 0.5rem !important;
+        right: 0.5rem !important;
+        padding: 0.4rem 0.65rem !important;
+        max-width: 210px !important;
+      }
+      .catalog-category-header {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.5rem !important;
+      }
+      .catalog-category-right {
+        align-items: flex-start !important;
+        width: 100% !important;
+      }
+      .catalog-categories-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.75rem !important;
+      }
+      .catalog-stats-row-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.85rem !important;
+      }
+      .catalog-steps-row {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 0.75rem !important;
+        width: 100% !important;
+      }
+      .catalog-step-card {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        text-align: left !important;
+        gap: 0.85rem !important;
+        padding: 0.75rem !important;
+        background: #f8fafc !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+        width: 100% !important;
+      }
+      .catalog-step-header {
+        margin-bottom: 0 !important;
+        width: auto !important;
+        flex-shrink: 0 !important;
+      }
+      .catalog-step-arrow {
+        display: none !important;
+      }
+      .catalog-step-icon {
+        margin-bottom: 0 !important;
+        flex-shrink: 0 !important;
+        width: 36px !important;
+        height: 36px !important;
+      }
+      .catalog-step-text {
+        flex: 1 !important;
+      }
+      .catalog-news-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 0.25rem !important;
+      }
+    }
+    @media (max-width: 480px) {
+      .catalog-hero-title {
+        font-size: clamp(1.85rem, 8vw, 2.2rem) !important;
+      }
+      .catalog-floating-badges {
+        display: none !important;
+      }
+      .catalog-categories-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+      }
+      .catalog-category-card {
+        padding: 0.85rem 0.5rem !important;
+      }
+      .catalog-benefits-grid {
+        grid-template-columns: 1fr !important;
+      }
+    }
+  `;
+}
