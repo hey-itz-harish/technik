@@ -1,16 +1,15 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { 
+import { loginSchoolApi } from '../services/api';
+import {
   Building2, 
   Lock, 
   Mail, 
   ArrowRight, 
   CheckCircle2, 
-  ShieldCheck, 
-  KeyRound, 
-  Sparkles, 
+  ShieldCheck,
+  KeyRound,
   School,
-  HelpCircle,
   AlertCircle
 } from 'lucide-react';
 
@@ -22,47 +21,37 @@ export default function Login() {
   const queryParams = new URLSearchParams(location.search);
   const isJustRegistered = queryParams.get('registered') === 'true';
 
-  const initialEmail = location.state?.email || 'coordinator@stxaviers.edu.in';
-  const initialSchoolName = location.state?.schoolName || "St. Xavier International School";
-  const initialRegId = location.state?.id || 'SCH-2026-TXI';
+  const initialEmail = location.state?.email || '';
+  const initialRegId = location.state?.id || '';
 
   const [emailOrCode, setEmailOrCode] = useState(initialEmail);
-  const [password, setPassword] = useState('••••••••');
+  const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
 
-  // Auto-Fill Demo Credentials Helper
-  const handleFillDemoCredentials = () => {
-    setEmailOrCode('SCH-2026-TXI');
-    setPassword('Technik2026!');
-    setLoginError('');
-  };
-
-  const handleLoginSubmit = (e) => {
+  const handleLoginSubmit = async (e) => {
     e.preventDefault();
     if (!emailOrCode || !password) {
-      setLoginError('Please enter your School Code / Email and Password.');
+      setLoginError('Please enter your registered email and password.');
       return;
     }
 
     setIsSubmitting(true);
     setLoginError('');
 
-    // Save pending MFA status
-    sessionStorage.setItem('technik_school_auth_pending', 'true');
-
-    setTimeout(() => {
+    try {
+      const res = await loginSchoolApi({ email: emailOrCode, password, rememberMe });
       setIsSubmitting(false);
-      // Redirect to Verification / MFA Setup Page
-      navigate('/mfa-setup', {
-        state: {
-          email: emailOrCode.includes('@') ? emailOrCode : 'coordinator@stxaviers.edu.in',
-          schoolName: initialSchoolName,
-          schoolCode: emailOrCode
-        }
+      // Credentials verified — a code has been emailed. Proceed to
+      // Code Verification to complete login.
+      navigate('/verify-code', {
+        state: { email: res.email || emailOrCode, rememberMe }
       });
-    }, 800);
+    } catch (err) {
+      setIsSubmitting(false);
+      setLoginError(err.message || 'Login failed. Please check your credentials and try again.');
+    }
   };
 
   return (
@@ -113,17 +102,8 @@ export default function Login() {
             </div>
             <div>
               <h2 style={styles.cardTitle}>Institutional Sign In</h2>
-              <p style={styles.cardSub}>Enter your School Code or Coordinator Email</p>
+              <p style={styles.cardSub}>Enter your registered coordinator email</p>
             </div>
-
-            <button 
-              type="button" 
-              onClick={handleFillDemoCredentials}
-              style={styles.demoFillBtn}
-              className="login-demo-btn"
-            >
-              <Sparkles size={14} /> Auto-Fill Demo Credentials
-            </button>
           </div>
 
           <form onSubmit={handleLoginSubmit} style={styles.formStack}>
@@ -138,14 +118,14 @@ export default function Login() {
             {/* Field 1: School Code / Email */}
             <div style={styles.fieldCol}>
               <label style={styles.fieldLabel}>
-                School Code or Coordinator Email <span style={styles.reqStar}>*</span>
+                Coordinator / School Email <span style={styles.reqStar}>*</span>
               </label>
               <div style={styles.inputWrapper}>
                 <Building2 size={18} color="#64748b" style={styles.inputIcon} />
-                <input 
-                  type="text" 
+                <input
+                  type="email"
                   required
-                  placeholder="e.g. SCH-2026-TXI or coordinator@stxaviers.edu.in"
+                  placeholder="e.g. coordinator@yourschool.edu.in"
                   value={emailOrCode}
                   onChange={(e) => setEmailOrCode(e.target.value)}
                   style={styles.textInput}

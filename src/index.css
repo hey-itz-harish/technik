@@ -651,3 +651,18 @@ img, svg, video, canvas {
     padding: 1.25rem;
   }
 }
+
+/* Shared spinner animation used by loading icons (e.g. lucide's Loader2) */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.spin-slow {
+  animation: spin-slow 1s linear infinite;
+}

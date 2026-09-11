@@ -13,6 +13,8 @@ import Verification from './pages/Verification';
 import About from './pages/About';
 import Schools from './pages/Schools';
 import MfaSetup from './pages/MfaSetup';
+import ActivationPending from './pages/ActivationPending';
+import CodeVerification from './pages/CodeVerification';
 import Login from './pages/Login';
 import TechnikPortal from './pages/TechnikPortal';
 import Contact from './pages/Contact';
@@ -54,9 +56,11 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
             } 
           />
           <Route path="/dashboard" element={<Dashboard registrations={registrations} />} />
+          <Route path="/activation-pending" element={<ActivationPending />} />
           <Route path="/mfa-setup" element={<MfaSetup />} />
           <Route path="/login" element={<Login />} />
           <Route path="/school-login" element={<Login />} />
+          <Route path="/verify-code" element={<CodeVerification />} />
           <Route path="/awards" element={<Awards />} />
           <Route path="/verification" element={<Verification registrations={registrations} />} />
           <Route path="/results" element={<Verification registrations={registrations} />} />

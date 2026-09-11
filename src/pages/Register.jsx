@@ -89,8 +89,11 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   const [isProcessing, setIsProcessing] = useState(true);
   const [registrationId, setRegistrationId] = useState('');
 
+  // Error Popup State
+  const [errorMessage, setErrorMessage] = useState('');
+
   // Submit School Registration Form
-  const handleSchoolRegisterSubmit = (e) => {
+  const handleSchoolRegisterSubmit = async (e) => {
     e.preventDefault();
 
     if (!schoolDetails.schoolName || !schoolDetails.email || !schoolDetails.mobile) {
@@ -110,14 +113,13 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
     }
 
     setDeclarationError(false);
+    setErrorMessage('');
     setIsProcessing(true);
     setShowModal(true);
 
-    registerSchoolApi({
-      schoolDetails,
-      coordinatorDetails
-    }).then((res) => {
-      const regId = res?.school?.id || res?.student?.id || ('SCH-' + Math.floor(100000 + Math.random() * 900000));
+    try {
+      const res = await registerSchoolApi({ schoolDetails, coordinatorDetails });
+      const regId = res?.school?.id || ('SCH-' + Math.floor(100000 + Math.random() * 900000));
       setRegistrationId(regId);
       setIsProcessing(false);
 
@@ -132,17 +134,20 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
         });
       }
       if (clearSelectedTrack) clearSelectedTrack();
-    });
+    } catch (err) {
+      setShowModal(false);
+      setIsProcessing(true);
+      setErrorMessage(err.message || 'Registration failed. Please try again.');
+    }
   };
 
   const handleFinishModal = () => {
     setShowModal(false);
-    navigate('/login?registered=true', { 
-      state: { 
-        email: schoolDetails.email, 
-        schoolName: schoolDetails.schoolName,
-        id: registrationId
-      } 
+    navigate('/activation-pending', {
+      state: {
+        email: schoolDetails.email,
+        schoolName: schoolDetails.schoolName
+      }
     });
   };
 
@@ -528,6 +533,24 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                 </button>
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ERROR POPUP MODAL */}
+      {errorMessage && (
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalCard}>
+            <div style={styles.modalContentCenter}>
+              <div style={styles.errorIconCircle}>
+                <AlertCircle size={40} color="#ffffff" />
+              </div>
+              <h3 style={styles.modalTitle}>Registration Failed</h3>
+              <p style={styles.modalDesc}>{errorMessage}</p>
+              <button onClick={() => setErrorMessage('')} style={styles.modalActionBtn}>
+                Close &amp; Try Again
+              </button>
+            </div>
           </div>
         </div>
       )}
@@ -933,6 +956,17 @@ const styles = {
     justifyContent: 'center',
     marginBottom: '1.25rem',
     boxShadow: '0 0 20px rgba(16, 185, 129, 0.4)',
+  },
+  errorIconCircle: {
+    width: '64px',
+    height: '64px',
+    borderRadius: '50%',
+    background: '#ef4444',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: '1.25rem',
+    boxShadow: '0 0 20px rgba(239, 68, 68, 0.4)',
   },
   modalTitle: {
     fontSize: '1.35rem',
