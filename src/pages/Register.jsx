@@ -13,7 +13,9 @@ import {
   GraduationCap, 
   Loader2, 
   ShieldCheck,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
@@ -55,6 +57,12 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
     email: ''
   });
 
+  // Account Credentials
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
   const [declarationConfirmed, setDeclarationConfirmed] = useState(false);
   const [declarationError, setDeclarationError] = useState(false);
   const declarationRef = useRef(null);
@@ -80,6 +88,9 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
       email: 'stem.coordinator@stxaviers.edu.in'
     });
 
+    setPassword('Technik@2026');
+    setConfirmPassword('Technik@2026');
+
     setDeclarationConfirmed(true);
     setDeclarationError(false);
   };
@@ -87,7 +98,6 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   // Modal State
   const [showModal, setShowModal] = useState(false);
   const [isProcessing, setIsProcessing] = useState(true);
-  const [registrationId, setRegistrationId] = useState('');
 
   // Error Popup State
   const [errorMessage, setErrorMessage] = useState('');
@@ -104,6 +114,18 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
       alert("Please fill in all required Coordinator Details.");
       return;
     }
+    if (!password || !confirmPassword) {
+      alert("Please enter and confirm an account password.");
+      return;
+    }
+    if (password.length < 6) {
+      alert("Password must be at least 6 characters long.");
+      return;
+    }
+    if (password !== confirmPassword) {
+      alert("Passwords do not match. Please re-enter them.");
+      return;
+    }
     if (!declarationConfirmed) {
       setDeclarationError(true);
       if (declarationRef.current) {
@@ -118,14 +140,15 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
     setShowModal(true);
 
     try {
-      const res = await registerSchoolApi({ schoolDetails, coordinatorDetails });
-      const regId = res?.school?.id || ('SCH-' + Math.floor(100000 + Math.random() * 900000));
-      setRegistrationId(regId);
+      await registerSchoolApi({ schoolDetails, coordinatorDetails, password });
       setIsProcessing(false);
 
       if (onRegisterSuccess) {
+        // A local-only id for the client-side registrations list — the
+        // backend no longer echoes an id back at this pending-activation stage.
+        const localRegId = 'SCH-' + Math.floor(100000 + Math.random() * 900000);
         onRegisterSuccess({
-          id: regId,
+          id: localRegId,
           schoolName: schoolDetails.schoolName,
           email: schoolDetails.email,
           phone: schoolDetails.mobile,
@@ -361,6 +384,54 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       required
                     />
                   </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Account Password <span style={styles.req}>*</span></label>
+                    <div style={styles.passwordInputWrapper}>
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        style={styles.passwordInput}
+                        placeholder="Create a password (min. 6 characters)"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        style={styles.passwordToggleBtn}
+                        tabIndex={-1}
+                        aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
+
+                  <div style={styles.fieldGroup}>
+                    <label style={styles.label}>Confirm Password <span style={styles.req}>*</span></label>
+                    <div style={styles.passwordInputWrapper}>
+                      <input
+                        type={showConfirmPassword ? 'text' : 'password'}
+                        style={styles.passwordInput}
+                        placeholder="Re-enter your password"
+                        value={confirmPassword}
+                        onChange={(e) => setConfirmPassword(e.target.value)}
+                        required
+                        minLength={6}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        style={styles.passwordToggleBtn}
+                        tabIndex={-1}
+                        aria-label={showConfirmPassword ? 'Hide password' : 'Show password'}
+                      >
+                        {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
               </div>
@@ -526,10 +597,10 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                 </div>
                 <h3 style={styles.modalTitle}>Registration Submitted Successfully!</h3>
                 <p style={styles.modalDesc}>
-                  Your registration reference number is <strong>{registrationId}</strong>. Access instructions have been sent to your registered email.
+                  An activation link has been sent to <strong>{schoolDetails.email}</strong>. Please check your inbox to activate your account.
                 </p>
                 <button onClick={handleFinishModal} style={styles.modalActionBtn}>
-                  Set Up MFA Security <ArrowRight size={16} />
+                  Continue <ArrowRight size={16} />
                 </button>
               </div>
             )}
@@ -823,6 +894,38 @@ const styles = {
     boxSizing: 'border-box',
     fontFamily: 'inherit',
     transition: 'all 0.2s ease',
+  },
+  passwordInputWrapper: {
+    position: 'relative',
+    width: '100%',
+  },
+  passwordInput: {
+    width: '100%',
+    height: '42px',
+    padding: '0.65rem 2.5rem 0.65rem 0.85rem',
+    borderRadius: '8px',
+    border: '1px solid #cbd5e1',
+    fontSize: '0.88rem',
+    color: '#0f172a',
+    outline: 'none',
+    background: '#ffffff',
+    boxSizing: 'border-box',
+    fontFamily: 'inherit',
+    transition: 'all 0.2s ease',
+  },
+  passwordToggleBtn: {
+    position: 'absolute',
+    top: '50%',
+    right: '0.6rem',
+    transform: 'translateY(-50%)',
+    background: 'transparent',
+    border: 'none',
+    padding: '0.2rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#64748b',
+    cursor: 'pointer',
   },
   select: {
     width: '100%',

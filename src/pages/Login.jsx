@@ -10,7 +10,9 @@ import {
   ShieldCheck,
   KeyRound,
   School,
-  AlertCircle
+  AlertCircle,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 
 export default function Login() {
@@ -26,6 +28,7 @@ export default function Login() {
 
   const [emailOrCode, setEmailOrCode] = useState(initialEmail);
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
@@ -101,7 +104,7 @@ export default function Login() {
               <School size={24} color="#0284c7" />
             </div>
             <div>
-              <h2 style={styles.cardTitle}>Institutional Sign In</h2>
+              <h2 style={styles.cardTitle}>School Login</h2>
               <p style={styles.cardSub}>Enter your registered coordinator email</p>
             </div>
           </div>
@@ -145,14 +148,23 @@ export default function Login() {
               </div>
               <div style={styles.inputWrapper}>
                 <Lock size={18} color="#64748b" style={styles.inputIcon} />
-                <input 
-                  type="password" 
+                <input
+                  type={showPassword ? 'text' : 'password'}
                   required
                   placeholder="Enter password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  style={styles.textInput}
+                  style={{ ...styles.textInput, paddingRight: '2.75rem' }}
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  style={styles.passwordToggleBtn}
+                  tabIndex={-1}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                >
+                  {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
+                </button>
               </div>
             </div>
 
@@ -411,6 +423,18 @@ const styles = {
     position: 'absolute',
     left: '1rem',
     pointerEvents: 'none'
+  },
+  passwordToggleBtn: {
+    position: 'absolute',
+    right: '0.85rem',
+    background: 'transparent',
+    border: 'none',
+    padding: '0.2rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    color: '#64748b',
+    cursor: 'pointer'
   },
   textInput: {
     width: '100%',

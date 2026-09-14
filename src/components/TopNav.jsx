@@ -18,7 +18,8 @@ import {
   Headset,
   Home as HomeIcon,
   Info,
-  ArrowRight
+  ArrowRight,
+  Building2
 } from 'lucide-react';
 
 export default function TopNav() {
@@ -151,6 +152,23 @@ export default function TopNav() {
               TECHNIK OLYMPIAD
             </Link>
 
+            <div className="dropdown-wrapper" style={styles.dropdownWrapper}>
+              <Link
+                to="/for-schools"
+                className={`nav-item-link ${isActive('/for-schools') ? 'active-link' : ''}`}
+                style={{
+                  ...styles.navLink,
+                  color: isActive('/for-schools') ? '#f97316' : '#0f172a',
+                  fontWeight: isActive('/for-schools') ? 700 : 600,
+                }}
+              >
+                FOR SCHOOLS <ChevronDown size={14} className="chevron-icon" />
+              </Link>
+              <div className="dropdown-menu" style={styles.dropdownMenu}>
+                <Link to="/for-schools" style={styles.dropdownItem}>Partner With Us</Link>
+              </div>
+            </div>
+
             <Link
               to="/results"
               className={`nav-item-link ${isActive('/results') || isActive('/verification') ? 'active-link' : ''}`}
@@ -260,14 +278,28 @@ export default function TopNav() {
                 <span>TECHNIK OLYMPIAD</span>
               </Link>
 
-              <Link 
-                to="/results" 
+              <Link
+                to="/for-schools"
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/for-schools') ? '#f97316' : '#0f172a',
+                  background: isActive('/for-schools') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/for-schools') ? 800 : 600,
+                }}
+                onClick={() => setIsOpen(false)}
+              >
+                <Building2 size={18} color={isActive('/for-schools') ? '#f97316' : '#64748b'} />
+                <span>FOR SCHOOLS</span>
+              </Link>
+
+              <Link
+                to="/results"
                 style={{
                   ...styles.mobileNavLink,
                   color: (isActive('/results') || isActive('/verification')) ? '#f97316' : '#0f172a',
                   background: (isActive('/results') || isActive('/verification')) ? '#fff7ed' : 'transparent',
                   fontWeight: (isActive('/results') || isActive('/verification')) ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <FileCheck2 size={18} color={(isActive('/results') || isActive('/verification')) ? '#f97316' : '#64748b'} />
@@ -679,6 +711,24 @@ styleSheet.innerText = `
   .dropdown-wrapper:hover .chevron-icon {
     transform: rotate(180deg);
     color: #f97316;
+  }
+
+  .dropdown-menu {
+    display: none;
+    opacity: 0;
+    transform: translateY(-6px);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+  }
+
+  .dropdown-wrapper:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .dropdown-menu a:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #fbbf24 !important;
   }
 
   @keyframes registerPulseGlow {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { HashRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, useLocation, useNavigate } from 'react-router-dom';
 import TopNav from './components/TopNav';
 import Footer from './components/Footer';
 import CreativeLoader from './components/CreativeLoader';
@@ -12,6 +12,7 @@ import Awards from './pages/Awards';
 import Verification from './pages/Verification';
 import About from './pages/About';
 import Schools from './pages/Schools';
+import ForSchools from './pages/ForSchools';
 import MfaSetup from './pages/MfaSetup';
 import ActivationPending from './pages/ActivationPending';
 import CodeVerification from './pages/CodeVerification';
@@ -22,7 +23,28 @@ import ComingSoon from './pages/ComingSoon';
 
 function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegisterSuccess }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+
+  // Force every fresh tab to land on Home, regardless of the URL it was
+  // opened with (typed address, bookmark, shared link). sessionStorage is
+  // scoped to this one tab and is wiped when the tab closes, so a brand-new
+  // tab always sees no flag here — even though the exact same site is still
+  // "open" in other tabs, or was open a minute ago in a tab that's since
+  // been closed. Once this runs, subsequent in-app navigation (Link clicks,
+  // navigate() calls) is untouched, since the flag is already set by then.
+  useEffect(() => {
+    const hasSessionStarted = sessionStorage.getItem('technik_tab_session_started');
+    if (!hasSessionStarted) {
+      sessionStorage.setItem('technik_tab_session_started', 'true');
+      if (location.pathname !== '/') {
+        navigate('/', { replace: true });
+      }
+    }
+    // Deliberately empty deps — this must run exactly once, on this tab's
+    // very first render, not on every route change.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setIsLoading(true);
@@ -41,6 +63,7 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
           <Route path="/" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/schools" element={<Schools />} />
+          <Route path="/for-schools" element={<ForSchools />} />
           <Route path="/admin" element={<TechnikPortal />} />
           <Route path="/technik-portal" element={<TechnikPortal />} />
           <Route path="/catalog" element={<Catalog onSelectTrack={setSelectedTrack} />} />
