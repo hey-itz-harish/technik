@@ -1,6 +1,5 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
-import ComingSoon from './ComingSoon';
+import React, { useState, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { registerSchoolApi } from '../services/api';
 import { 
   Building2, 
@@ -8,11 +7,10 @@ import {
   FileText, 
   ArrowRight, 
   ArrowLeft, 
-  CheckCircle, 
+  CheckCircle,
+  Check,
   Sparkles, 
-  GraduationCap, 
   Loader2, 
-  ShieldCheck,
   AlertCircle,
   Eye,
   EyeOff
@@ -20,20 +18,6 @@ import {
 
 export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   const navigate = useNavigate();
-  const location = useLocation();
-
-  // Read URL query parameter for active portal level (e.g., /register?level=student or /register?level=school)
-  const queryParams = new URLSearchParams(location.search);
-  const initialLevel = queryParams.get('level') === 'student' ? 'student' : 'school';
-  
-  const [activeLevel, setActiveLevel] = useState(initialLevel); // 'school' | 'student'
-
-  useEffect(() => {
-    const level = new URLSearchParams(location.search).get('level');
-    if (level === 'student' || level === 'school') {
-      setActiveLevel(level);
-    }
-  }, [location.search]);
 
   // ==========================================
   // SCHOOL REGISTRATION FORM STATE
@@ -67,6 +51,31 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   const [declarationError, setDeclarationError] = useState(false);
   const declarationRef = useRef(null);
 
+  // Dynamic Step Completion Calculation for interactive checkmarks
+  const isStep1Complete = Boolean(
+    schoolDetails.schoolName.trim() &&
+    schoolDetails.board &&
+    schoolDetails.state.trim() &&
+    schoolDetails.district.trim() &&
+    schoolDetails.city.trim() &&
+    schoolDetails.address.trim() &&
+    schoolDetails.email.trim() &&
+    schoolDetails.mobile.trim() &&
+    schoolDetails.principalName.trim() &&
+    password &&
+    confirmPassword &&
+    password === confirmPassword
+  );
+
+  const isStep2Complete = Boolean(
+    coordinatorDetails.name.trim() &&
+    coordinatorDetails.designation.trim() &&
+    coordinatorDetails.mobile.trim() &&
+    coordinatorDetails.email.trim()
+  );
+
+  const isStep3Complete = Boolean(declarationConfirmed);
+
   // Auto-Fill Demo Data Helper
   const handleFillDemoData = () => {
     setSchoolDetails({
@@ -93,6 +102,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
 
     setDeclarationConfirmed(true);
     setDeclarationError(false);
+    setFieldErrors({});
   };
 
   // Modal State
@@ -102,35 +112,78 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   // Error Popup State
   const [errorMessage, setErrorMessage] = useState('');
 
-  // Submit School Registration Form
-  const handleSchoolRegisterSubmit = async (e) => {
-    e.preventDefault();
+  // Field-level Validation Errors State
+  const [fieldErrors, setFieldErrors] = useState({});
 
-    if (!schoolDetails.schoolName || !schoolDetails.email || !schoolDetails.mobile) {
-      alert("Please fill in all required School Details.");
-      return;
+  const clearFieldError = (key) => {
+    setFieldErrors(prev => {
+      if (!prev[key]) return prev;
+      const updated = { ...prev };
+      delete updated[key];
+      return updated;
+    });
+  };
+
+  const validateSchoolForm = () => {
+    const errs = {};
+
+    // School Details
+    if (!schoolDetails.schoolName.trim()) errs.schoolName = "This field cannot be left empty";
+    if (!schoolDetails.board) errs.board = "This field cannot be left empty";
+    if (!schoolDetails.state) errs.state = "This field cannot be left empty";
+    if (!schoolDetails.district) errs.district = "This field cannot be left empty";
+    if (!schoolDetails.city.trim()) errs.city = "This field cannot be left empty";
+    if (!schoolDetails.address.trim()) errs.address = "This field cannot be left empty";
+    if (!schoolDetails.email.trim()) {
+      errs.schoolEmail = "This field cannot be left empty";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(schoolDetails.email.trim())) {
+      errs.schoolEmail = "Please enter a valid email address";
     }
-    if (!coordinatorDetails.name || !coordinatorDetails.mobile || !coordinatorDetails.email) {
-      alert("Please fill in all required Coordinator Details.");
-      return;
+    if (!schoolDetails.mobile.trim()) errs.schoolMobile = "This field cannot be left empty";
+    if (!schoolDetails.principalName.trim()) errs.principalName = "This field cannot be left empty";
+
+    // Passwords
+    if (!password) {
+      errs.password = "This field cannot be left empty";
+    } else if (password.length < 6) {
+      errs.password = "Password must be at least 6 characters long";
     }
-    if (!password || !confirmPassword) {
-      alert("Please enter and confirm an account password.");
-      return;
+    if (!confirmPassword) {
+      errs.confirmPassword = "This field cannot be left empty";
+    } else if (confirmPassword !== password) {
+      errs.confirmPassword = "Passwords do not match";
     }
-    if (password.length < 6) {
-      alert("Password must be at least 6 characters long.");
-      return;
+
+    // Coordinator Details
+    if (!coordinatorDetails.name.trim()) errs.coordName = "This field cannot be left empty";
+    if (!coordinatorDetails.designation.trim()) errs.coordDesignation = "This field cannot be left empty";
+    if (!coordinatorDetails.mobile.trim()) errs.coordMobile = "This field cannot be left empty";
+    if (!coordinatorDetails.email.trim()) {
+      errs.coordEmail = "This field cannot be left empty";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coordinatorDetails.email.trim())) {
+      errs.coordEmail = "Please enter a valid email address";
     }
-    if (password !== confirmPassword) {
-      alert("Passwords do not match. Please re-enter them.");
-      return;
-    }
+
+    // Declaration
     if (!declarationConfirmed) {
+      errs.declaration = "Please accept the declaration to proceed";
       setDeclarationError(true);
       if (declarationRef.current) {
         declarationRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
       }
+    } else {
+      setDeclarationError(false);
+    }
+
+    setFieldErrors(errs);
+    return Object.keys(errs).length === 0;
+  };
+
+  // Submit School Registration Form
+  const handleSchoolRegisterSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!validateSchoolForm()) {
       return;
     }
 
@@ -201,28 +254,69 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
           {/* Step Indicator Bar (1, 2, 3) */}
           <div style={styles.stepBarWrapper}>
             <div style={styles.stepBarContainer} className="register-step-container">
-              <div style={styles.stepItemActive}>
-                <div style={styles.stepNumberActive}>1</div>
+              {/* Step 1: School Details */}
+              <div style={isStep1Complete ? styles.stepItemComplete : styles.stepItemActive}>
+                <div 
+                  style={isStep1Complete ? styles.stepNumberCompleted : styles.stepNumberActive}
+                  className={isStep1Complete ? "step-check-anim" : ""}
+                >
+                  {isStep1Complete ? <Check size={18} strokeWidth={3} /> : '1'}
+                </div>
                 <div style={styles.stepTextGroup}>
-                  <div style={styles.stepTitleActive}>School Details</div>
+                  <div style={isStep1Complete ? styles.stepTitleComplete : styles.stepTitleActive}>
+                    School Details
+                    {isStep1Complete && <span style={styles.stepCompletedPill}>Completed</span>}
+                  </div>
                   <div style={styles.stepSub} className="register-step-sub">Tell us about your school</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} className="register-step-divider" />
 
-              <div style={styles.stepItem}>
-                <div style={styles.stepNumber}>2</div>
+              <div 
+                style={{
+                  ...styles.stepDivider,
+                  ...(isStep1Complete ? styles.stepDividerActive : {})
+                }} 
+                className="register-step-divider" 
+              />
+
+              {/* Step 2: Coordinator Details */}
+              <div style={isStep2Complete ? styles.stepItemComplete : (isStep1Complete ? styles.stepItemActive : styles.stepItem)}>
+                <div 
+                  style={isStep2Complete ? styles.stepNumberCompleted : (isStep1Complete ? styles.stepNumberActive : styles.stepNumber)}
+                  className={isStep2Complete ? "step-check-anim" : ""}
+                >
+                  {isStep2Complete ? <Check size={18} strokeWidth={3} /> : '2'}
+                </div>
                 <div style={styles.stepTextGroup}>
-                  <div style={styles.stepTitle}>Coordinator Details</div>
+                  <div style={isStep2Complete ? styles.stepTitleComplete : (isStep1Complete ? styles.stepTitleActive : styles.stepTitle)}>
+                    Coordinator Details
+                    {isStep2Complete && <span style={styles.stepCompletedPill}>Completed</span>}
+                  </div>
                   <div style={styles.stepSub} className="register-step-sub">Add contact person</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} className="register-step-divider" />
 
-              <div style={styles.stepItem}>
-                <div style={styles.stepNumber}>3</div>
+              <div 
+                style={{
+                  ...styles.stepDivider,
+                  ...(isStep2Complete ? styles.stepDividerActive : {})
+                }} 
+                className="register-step-divider" 
+              />
+
+              {/* Step 3: Review & Submit */}
+              <div style={isStep3Complete ? styles.stepItemComplete : (isStep2Complete ? styles.stepItemActive : styles.stepItem)}>
+                <div 
+                  style={isStep3Complete ? styles.stepNumberCompleted : (isStep2Complete ? styles.stepNumberActive : styles.stepNumber)}
+                  className={isStep3Complete ? "step-check-anim" : ""}
+                >
+                  {isStep3Complete ? <Check size={18} strokeWidth={3} /> : '3'}
+                </div>
                 <div style={styles.stepTextGroup}>
-                  <div style={styles.stepTitle}>Review & Submit</div>
+                  <div style={isStep3Complete ? styles.stepTitleComplete : (isStep2Complete ? styles.stepTitleActive : styles.stepTitle)}>
+                    Review & Submit
+                    {isStep3Complete && <span style={styles.stepCompletedPill}>Ready</span>}
+                  </div>
                   <div style={styles.stepSub} className="register-step-sub">Confirm and submit</div>
                 </div>
               </div>
@@ -231,7 +325,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
 
           {/* Main Form Body */}
           <main style={styles.formMainContainer} className="register-main-container">
-            <form onSubmit={handleSchoolRegisterSubmit} style={styles.formStack}>
+            <form onSubmit={handleSchoolRegisterSubmit} style={styles.formStack} noValidate>
 
               {/* CARD 1: SCHOOL DETAILS */}
               <div style={styles.cardBox} className="register-card-box">
@@ -259,21 +353,32 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <label style={styles.label}>School Name <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.schoolName ? styles.inputError : {})
+                      }}
                       placeholder="Enter school name"
                       value={schoolDetails.schoolName}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, schoolName: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, schoolName: e.target.value });
+                        clearFieldError('schoolName');
+                      }}
                     />
+                    {fieldErrors.schoolName && <span style={styles.fieldError}>{fieldErrors.schoolName}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Board <span style={styles.req}>*</span></label>
                     <select
-                      style={styles.select}
+                      style={{
+                        ...styles.select,
+                        ...(fieldErrors.board ? styles.inputError : {})
+                      }}
                       value={schoolDetails.board}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, board: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, board: e.target.value });
+                        clearFieldError('board');
+                      }}
                     >
                       <option value="">Select Board</option>
                       <option value="CBSE">CBSE</option>
@@ -283,15 +388,21 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       <option value="IGCSE">IGCSE</option>
                       <option value="Other">Other</option>
                     </select>
+                    {fieldErrors.board && <span style={styles.fieldError}>{fieldErrors.board}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>State <span style={styles.req}>*</span></label>
                     <select
-                      style={styles.select}
+                      style={{
+                        ...styles.select,
+                        ...(fieldErrors.state ? styles.inputError : {})
+                      }}
                       value={schoolDetails.state}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, state: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, state: e.target.value });
+                        clearFieldError('state');
+                      }}
                     >
                       <option value="">Select State</option>
                       <option value="Andhra Pradesh">Andhra Pradesh</option>
@@ -302,15 +413,21 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       <option value="Delhi">Delhi</option>
                       <option value="Other">Other</option>
                     </select>
+                    {fieldErrors.state && <span style={styles.fieldError}>{fieldErrors.state}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>District <span style={styles.req}>*</span></label>
                     <select
-                      style={styles.select}
+                      style={{
+                        ...styles.select,
+                        ...(fieldErrors.district ? styles.inputError : {})
+                      }}
                       value={schoolDetails.district}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, district: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, district: e.target.value });
+                        clearFieldError('district');
+                      }}
                     >
                       <option value="">Select District</option>
                       <option value="Krishna / Vijayawada">Krishna / Vijayawada</option>
@@ -323,66 +440,97 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       <option value="Bengaluru Urban">Bengaluru Urban</option>
                       <option value="Other">Other</option>
                     </select>
+                    {fieldErrors.district && <span style={styles.fieldError}>{fieldErrors.district}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>City <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.city ? styles.inputError : {})
+                      }}
                       placeholder="Enter city"
                       value={schoolDetails.city}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, city: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, city: e.target.value });
+                        clearFieldError('city');
+                      }}
                     />
+                    {fieldErrors.city && <span style={styles.fieldError}>{fieldErrors.city}</span>}
                   </div>
 
                   <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }} className="register-col-span-all">
                     <label style={styles.label}>School Address <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.address ? styles.inputError : {})
+                      }}
                       placeholder="Enter complete address (Street, Landmark, Pincode)"
                       value={schoolDetails.address}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, address: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, address: e.target.value });
+                        clearFieldError('address');
+                      }}
                     />
+                    {fieldErrors.address && <span style={styles.fieldError}>{fieldErrors.address}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>School Email <span style={styles.req}>*</span></label>
                     <input
                       type="email"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.schoolEmail ? styles.inputError : {})
+                      }}
                       placeholder="Enter school email"
                       value={schoolDetails.email}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, email: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, email: e.target.value });
+                        clearFieldError('schoolEmail');
+                      }}
                     />
+                    {fieldErrors.schoolEmail && <span style={styles.fieldError}>{fieldErrors.schoolEmail}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>School Mobile <span style={styles.req}>*</span></label>
                     <input
                       type="tel"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.schoolMobile ? styles.inputError : {})
+                      }}
                       placeholder="Enter school mobile number"
                       value={schoolDetails.mobile}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, mobile: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, mobile: e.target.value });
+                        clearFieldError('schoolMobile');
+                      }}
                     />
+                    {fieldErrors.schoolMobile && <span style={styles.fieldError}>{fieldErrors.schoolMobile}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Principal Name <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.principalName ? styles.inputError : {})
+                      }}
                       placeholder="Enter principal name"
                       value={schoolDetails.principalName}
-                      onChange={(e) => setSchoolDetails({ ...schoolDetails, principalName: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setSchoolDetails({ ...schoolDetails, principalName: e.target.value });
+                        clearFieldError('principalName');
+                      }}
                     />
+                    {fieldErrors.principalName && <span style={styles.fieldError}>{fieldErrors.principalName}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
@@ -390,12 +538,16 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <div style={styles.passwordInputWrapper}>
                       <input
                         type={showPassword ? 'text' : 'password'}
-                        style={styles.passwordInput}
+                        style={{
+                          ...styles.passwordInput,
+                          ...(fieldErrors.password ? styles.inputError : {})
+                        }}
                         placeholder="Create a password (min. 6 characters)"
                         value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                        required
-                        minLength={6}
+                        onChange={(e) => {
+                          setPassword(e.target.value);
+                          clearFieldError('password');
+                        }}
                       />
                       <button
                         type="button"
@@ -407,6 +559,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                         {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
+                    {fieldErrors.password && <span style={styles.fieldError}>{fieldErrors.password}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
@@ -414,12 +567,16 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <div style={styles.passwordInputWrapper}>
                       <input
                         type={showConfirmPassword ? 'text' : 'password'}
-                        style={styles.passwordInput}
+                        style={{
+                          ...styles.passwordInput,
+                          ...(fieldErrors.confirmPassword ? styles.inputError : {})
+                        }}
                         placeholder="Re-enter your password"
                         value={confirmPassword}
-                        onChange={(e) => setConfirmPassword(e.target.value)}
-                        required
-                        minLength={6}
+                        onChange={(e) => {
+                          setConfirmPassword(e.target.value);
+                          clearFieldError('confirmPassword');
+                        }}
                       />
                       <button
                         type="button"
@@ -431,6 +588,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                         {showConfirmPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                       </button>
                     </div>
+                    {fieldErrors.confirmPassword && <span style={styles.fieldError}>{fieldErrors.confirmPassword}</span>}
                   </div>
                 </div>
 
@@ -453,48 +611,72 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <label style={styles.label}>Coordinator Name <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.coordName ? styles.inputError : {})
+                      }}
                       placeholder="Enter coordinator name"
                       value={coordinatorDetails.name}
-                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, name: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setCoordinatorDetails({ ...coordinatorDetails, name: e.target.value });
+                        clearFieldError('coordName');
+                      }}
                     />
+                    {fieldErrors.coordName && <span style={styles.fieldError}>{fieldErrors.coordName}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Designation <span style={styles.req}>*</span></label>
                     <input
                       type="text"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.coordDesignation ? styles.inputError : {})
+                      }}
                       placeholder="Enter designation (e.g. Science HOD, STEM Coordinator)"
                       value={coordinatorDetails.designation}
-                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, designation: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setCoordinatorDetails({ ...coordinatorDetails, designation: e.target.value });
+                        clearFieldError('coordDesignation');
+                      }}
                     />
+                    {fieldErrors.coordDesignation && <span style={styles.fieldError}>{fieldErrors.coordDesignation}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Mobile Number <span style={styles.req}>*</span></label>
                     <input
                       type="tel"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.coordMobile ? styles.inputError : {})
+                      }}
                       placeholder="Enter mobile number"
                       value={coordinatorDetails.mobile}
-                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, mobile: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setCoordinatorDetails({ ...coordinatorDetails, mobile: e.target.value });
+                        clearFieldError('coordMobile');
+                      }}
                     />
+                    {fieldErrors.coordMobile && <span style={styles.fieldError}>{fieldErrors.coordMobile}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Email ID <span style={styles.req}>*</span></label>
                     <input
                       type="email"
-                      style={styles.input}
+                      style={{
+                        ...styles.input,
+                        ...(fieldErrors.coordEmail ? styles.inputError : {})
+                      }}
                       placeholder="Enter email address"
                       value={coordinatorDetails.email}
-                      onChange={(e) => setCoordinatorDetails({ ...coordinatorDetails, email: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setCoordinatorDetails({ ...coordinatorDetails, email: e.target.value });
+                        clearFieldError('coordEmail');
+                      }}
                     />
+                    {fieldErrors.coordEmail && <span style={styles.fieldError}>{fieldErrors.coordEmail}</span>}
                   </div>
                 </div>
               </div>
@@ -504,26 +686,26 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                 ref={declarationRef}
                 style={{
                   ...styles.cardBox,
-                  ...(declarationError ? styles.cardBoxError : {})
+                  ...(declarationError || fieldErrors.declaration ? styles.cardBoxError : {})
                 }}
                 className="register-card-box"
               >
                 <div style={styles.cardSectionHeader} className="register-card-header">
                   <div style={{
                     ...styles.sectionIconSquare,
-                    background: declarationError ? '#fee2e2' : '#e0f2fe'
+                    background: (declarationError || fieldErrors.declaration) ? '#fee2e2' : '#e0f2fe'
                   }}>
-                    <FileText size={22} color={declarationError ? '#dc2626' : '#0284c7'} />
+                    <FileText size={22} color={(declarationError || fieldErrors.declaration) ? '#dc2626' : '#0284c7'} />
                   </div>
                   <div>
                     <h2 style={{
                       ...styles.cardTitle,
-                      color: declarationError ? '#dc2626' : '#0b1d3a'
+                      color: (declarationError || fieldErrors.declaration) ? '#dc2626' : '#0b1d3a'
                     }}>Declaration</h2>
                   </div>
                 </div>
 
-                {declarationError && (
+                {(declarationError || fieldErrors.declaration) && (
                   <div style={styles.declarationErrorAlert} className="shake-error-alert">
                     <AlertCircle size={18} color="#dc2626" style={{ flexShrink: 0 }} />
                     <span>
@@ -539,17 +721,20 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     checked={declarationConfirmed}
                     onChange={(e) => {
                       setDeclarationConfirmed(e.target.checked);
-                      if (e.target.checked) setDeclarationError(false);
+                      if (e.target.checked) {
+                        setDeclarationError(false);
+                        clearFieldError('declaration');
+                      }
                     }}
                     style={{
                       ...styles.checkbox,
-                      ...(declarationError ? styles.checkboxError : {})
+                      ...((declarationError || fieldErrors.declaration) ? styles.checkboxError : {})
                     }}
                   />
                   <label htmlFor="declaration-chk" style={{
                     ...styles.declarationText,
-                    color: declarationError ? '#dc2626' : '#334155',
-                    fontWeight: declarationError ? 600 : 400
+                    color: (declarationError || fieldErrors.declaration) ? '#dc2626' : '#334155',
+                    fontWeight: (declarationError || fieldErrors.declaration) ? 600 : 400
                   }}>
                     We hereby confirm that the information provided is true and correct. We have obtained the consent from the school administration to register for the Technik Olympiad.
                   </label>
@@ -719,6 +904,14 @@ const styles = {
     alignItems: 'center',
     gap: '0.75rem',
     flex: 1,
+    transition: 'all 0.3s ease',
+  },
+  stepItemComplete: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.75rem',
+    flex: 1,
+    transition: 'all 0.3s ease',
   },
   stepItem: {
     display: 'flex',
@@ -726,6 +919,7 @@ const styles = {
     gap: '0.75rem',
     flex: 1,
     opacity: 0.6,
+    transition: 'all 0.3s ease',
   },
   stepNumberActive: {
     width: '38px',
@@ -740,6 +934,22 @@ const styles = {
     justifyContent: 'center',
     boxShadow: '0 4px 10px rgba(4, 16, 38, 0.25)',
     flexShrink: 0,
+    transition: 'all 0.3s ease',
+  },
+  stepNumberCompleted: {
+    width: '38px',
+    height: '38px',
+    borderRadius: '50%',
+    background: 'linear-gradient(135deg, #16a34a 0%, #15803d 100%)',
+    color: '#ffffff',
+    fontWeight: 800,
+    fontSize: '1rem',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    boxShadow: '0 4px 14px rgba(22, 163, 74, 0.35)',
+    flexShrink: 0,
+    transition: 'all 0.3s ease',
   },
   stepNumber: {
     width: '38px',
@@ -753,22 +963,51 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'center',
     flexShrink: 0,
+    transition: 'all 0.3s ease',
   },
   stepTextGroup: {
     display: 'flex',
     flexDirection: 'column',
+    gap: '2px',
   },
   stepTitleActive: {
     fontSize: '0.92rem',
     fontWeight: 700,
     color: '#0f172a',
     fontFamily: 'var(--font-heading)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+  },
+  stepTitleComplete: {
+    fontSize: '0.92rem',
+    fontWeight: 700,
+    color: '#15803d',
+    fontFamily: 'var(--font-heading)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
   },
   stepTitle: {
     fontSize: '0.92rem',
     fontWeight: 600,
     color: '#475569',
     fontFamily: 'var(--font-heading)',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.4rem',
+  },
+  stepCompletedPill: {
+    fontSize: '0.62rem',
+    fontWeight: 800,
+    textTransform: 'uppercase',
+    background: '#dcfce7',
+    color: '#15803d',
+    padding: '0.12rem 0.45rem',
+    borderRadius: '12px',
+    letterSpacing: '0.04em',
+    display: 'inline-flex',
+    alignItems: 'center',
   },
   stepSub: {
     fontSize: '0.75rem',
@@ -778,6 +1017,12 @@ const styles = {
     width: '1px',
     height: '30px',
     background: '#cbd5e1',
+    transition: 'all 0.3s ease',
+  },
+  stepDividerActive: {
+    background: 'linear-gradient(180deg, #16a34a 0%, #22c55e 100%)',
+    boxShadow: '0 0 8px rgba(22, 163, 74, 0.4)',
+    width: '2px',
   },
 
   /* Form Container */
@@ -894,6 +1139,18 @@ const styles = {
     boxSizing: 'border-box',
     fontFamily: 'inherit',
     transition: 'all 0.2s ease',
+  },
+  inputError: {
+    borderColor: '#ef4444 !important',
+    background: '#fff8f8 !important',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.15)',
+  },
+  fieldError: {
+    color: '#dc2626',
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    marginTop: '0.15rem',
+    display: 'block',
   },
   passwordInputWrapper: {
     position: 'relative',
@@ -1118,6 +1375,15 @@ if (typeof document !== 'undefined') {
     }
     .shake-error-alert {
       animation: errorShake 0.45s ease-in-out;
+    }
+    @keyframes stepCheckPop {
+      0% { transform: scale(0.5) rotate(-20deg); opacity: 0; }
+      50% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+      75% { transform: scale(0.95) rotate(-2deg); }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+    .step-check-anim {
+      animation: stepCheckPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
     @media (max-width: 768px) {
       .register-main-container {

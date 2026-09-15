@@ -175,7 +175,7 @@ export default function MfaSetup() {
                 <form onSubmit={handleVerifySubmit} style={styles.otpForm}>
                   <label style={styles.otpLabel}>Enter 6-Digit Code from Authenticator App <span style={{ color: '#ef4444' }}>*</span></label>
 
-                  <div style={styles.otpInputGroup}>
+                  <div style={styles.otpInputGroup} className="otp-input-group">
                     {otp.map((digit, idx) => (
                       <input
                         key={idx}
@@ -185,6 +185,7 @@ export default function MfaSetup() {
                         value={digit}
                         onChange={(e) => handleOtpChange(idx, e.target.value)}
                         onKeyDown={(e) => handleKeyDown(idx, e)}
+                        className="otp-box-input"
                         style={{
                           ...styles.otpBox,
                           ...(digit ? styles.otpBoxFilled : {}),
@@ -609,6 +610,16 @@ if (typeof document !== 'undefined') {
     @media (max-width: 768px) {
       .mfa-setup-grid {
         grid-template-columns: 1fr !important;
+      }
+    }
+    @media (max-width: 440px) {
+      .otp-input-group {
+        gap: 0.35rem !important;
+      }
+      .otp-box-input {
+        width: 38px !important;
+        height: 46px !important;
+        font-size: 1.15rem !important;
       }
     }
   `;

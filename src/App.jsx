@@ -19,30 +19,35 @@ import CodeVerification from './pages/CodeVerification';
 import Login from './pages/Login';
 import TechnikPortal from './pages/TechnikPortal';
 import Contact from './pages/Contact';
-import ComingSoon from './pages/ComingSoon';
+import FAQ from './pages/FAQ';
+import PrivacyPolicy from './pages/PrivacyPolicy';
+import TermsConditions from './pages/TermsConditions';
+import RefundPolicy from './pages/RefundPolicy';
+import NotFound from './pages/NotFound';
 
 function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegisterSuccess }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
 
-  // Force every fresh tab to land on Home, regardless of the URL it was
-  // opened with (typed address, bookmark, shared link). sessionStorage is
-  // scoped to this one tab and is wiped when the tab closes, so a brand-new
-  // tab always sees no flag here — even though the exact same site is still
-  // "open" in other tabs, or was open a minute ago in a tab that's since
-  // been closed. Once this runs, subsequent in-app navigation (Link clicks,
-  // navigate() calls) is untouched, since the flag is already set by then.
+  // Force fresh tabs to start on Home, UNLESS the tab was opened via a direct
+  // external action link (such as the email activation link containing a token).
   useEffect(() => {
     const hasSessionStarted = sessionStorage.getItem('technik_tab_session_started');
     if (!hasSessionStarted) {
       sessionStorage.setItem('technik_tab_session_started', 'true');
-      if (location.pathname !== '/') {
+      
+      const isDirectActionRoute = 
+        location.pathname.startsWith('/activation-pending') ||
+        location.pathname.startsWith('/activate') ||
+        location.pathname.startsWith('/mfa-setup') ||
+        location.search.includes('token=') ||
+        window.location.href.includes('token=');
+
+      if (!isDirectActionRoute && location.pathname !== '/') {
         navigate('/', { replace: true });
       }
     }
-    // Deliberately empty deps — this must run exactly once, on this tab's
-    // very first render, not on every route change.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -67,7 +72,7 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
           <Route path="/admin" element={<TechnikPortal />} />
           <Route path="/technik-portal" element={<TechnikPortal />} />
           <Route path="/catalog" element={<Catalog onSelectTrack={setSelectedTrack} />} />
-          <Route path="/skill-compass" element={<ComingSoon />} />
+          <Route path="/skill-compass" element={<SkillCompass />} />
           <Route 
             path="/register" 
             element={
@@ -88,7 +93,15 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
           <Route path="/verification" element={<Verification registrations={registrations} />} />
           <Route path="/results" element={<Verification registrations={registrations} />} />
           <Route path="/contact" element={<Contact />} />
-          <Route path="*" element={<ComingSoon />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/faqs" element={<FAQ />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/terms-and-conditions" element={<TermsConditions />} />
+          <Route path="/refund-policy" element={<RefundPolicy />} />
+          <Route path="/refund" element={<RefundPolicy />} />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       <Footer />

@@ -4,7 +4,6 @@ import { loginSchoolApi } from '../services/api';
 import {
   Building2, 
   Lock, 
-  Mail, 
   ArrowRight, 
   CheckCircle2, 
   ShieldCheck,
@@ -32,14 +31,34 @@ export default function Login() {
   const [rememberMe, setRememberMe] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+
+  const clearFieldError = (key) => {
+    if (fieldErrors[key]) {
+      setFieldErrors(prev => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
+  };
 
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
-    if (!emailOrCode || !password) {
-      setLoginError('Please enter your registered email and password.');
+    const errs = {};
+    if (!emailOrCode.trim()) {
+      errs.emailOrCode = "This field cannot be left empty";
+    }
+    if (!password) {
+      errs.password = "This field cannot be left empty";
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
       return;
     }
 
+    setFieldErrors({});
     setIsSubmitting(true);
     setLoginError('');
 
@@ -109,7 +128,7 @@ export default function Login() {
             </div>
           </div>
 
-          <form onSubmit={handleLoginSubmit} style={styles.formStack}>
+          <form onSubmit={handleLoginSubmit} style={styles.formStack} noValidate>
             
             {loginError && (
               <div style={styles.errorAlert}>
@@ -124,16 +143,24 @@ export default function Login() {
                 Coordinator / School Email <span style={styles.reqStar}>*</span>
               </label>
               <div style={styles.inputWrapper}>
-                <Building2 size={18} color="#64748b" style={styles.inputIcon} />
+                <Building2 size={18} color={fieldErrors.emailOrCode ? '#ef4444' : '#64748b'} style={styles.inputIcon} />
                 <input
                   type="email"
-                  required
                   placeholder="e.g. coordinator@yourschool.edu.in"
                   value={emailOrCode}
-                  onChange={(e) => setEmailOrCode(e.target.value)}
-                  style={styles.textInput}
+                  onChange={(e) => {
+                    setEmailOrCode(e.target.value);
+                    clearFieldError('emailOrCode');
+                  }}
+                  style={{
+                    ...styles.textInput,
+                    ...(fieldErrors.emailOrCode ? styles.inputError : {})
+                  }}
                 />
               </div>
+              {fieldErrors.emailOrCode && (
+                <span style={styles.fieldError}>{fieldErrors.emailOrCode}</span>
+              )}
             </div>
 
             {/* Field 2: Password */}
@@ -147,14 +174,20 @@ export default function Login() {
                 </a>
               </div>
               <div style={styles.inputWrapper}>
-                <Lock size={18} color="#64748b" style={styles.inputIcon} />
+                <Lock size={18} color={fieldErrors.password ? '#ef4444' : '#64748b'} style={styles.inputIcon} />
                 <input
                   type={showPassword ? 'text' : 'password'}
-                  required
                   placeholder="Enter password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  style={{ ...styles.textInput, paddingRight: '2.75rem' }}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    clearFieldError('password');
+                  }}
+                  style={{
+                    ...styles.textInput,
+                    paddingRight: '2.75rem',
+                    ...(fieldErrors.password ? styles.inputError : {})
+                  }}
                 />
                 <button
                   type="button"
@@ -166,6 +199,9 @@ export default function Login() {
                   {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
                 </button>
               </div>
+              {fieldErrors.password && (
+                <span style={styles.fieldError}>{fieldErrors.password}</span>
+              )}
             </div>
 
             {/* Remember Me & Help Row */}
@@ -446,7 +482,19 @@ const styles = {
     fontSize: '0.92rem',
     outline: 'none',
     boxSizing: 'border-box',
-    transition: 'all 0.2s'
+    transition: 'all 0.2s',
+  },
+  inputError: {
+    borderColor: '#ef4444 !important',
+    background: '#fef2f2 !important',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.12)'
+  },
+  fieldError: {
+    color: '#dc2626',
+    fontSize: '0.78rem',
+    fontWeight: 600,
+    marginTop: '0.2rem',
+    display: 'block'
   },
   forgotLink: {
     color: '#0284c7',

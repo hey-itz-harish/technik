@@ -24,7 +24,6 @@ import {
   Award,
   GraduationCap,
   ArrowRight,
-  Play,
   CheckCircle2,
   ChevronRight
 } from 'lucide-react';
@@ -196,13 +195,6 @@ export default function Catalog({ onSelectTrack }) {
                   <span>REGISTER NOW</span>
                   <ArrowRight size={16} />
                 </Link>
-                <button 
-                  style={styles.watchVideoBtn}
-                  onClick={() => alert("Introductory video coming soon!")}
-                >
-                  <Play size={16} fill="#ffffff" color="#ffffff" />
-                  <span>Watch Our Video</span>
-                </button>
               </div>
             </div>
 

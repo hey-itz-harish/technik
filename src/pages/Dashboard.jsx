@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Award, Calendar, CheckCircle2, ChevronRight, FileDown, Lock, ShieldCheck, Sparkles, BookOpen, Compass, Plus, TrendingUp, Zap, Clock, Activity, BarChart2 } from 'lucide-react';
+import { Award, Calendar, FileDown, Lock, ShieldCheck, Sparkles, BookOpen, Compass, Plus, Zap } from 'lucide-react';
 
 export default function Dashboard({ registrations, onUpdateStage, onLoadDemoData }) {
   const [activeRegId, setActiveRegId] = useState(registrations.length > 0 ? registrations[0].id : null);

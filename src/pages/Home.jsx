@@ -1,42 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import logoImg from '../assets/logo.png';
-import heroStudentImg from '../assets/hero_student.jpg';
-import studentCardImg from '../assets/student_card_img.jpg';
 import schoolCardImg from '../assets/school_card_img.jpg';
 import handshakeCardImg from '../assets/handshake_card_img.jpg';
 import news1Img from '../assets/news1.jpg';
 import news2Img from '../assets/news2.jpg';
 import news3Img from '../assets/news3.jpg';
-import achiever1Img from '../assets/achiever1.jpg';
-import achiever2Img from '../assets/achiever2.jpg';
-import achiever3Img from '../assets/achiever3.jpg';
 import prideTrophy3DImg from '../assets/pride_trophy_3d.jpg';
 import olympiadRocket3DImg from '../assets/olympiad_rocket_3d.jpg';
 import resultMedalImg from '../assets/result_gold_medal_3d.jpg';
 import {
   Trophy,
-  ArrowRight,
   Sparkles,
   Calendar,
   Users,
-  BookOpen,
   Award,
   MapPin,
   Bot,
-  Cpu,
   Code,
   Palette,
-  BookMarked,
   Calculator,
   CheckCircle2,
-  School,
-  Handshake,
-  CheckCircle,
-  ShieldCheck,
   Star,
-  ExternalLink,
-  Phone,
   Building2,
   Lightbulb,
   FileText,
@@ -46,55 +31,6 @@ import {
   Headphones,
   Search
 } from 'lucide-react';
-
-// Helper component for count-up animated numbers
-function AnimatedStatNumber({ val }) {
-  const [displayVal, setDisplayVal] = useState(val);
-  const elementRef = useRef(null);
-  const hasAnimated = useRef(false);
-
-  useEffect(() => {
-    // Extract first continuous numeric sequence if present
-    const match = val.match(/\d+/);
-    if (!match) return;
-
-    const targetNum = parseInt(match[0], 10);
-    const prefix = val.substring(0, match.index);
-    const suffix = val.substring(match.index + match[0].length);
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && !hasAnimated.current) {
-          hasAnimated.current = true;
-          let startNum = 0;
-          const duration = 1600; // ms
-          const stepTime = 25;
-          const totalSteps = duration / stepTime;
-          const increment = targetNum / totalSteps;
-
-          const timer = setInterval(() => {
-            startNum += increment;
-            if (startNum >= targetNum) {
-              setDisplayVal(`${prefix}${targetNum}${suffix}`);
-              clearInterval(timer);
-            } else {
-              setDisplayVal(`${prefix}${Math.floor(startNum)}${suffix}`);
-            }
-          }, stepTime);
-        }
-      },
-      { threshold: 0.3 }
-    );
-
-    if (elementRef.current) {
-      observer.observe(elementRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, [val]);
-
-  return <span ref={elementRef}>{displayVal}</span>;
-}
 
 export default function Home() {
   const [mouseTilt, setMouseTilt] = useState({ x: 0, y: 0 });
@@ -130,59 +66,6 @@ export default function Home() {
   const handleMouseLeaveHero = () => {
     setMouseTilt({ x: 0, y: 0 });
   };
-
-  const statsList = [
-    { icon: Calendar, val: "2018", label: "Our Journey Began", color: "#2563eb" },
-    { icon: Users, val: "Play School to Class 12", label: "Eligible Students", color: "#059669" },
-    { icon: BookOpen, val: "6+ Olympiads", label: "Future-Ready Subjects", color: "#d97706" },
-    { icon: Award, val: "School · District · State", label: "Recognition Levels", color: "#f97316" },
-    { icon: MapPin, val: "5 States + Puducherry", label: "Our Focus Region", color: "#dc2626" }
-  ];
-
-  const olympiadsList = [
-    {
-      title: "Robotics Olympiad",
-      desc: "Explore robotics, automation, machines, sensors and intelligent technologies.",
-      icon: Bot,
-      color: "#2563eb",
-      bgColor: "rgba(37, 99, 235, 0.08)"
-    },
-    {
-      title: "Generative AI Olympiad",
-      desc: "Introducing students to the world of Artificial Intelligence and future technologies.",
-      icon: Cpu,
-      color: "#059669",
-      bgColor: "rgba(5, 150, 105, 0.08)"
-    },
-    {
-      title: "Coding Olympiad",
-      desc: "Develop logical thinking, computational skills and problem-solving abilities.",
-      icon: Code,
-      color: "#ea580c",
-      bgColor: "rgba(234, 88, 12, 0.08)"
-    },
-    {
-      title: "Technik Art Olympiad",
-      desc: "A platform for young creative minds to showcase artistic imagination and creativity.",
-      icon: Palette,
-      color: "#7c3aed",
-      bgColor: "rgba(124, 58, 237, 0.08)"
-    },
-    {
-      title: "English Olympiad",
-      desc: "Develop and assess vocabulary, grammar, comprehension and language skills.",
-      icon: BookMarked,
-      color: "#0284c7",
-      bgColor: "rgba(2, 132, 199, 0.08)"
-    },
-    {
-      title: "Mental Maths Olympiad",
-      desc: "Encouraging numerical ability, logical reasoning and quick calculation.",
-      icon: Calculator,
-      color: "#dc2626",
-      bgColor: "rgba(220, 38, 38, 0.08)"
-    }
-  ];
 
   return (
     <div style={styles.page}>
@@ -1815,7 +1698,7 @@ const styles = {
     paddingBottom: '0.75rem',
     borderBottom: '1px dashed #e2e8f0',
   },
-  newsThumbImg: {
+  newsThumbImgSecondary: {
     width: '52px',
     height: '52px',
     borderRadius: '8px',

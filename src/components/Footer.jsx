@@ -4,8 +4,7 @@ import logoImg from '../assets/logo.png';
 import {
   Phone,
   Mail,
-  MapPin,
-  Trophy
+  MapPin
 } from 'lucide-react';
 
 export default function Footer() {
@@ -102,8 +101,8 @@ export default function Footer() {
               <Link to="/faq" style={styles.linkItem}>FAQs</Link>
               <Link to="/contact" style={styles.linkItem}>Contact Us</Link>
               <Link to="/privacy" style={styles.linkItem}>Privacy Policy</Link>
-              <Link to="/privacy" style={styles.linkItem}>Terms & Conditions</Link>
-              <Link to="/privacy" style={styles.linkItem}>Refund Policy</Link>
+              <Link to="/terms" style={styles.linkItem}>Terms & Conditions</Link>
+              <Link to="/refund-policy" style={styles.linkItem}>Refund Policy</Link>
             </div>
           </div>
 
@@ -259,27 +258,33 @@ const styles = {
 };
 
 // Add responsive CSS styling
-const styleSheet = document.createElement("style");
-styleSheet.innerText = `
-  @media (max-width: 991px) {
-    .footer-columns-grid {
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 2rem 1.5rem !important;
-    }
+if (typeof document !== 'undefined') {
+  const footerStyleId = 'footer-responsive-styles';
+  if (!document.getElementById(footerStyleId)) {
+    const styleSheet = document.createElement("style");
+    styleSheet.id = footerStyleId;
+    styleSheet.innerText = `
+      @media (max-width: 991px) {
+        .footer-columns-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+          gap: 2rem 1.5rem !important;
+        }
+      }
+      @media (max-width: 600px) {
+        .footer-columns-grid {
+          grid-template-columns: 1fr !important;
+          gap: 1.75rem !important;
+        }
+        .footer-brand-header {
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          gap: 1.25rem !important;
+        }
+      }
+      footer a:hover {
+        color: #38bdf8 !important;
+      }
+    `;
+    document.head.appendChild(styleSheet);
   }
-  @media (max-width: 600px) {
-    .footer-columns-grid {
-      grid-template-columns: 1fr !important;
-      gap: 1.75rem !important;
-    }
-    .footer-brand-header {
-      flex-direction: column !important;
-      align-items: flex-start !important;
-      gap: 1.25rem !important;
-    }
-  }
-  footer a:hover {
-    color: #38bdf8 !important;
-  }
-`;
-document.head.appendChild(styleSheet);
+}

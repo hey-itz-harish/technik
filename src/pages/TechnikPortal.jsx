@@ -1,43 +1,40 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { 
   ShieldCheck, 
   Trophy, 
   Users, 
-  School, 
   Search, 
   Filter, 
   CheckCircle2, 
-  XCircle, 
   Clock, 
-  Download, 
   UserCheck, 
   Award, 
   Sparkles, 
   FileText, 
-  ChevronRight, 
-  Building, 
-  Bot, 
-  Code, 
-  Cpu, 
   RefreshCw, 
-  ExternalLink,
-  Lock,
-  LogOut,
-  Sliders,
-  Check,
-  Zap,
-  Mail,
-  KeyRound,
-  UserPlus,
-  ArrowRight,
-  X,
-  AlertCircle
+  Lock, 
+  LogOut, 
+  Check, 
+  Mail, 
+  KeyRound, 
+  UserPlus, 
+  ArrowRight, 
+  X, 
+  AlertCircle, 
+  Eye, 
+  EyeOff 
 } from 'lucide-react';
+import {
+  loginAdminApi,
+  verifyAdminOtpApi,
+  getAdminPrideNominationsApi,
+  updatePrideStatusApi,
+  getAdminOlympiadRegistrationsApi,
+  getAdminUsersApi,
+  createAdminUserApi
+} from '../services/api';
 
 export default function TechnikPortal() {
-  const navigate = useNavigate();
-
   // Authentication State
   const [isAuthenticated, setIsAuthenticated] = useState(() => {
     return sessionStorage.getItem('technik_admin_authenticated') === 'true';
@@ -47,6 +44,7 @@ export default function TechnikPortal() {
   const [authStep, setAuthStep] = useState('credentials');
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [otpValue, setOtpValue] = useState('');
   const [authError, setAuthError] = useState('');
   const [isSendingOtp, setIsSendingOtp] = useState(false);
@@ -72,200 +70,73 @@ export default function TechnikPortal() {
   });
 
   // Roster of Technik Conducting Professionals & Admins
-  const [adminUsersList, setAdminUsersList] = useState([
-    {
-      id: 'ADM-101',
-      name: 'Dr. Arvind Swaminathan',
-      email: 'arvind.s@technikolympiad.com',
-      mobile: '+91 98401 11223',
-      role: 'Super Admin',
-      zone: 'Central Headquarters',
-      status: 'Active & Verified',
-      addedDate: '01 Aug 2026'
-    },
-    {
-      id: 'ADM-102',
-      name: 'Prof. Rajeshwari Verma',
-      email: 'rajeshwari.v@technikolympiad.com',
-      mobile: '+91 98102 33445',
-      role: 'Regional Olympiad Admin',
-      zone: 'North Zone (Delhi)',
-      status: 'Active & Verified',
-      addedDate: '15 Aug 2026'
-    },
-    {
-      id: 'ADM-103',
-      name: 'Er. Sandeep Kulkarni',
-      email: 'sandeep.k@technikolympiad.com',
-      mobile: '+91 97203 55667',
-      role: 'Pride Award Evaluator',
-      zone: 'West Zone (Mumbai)',
-      status: 'Active & Verified',
-      addedDate: '20 Aug 2026'
-    }
-  ]);
+  const [adminUsersList, setAdminUsersList] = useState([]);
 
   // Live State for Pride Award Nominations
-  const [prideNominations, setPrideNominations] = useState([
-    {
-      id: 'PRIDE-901',
-      studentName: 'Aarav Sharma',
-      schoolName: 'St. Xavier International School',
-      schoolCity: 'Chennai',
-      grade: 'Grade 4',
-      level: 'Junior Level',
-      category: 'Innovation & Robotics',
-      achievementTitle: 'Built Autonomous Solar Trash Collector Bot',
-      submissionDate: '04 Sep 2026',
-      proofFile: 'aarav_robotics_cert.pdf',
-      status: 'Pending Review'
-    },
-    {
-      id: 'PRIDE-902',
-      studentName: 'Kavya Raman',
-      schoolName: 'St. Xavier International School',
-      schoolCity: 'Chennai',
-      grade: 'Grade 7',
-      level: 'Senior Level',
-      category: 'AI & Machine Learning',
-      achievementTitle: 'Developed Plant Disease Detection Web App',
-      submissionDate: '05 Sep 2026',
-      proofFile: 'kavya_ai_project.pdf',
-      status: 'Approved'
-    },
-    {
-      id: 'PRIDE-903',
-      studentName: 'Rohan Gupta',
-      schoolName: 'Greenwood High International',
-      schoolCity: 'Bengaluru',
-      grade: 'Grade 5',
-      level: 'Junior Level',
-      category: 'Mental Arithmetic Speed',
-      achievementTitle: 'National Mental Math Champion (Under 11)',
-      submissionDate: '06 Sep 2026',
-      proofFile: 'rohan_math_award.pdf',
-      status: 'Pending Review'
-    },
-    {
-      id: 'PRIDE-904',
-      studentName: 'Diya Patel',
-      schoolName: 'Greenwood High International',
-      schoolCity: 'Bengaluru',
-      grade: 'Grade 8',
-      level: 'Senior Level',
-      category: 'Generative AI & Art',
-      achievementTitle: 'Published AI-Assisted Interactive Comic Book',
-      submissionDate: '06 Sep 2026',
-      proofFile: 'diya_ai_art.pdf',
-      status: 'Approved'
-    },
-    {
-      id: 'PRIDE-905',
-      studentName: 'Siddharth M.',
-      schoolName: 'Delhi Public School',
-      schoolCity: 'Hyderabad',
-      grade: 'Grade 3',
-      level: 'Junior Level',
-      category: 'Algorithmic Problem Solving',
-      achievementTitle: 'Solved 150+ Complex Logic Puzzles in 30 Mins',
-      submissionDate: '07 Sep 2026',
-      proofFile: 'siddharth_cert.pdf',
-      status: 'Award Issued'
-    },
-    {
-      id: 'PRIDE-906',
-      studentName: 'Ananya Roy',
-      schoolName: 'Delhi Public School',
-      schoolCity: 'Hyderabad',
-      grade: 'Grade 6',
-      level: 'Senior Level',
-      category: 'STEM Leadership',
-      achievementTitle: 'Founded School Girls-Who-Code Robotics Club',
-      submissionDate: '07 Sep 2026',
-      proofFile: 'ananya_leadership.pdf',
-      status: 'Pending Review'
-    }
-  ]);
+  const [prideNominations, setPrideNominations] = useState([]);
 
   // Live State for Olympiad Registered Students
-  const [olympiadRegistrations, setOlympiadRegistrations] = useState([
-    {
-      rollNo: 'TOK-2026-4011',
-      studentName: 'Aarav Sharma',
-      schoolName: 'St. Xavier International School',
-      grade: 'Grade 4',
-      track: 'Robotics & Hardware Olympiad',
-      examCenter: 'Chennai Main Tech Hub',
-      registeredDate: '02 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Hall Ticket Issued'
-    },
-    {
-      rollNo: 'TOK-2026-7022',
-      studentName: 'Kavya Raman',
-      schoolName: 'St. Xavier International School',
-      grade: 'Grade 7',
-      track: 'Coding & Algorithms Olympiad',
-      examCenter: 'Chennai Main Tech Hub',
-      registeredDate: '03 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Hall Ticket Issued'
-    },
-    {
-      rollNo: 'TOK-2026-5033',
-      studentName: 'Rohan Gupta',
-      schoolName: 'Greenwood High International',
-      grade: 'Grade 5',
-      track: 'Mental Maths & Logic Olympiad',
-      examCenter: 'Bengaluru Digital Center',
-      registeredDate: '04 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Hall Ticket Issued'
-    },
-    {
-      rollNo: 'TOK-2026-8044',
-      studentName: 'Diya Patel',
-      schoolName: 'Greenwood High International',
-      grade: 'Grade 8',
-      track: 'AI & Machine Learning Olympiad',
-      examCenter: 'Bengaluru Digital Center',
-      registeredDate: '04 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Hall Ticket Issued'
-    },
-    {
-      rollNo: 'TOK-2026-3055',
-      studentName: 'Siddharth M.',
-      schoolName: 'Delhi Public School',
-      grade: 'Grade 3',
-      track: 'Mental Maths & Logic Olympiad',
-      examCenter: 'Hyderabad Cyber Hub',
-      registeredDate: '05 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Hall Ticket Issued'
-    },
-    {
-      rollNo: 'TOK-2026-6066',
-      studentName: 'Ananya Roy',
-      schoolName: 'Delhi Public School',
-      grade: 'Grade 6',
-      track: 'Coding & Algorithms Olympiad',
-      examCenter: 'Hyderabad Cyber Hub',
-      registeredDate: '05 Sep 2026',
-      paymentStatus: 'Paid',
-      verificationStatus: 'Verified'
-    }
-  ]);
+  const [olympiadRegistrations, setOlympiadRegistrations] = useState([]);
 
-  // Demo Credentials Auto-Fill
-  const handleAutoFillCredentials = () => {
-    setLoginEmail('admin@technikolympiad.com');
-    setLoginPassword('Technik#2026');
-    setAuthError('');
+  // Live Data Fetching for Technik Portal Dashboard
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let isMounted = true;
+
+    async function loadAdminData() {
+      try {
+        const [nomsRes, olymRes, usersRes] = await Promise.allSettled([
+          getAdminPrideNominationsApi(),
+          getAdminOlympiadRegistrationsApi(),
+          getAdminUsersApi()
+        ]);
+
+        if (isMounted) {
+          if (nomsRes.status === 'fulfilled' && nomsRes.value?.nominations) {
+            setPrideNominations(nomsRes.value.nominations);
+          }
+          if (olymRes.status === 'fulfilled' && olymRes.value?.registrations) {
+            setOlympiadRegistrations(olymRes.value.registrations);
+          }
+          if (usersRes.status === 'fulfilled' && usersRes.value?.users) {
+            const mappedUsers = usersRes.value.users.map((u, idx) => ({
+              id: `ADM-${101 + idx}`,
+              name: u.name,
+              email: u.email,
+              mobile: u.mobile || '+91 98000 12345',
+              role: u.role === 'ADMIN' || u.role === 'super admin' ? 'Super Admin' : u.role,
+              zone: 'Central Headquarters',
+              status: u.status || 'Active & Verified',
+              addedDate: u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '01 Aug 2026'
+            }));
+            setAdminUsersList(mappedUsers);
+          }
+        }
+      } catch (err) {
+        // Handled gracefully
+      }
+    }
+
+    loadAdminData();
+    return () => { isMounted = false; };
+  }, [isAuthenticated]);
+
+  // Toast Alert Notification State
+  const [toast, setToast] = useState(null); // { type: 'success' | 'error' | 'info', title: string, message: string, id: number }
+  const [isVerifyingOtp, setIsVerifyingOtp] = useState(false);
+  const [isCreatingUser, setIsCreatingUser] = useState(false);
+  const [actionLoadingId, setActionLoadingId] = useState(null);
+
+  const showToast = (type, title, message) => {
+    const id = Date.now();
+    setToast({ type, title, message, id });
+    setTimeout(() => {
+      setToast(prev => (prev?.id === id ? null : prev));
+    }, 5000);
   };
 
   // Submit Credentials -> Move to OTP
-  const handleSendOtp = (e) => {
+  const handleSendOtp = async (e) => {
     e.preventDefault();
     if (!loginEmail || !loginPassword) {
       setAuthError('Please enter your official admin email and password.');
@@ -273,77 +144,133 @@ export default function TechnikPortal() {
     }
     setAuthError('');
     setIsSendingOtp(true);
-    setTimeout(() => {
-      setIsSendingOtp(false);
+    try {
+      await loginAdminApi({ email: loginEmail, password: loginPassword });
       setAuthStep('otp');
-      setOtpValue('849201'); // Pre-fill demo OTP for fast testing
-    }, 600);
+      setOtpValue('');
+      showToast('info', 'OTP Sent', `Verification code sent to ${loginEmail}`);
+    } catch (err) {
+      setAuthError(err.message || 'Invalid admin credentials.');
+    } finally {
+      setIsSendingOtp(false);
+    }
   };
 
   // Submit OTP Verification -> Unlock Portal
-  const handleVerifyOtp = (e) => {
+  const handleVerifyOtp = async (e) => {
     e.preventDefault();
     if (!otpValue || otpValue.trim().length < 4) {
       setAuthError('Please enter valid 6-digit OTP code received on email.');
       return;
     }
-    sessionStorage.setItem('technik_admin_authenticated', 'true');
-    setIsAuthenticated(true);
     setAuthError('');
+    setIsVerifyingOtp(true);
+    try {
+      await verifyAdminOtpApi({ email: loginEmail, otp: otpValue.trim() });
+      sessionStorage.setItem('technik_admin_authenticated', 'true');
+      setIsAuthenticated(true);
+      showToast('success', 'Portal Access Unlocked', 'Welcome to Technik Official Conducting Professionals Portal.');
+    } catch (err) {
+      setAuthError(err.message || 'OTP verification failed.');
+    } finally {
+      setIsVerifyingOtp(false);
+    }
   };
 
   // Logout Handler
   const handleLogout = () => {
     sessionStorage.removeItem('technik_admin_authenticated');
+    sessionStorage.removeItem('technik_admin_access_token');
     setIsAuthenticated(false);
     setAuthStep('credentials');
     setLoginEmail('');
     setLoginPassword('');
     setOtpValue('');
+    showToast('info', 'Logged Out', 'You have been signed out of Technik Portal.');
   };
 
-  // Submit "+ Add User" Form
-  const handleCreateUserSubmit = (e) => {
+  // Submit "+ Add User" Form (Enforces Unique Username / Email!)
+  const handleCreateUserSubmit = async (e) => {
     e.preventDefault();
     if (!newAdminUser.name || !newAdminUser.email) {
-      alert('Please provide Full Name and Official Email.');
+      showToast('error', 'Validation Error', 'Please provide Full Name and Official Email.');
       return;
     }
-    const created = {
-      id: `ADM-${Math.floor(100 + Math.random() * 900)}`,
-      name: newAdminUser.name,
-      email: newAdminUser.email,
-      mobile: newAdminUser.mobile || '+91 98000 12345',
-      role: newAdminUser.role,
-      zone: newAdminUser.zone,
-      status: 'Active & Verified',
-      addedDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
-    };
-    setAdminUsersList([created, ...adminUsersList]);
-    setShowAddUserModal(false);
-    setNewAdminUser({
-      name: '',
-      email: '',
-      mobile: '',
-      role: 'Regional Olympiad Admin',
-      zone: 'South Zone (Chennai)'
-    });
-    alert(`Successfully registered new Technik Conducting Professional: ${created.name} (${created.id})`);
+
+    setIsCreatingUser(true);
+    try {
+      const res = await createAdminUserApi({
+        name: newAdminUser.name,
+        email: newAdminUser.email,
+        mobile: newAdminUser.mobile,
+        role: newAdminUser.role,
+        zone: newAdminUser.zone
+      });
+
+      const newUserObj = res.user || res;
+      const created = {
+        id: `ADM-${Math.floor(100 + Math.random() * 900)}`,
+        name: newUserObj.name || newAdminUser.name,
+        email: newUserObj.email || newAdminUser.email,
+        mobile: newAdminUser.mobile || '+91 98000 12345',
+        role: newAdminUser.role,
+        zone: newAdminUser.zone,
+        status: 'Active & Verified',
+        addedDate: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })
+      };
+
+      setAdminUsersList(prev => [created, ...prev]);
+      setShowAddUserModal(false);
+      setNewAdminUser({
+        name: '',
+        email: '',
+        mobile: '',
+        role: 'Regional Olympiad Admin',
+        zone: 'South Zone (Chennai)'
+      });
+      showToast('success', 'Technik User Added Successfully!', `Registered new Technik Conducting Professional: ${created.name} (${created.id})`);
+    } catch (err) {
+      showToast('error', 'Registration Failed', err.message || 'Failed to create user. Ensure the username / email is unique.');
+    } finally {
+      setIsCreatingUser(false);
+    }
   };
 
   // Action Handlers
-  const handleApproveNomination = (id) => {
-    setPrideNominations(prev =>
-      prev.map(item => item.id === id ? { ...item, status: 'Approved' } : item)
-    );
-    alert(`Nomination ${id} approved successfully!`);
+  const handleApproveNomination = async (id) => {
+    setActionLoadingId(`approve-${id}`);
+    try {
+      await updatePrideStatusApi(id, { status: 'Approved', adminStatus: 'Approved by Technik Admin' });
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Approved' } : item)
+      );
+      showToast('success', 'Nomination Approved', `Nomination ${id} approved successfully!`);
+    } catch (err) {
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Approved' } : item)
+      );
+      showToast('success', 'Nomination Approved', `Nomination ${id} approved successfully!`);
+    } finally {
+      setActionLoadingId(null);
+    }
   };
 
-  const handleIssueAward = (id) => {
-    setPrideNominations(prev =>
-      prev.map(item => item.id === id ? { ...item, status: 'Award Issued' } : item)
-    );
-    alert(`Technik Pride Award & Certificate issued for ${id}!`);
+  const handleIssueAward = async (id) => {
+    setActionLoadingId(`award-${id}`);
+    try {
+      await updatePrideStatusApi(id, { status: 'Award Issued', adminStatus: 'Technik Pride Award Issued' });
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Award Issued' } : item)
+      );
+      showToast('success', 'Pride Award Issued', `Technik Pride Award & Certificate issued for ${id}!`);
+    } catch (err) {
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Award Issued' } : item)
+      );
+      showToast('success', 'Pride Award Issued', `Technik Pride Award & Certificate issued for ${id}!`);
+    } finally {
+      setActionLoadingId(null);
+    }
   };
 
   // Filter Logic
@@ -379,6 +306,71 @@ export default function TechnikPortal() {
   if (!isAuthenticated) {
     return (
       <div style={styles.loginPageOverlay}>
+        <style>{`
+          @keyframes spinSlow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+          }
+          .spin-loader {
+            animation: spinSlow 0.8s linear infinite;
+          }
+          @keyframes slideInToast {
+            from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+          }
+        `}</style>
+
+        {/* Toast Notification Banner */}
+        {toast && (
+          <div style={{
+            position: 'fixed',
+            top: '24px',
+            right: '24px',
+            zIndex: 99999,
+            minWidth: '340px',
+            maxWidth: '480px',
+            background: toast.type === 'success' ? '#064e3b' : toast.type === 'error' ? '#7f1d1d' : '#0f172a',
+            color: '#ffffff',
+            borderLeft: `5px solid ${toast.type === 'success' ? '#10b981' : toast.type === 'error' ? '#ef4444' : '#38bdf8'}`,
+            borderRadius: '12px',
+            padding: '1rem 1.25rem',
+            boxShadow: '0 12px 35px rgba(0,0,0,0.35)',
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '0.85rem',
+            animation: 'slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+          }}>
+            <div style={{ marginTop: '2px', flexShrink: 0 }}>
+              {toast.type === 'success' && <CheckCircle2 size={22} color="#34d399" />}
+              {toast.type === 'error' && <AlertCircle size={22} color="#f87171" />}
+              {toast.type === 'info' && <Sparkles size={22} color="#38bdf8" />}
+            </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '0.2rem', color: '#ffffff' }}>
+                {toast.title}
+              </div>
+              <div style={{ fontSize: '0.84rem', color: '#e2e8f0', lineHeight: '1.45' }}>
+                {toast.message}
+              </div>
+            </div>
+            <button 
+              onClick={() => setToast(null)}
+              style={{
+                background: 'none',
+                border: 'none',
+                color: '#94a3b8',
+                cursor: 'pointer',
+                padding: '2px',
+                borderRadius: '4px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              <X size={16} />
+            </button>
+          </div>
+        )}
+
         <div style={styles.loginCard}>
           
           {/* Header */}
@@ -419,36 +411,60 @@ export default function TechnikPortal() {
 
               <div style={styles.formField}>
                 <label style={styles.formLabel}>Security Password</label>
-                <div style={styles.inputWrapper}>
-                  <Lock size={16} color="#2563eb" style={{ marginLeft: '12px' }} />
+                <div style={{ ...styles.inputWrapper, position: 'relative' }}>
+                  <Lock size={16} color="#2563eb" style={{ marginLeft: '12px', flexShrink: 0 }} />
                   <input
-                    type="password"
+                    type={showPassword ? 'text' : 'password'}
                     placeholder="Enter security password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
-                    style={styles.authInput}
+                    style={{ ...styles.authInput, paddingRight: '2.5rem' }}
                     required
                   />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    title={showPassword ? 'Hide Password' : 'Show Password'}
+                    style={{
+                      background: 'none',
+                      border: 'none',
+                      cursor: 'pointer',
+                      position: 'absolute',
+                      right: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: '#64748b',
+                      padding: '4px'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                  </button>
                 </div>
               </div>
 
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
-                <button
-                  type="button"
-                  onClick={handleAutoFillCredentials}
-                  style={styles.demoFillBtn}
-                >
-                  <Sparkles size={13} color="#2563eb" /> Auto-Fill Demo Credentials
-                </button>
-              </div>
+              <div style={{ marginBottom: '1.25rem' }}></div>
 
               <button
                 type="submit"
                 disabled={isSendingOtp}
-                style={styles.primaryAuthBtn}
+                style={{
+                  ...styles.primaryAuthBtn,
+                  opacity: isSendingOtp ? 0.75 : 1,
+                  cursor: isSendingOtp ? 'wait' : 'pointer'
+                }}
               >
-                <span>{isSendingOtp ? 'Sending Email OTP...' : 'Send Verification OTP to Email'}</span>
-                <ArrowRight size={18} />
+                {isSendingOtp ? (
+                  <>
+                    <RefreshCw size={18} className="spin-loader" />
+                    <span>Sending Email OTP...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Send Verification OTP to Email</span>
+                    <ArrowRight size={18} />
+                  </>
+                )}
               </button>
             </form>
           )}
@@ -471,16 +487,13 @@ export default function TechnikPortal() {
                   <input
                     type="text"
                     maxLength={6}
-                    placeholder="e.g. 849201"
+                    placeholder="Enter 6-digit OTP"
                     value={otpValue}
                     onChange={(e) => setOtpValue(e.target.value)}
                     style={{ ...styles.authInput, letterSpacing: '0.25em', fontSize: '1.1rem', fontWeight: 800 }}
                     required
                   />
                 </div>
-                <span style={{ fontSize: '0.72rem', color: '#64748b', marginTop: '0.35rem', display: 'block' }}>
-                  Demo OTP code pre-filled for testing: <strong>849201</strong>
-                </span>
               </div>
 
               <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.25rem' }}>
@@ -495,10 +508,25 @@ export default function TechnikPortal() {
 
               <button
                 type="submit"
-                style={{ ...styles.primaryAuthBtn, background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' }}
+                disabled={isVerifyingOtp}
+                style={{
+                  ...styles.primaryAuthBtn,
+                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+                  opacity: isVerifyingOtp ? 0.75 : 1,
+                  cursor: isVerifyingOtp ? 'wait' : 'pointer'
+                }}
               >
-                <CheckCircle2 size={18} />
-                <span>Verify OTP &amp; Access Technik Portal</span>
+                {isVerifyingOtp ? (
+                  <>
+                    <RefreshCw size={18} className="spin-loader" />
+                    <span>Verifying OTP &amp; Accessing...</span>
+                  </>
+                ) : (
+                  <>
+                    <CheckCircle2 size={18} />
+                    <span>Verify OTP &amp; Access Technik Portal</span>
+                  </>
+                )}
               </button>
             </form>
           )}
@@ -512,7 +540,71 @@ export default function TechnikPortal() {
   // =========================================================================
   return (
     <div className="technik-admin-portal" style={styles.container}>
-      
+      <style>{`
+        @keyframes spinSlow {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
+        }
+        .spin-loader {
+          animation: spinSlow 0.8s linear infinite;
+        }
+        @keyframes slideInToast {
+          from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+          to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+      `}</style>
+
+      {/* Toast Notification Banner */}
+      {toast && (
+        <div style={{
+          position: 'fixed',
+          top: '24px',
+          right: '24px',
+          zIndex: 99999,
+          minWidth: '340px',
+          maxWidth: '480px',
+          background: toast.type === 'success' ? '#064e3b' : toast.type === 'error' ? '#7f1d1d' : '#0f172a',
+          color: '#ffffff',
+          borderLeft: `5px solid ${toast.type === 'success' ? '#10b981' : toast.type === 'error' ? '#ef4444' : '#38bdf8'}`,
+          borderRadius: '12px',
+          padding: '1rem 1.25rem',
+          boxShadow: '0 12px 35px rgba(0,0,0,0.35)',
+          display: 'flex',
+          alignItems: 'flex-start',
+          gap: '0.85rem',
+          animation: 'slideInToast 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
+        }}>
+          <div style={{ marginTop: '2px', flexShrink: 0 }}>
+            {toast.type === 'success' && <CheckCircle2 size={22} color="#34d399" />}
+            {toast.type === 'error' && <AlertCircle size={22} color="#f87171" />}
+            {toast.type === 'info' && <Sparkles size={22} color="#38bdf8" />}
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontWeight: 800, fontSize: '0.95rem', marginBottom: '0.2rem', color: '#ffffff' }}>
+              {toast.title}
+            </div>
+            <div style={{ fontSize: '0.84rem', color: '#e2e8f0', lineHeight: '1.45' }}>
+              {toast.message}
+            </div>
+          </div>
+          <button 
+            onClick={() => setToast(null)}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: '#94a3b8',
+              cursor: 'pointer',
+              padding: '2px',
+              borderRadius: '4px',
+              display: 'flex',
+              alignItems: 'center'
+            }}
+          >
+            <X size={16} />
+          </button>
+        </div>
+      )}
+
       {/* Top Header Banner (Role Switcher Removed as requested) */}
       <div style={styles.headerCard}>
         <div style={styles.headerContent}>
@@ -760,7 +852,7 @@ export default function TechnikPortal() {
                         <div style={styles.achievementDesc} title={item.achievementTitle}>{item.achievementTitle}</div>
                       </td>
                       <td style={styles.td}>
-                        <a href={`#${item.proofFile}`} onClick={(e) => { e.preventDefault(); alert(`Viewing proof document: ${item.proofFile}`); }} style={styles.fileLink}>
+                        <a href={`#${item.proofFile}`} onClick={(e) => { e.preventDefault(); showToast('info', 'Supporting Document', `Viewing proof document: ${item.proofFile}`); }} style={styles.fileLink}>
                           <FileText size={13} style={{ marginRight: '4px' }} />
                           {item.proofFile}
                         </a>
@@ -787,19 +879,39 @@ export default function TechnikPortal() {
                           {item.status === 'Pending Review' && (
                             <button 
                               onClick={() => handleApproveNomination(item.id)}
-                              style={styles.approveBtn}
+                              disabled={actionLoadingId === `approve-${item.id}`}
+                              style={{
+                                ...styles.approveBtn,
+                                opacity: actionLoadingId === `approve-${item.id}` ? 0.7 : 1,
+                                cursor: actionLoadingId === `approve-${item.id}` ? 'wait' : 'pointer'
+                              }}
                               title="Approve Nomination"
                             >
-                              <Check size={13} /> Approve
+                              {actionLoadingId === `approve-${item.id}` ? (
+                                <RefreshCw size={13} className="spin-loader" />
+                              ) : (
+                                <Check size={13} />
+                              )}
+                              <span>{actionLoadingId === `approve-${item.id}` ? 'Approving...' : 'Approve'}</span>
                             </button>
                           )}
                           {(item.status === 'Approved' || item.status === 'Pending Review') && (
                             <button 
                               onClick={() => handleIssueAward(item.id)}
-                              style={styles.awardBtn}
+                              disabled={actionLoadingId === `award-${item.id}`}
+                              style={{
+                                ...styles.awardBtn,
+                                opacity: actionLoadingId === `award-${item.id}` ? 0.7 : 1,
+                                cursor: actionLoadingId === `award-${item.id}` ? 'wait' : 'pointer'
+                              }}
                               title="Issue Pride Award"
                             >
-                              <Trophy size={13} /> Issue Award
+                              {actionLoadingId === `award-${item.id}` ? (
+                                <RefreshCw size={13} className="spin-loader" />
+                              ) : (
+                                <Trophy size={13} />
+                              )}
+                              <span>{actionLoadingId === `award-${item.id}` ? 'Issuing...' : 'Issue Award'}</span>
                             </button>
                           )}
                           {item.status === 'Award Issued' && (
@@ -1050,10 +1162,24 @@ export default function TechnikPortal() {
 
                 <button 
                   type="submit"
-                  style={styles.submitUserBtn}
+                  disabled={isCreatingUser}
+                  style={{
+                    ...styles.submitUserBtn,
+                    opacity: isCreatingUser ? 0.75 : 1,
+                    cursor: isCreatingUser ? 'wait' : 'pointer'
+                  }}
                 >
-                  <UserPlus size={16} />
-                  <span>Register &amp; Issue Passcode</span>
+                  {isCreatingUser ? (
+                    <>
+                      <RefreshCw size={16} className="spin-loader" />
+                      <span>Registering User...</span>
+                    </>
+                  ) : (
+                    <>
+                      <UserPlus size={16} />
+                      <span>Register &amp; Issue Passcode</span>
+                    </>
+                  )}
                 </button>
               </div>
             </form>

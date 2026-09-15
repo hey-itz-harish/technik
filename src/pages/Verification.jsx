@@ -11,15 +11,8 @@ import {
   Trophy,
   ShieldCheck,
   ArrowRight,
-  Search,
   Download,
   Award,
-  Sparkles,
-  ChevronRight,
-  User,
-  Building2,
-  Calendar,
-  Check,
   X
 } from 'lucide-react';
 
@@ -32,6 +25,10 @@ export default function Verification({ registrations = [] }) {
 
   // Verify direct code state
   const [verifyCode, setVerifyCode] = useState('');
+
+  // Inline error states
+  const [searchError, setSearchError] = useState('');
+  const [verifyError, setVerifyError] = useState('');
 
   // Result display modal/card state
   const [activeResult, setActiveResult] = useState(null);
@@ -111,6 +108,11 @@ export default function Verification({ registrations = [] }) {
 
   const handleSearch = (e) => {
     if (e) e.preventDefault();
+    if (!regNumber.trim()) {
+      setSearchError("This field cannot be left empty");
+      return;
+    }
+    setSearchError("");
     const query = regNumber.trim().toUpperCase();
 
     // Check user registrations props + sample database
@@ -174,8 +176,12 @@ export default function Verification({ registrations = [] }) {
 
   const handleVerifySubmit = (e) => {
     e.preventDefault();
+    if (!verifyCode.trim()) {
+      setVerifyError("This field cannot be left empty");
+      return;
+    }
+    setVerifyError("");
     const query = verifyCode.trim().toUpperCase();
-    if (!query) return;
 
     const found = sampleDatabase.find(r => r.id.toUpperCase() === query);
     if (found) {
@@ -273,7 +279,7 @@ export default function Verification({ registrations = [] }) {
             </div>
 
             {/* Search Form */}
-            <form onSubmit={handleSearch} style={styles.searchForm}>
+            <form onSubmit={handleSearch} style={styles.searchForm} noValidate>
               <div style={styles.formGrid} className="verification-form-grid">
                 
                 {/* Field 1: Reg Number */}
@@ -284,10 +290,19 @@ export default function Verification({ registrations = [] }) {
                   <input 
                     type="text" 
                     placeholder="Enter your registration number"
-                    style={styles.textInput}
+                    style={{
+                      ...styles.textInput,
+                      ...(searchError ? styles.inputError : {})
+                    }}
                     value={regNumber}
-                    onChange={(e) => setRegNumber(e.target.value)}
+                    onChange={(e) => {
+                      setRegNumber(e.target.value);
+                      if (searchError) setSearchError('');
+                    }}
                   />
+                  {searchError && (
+                    <span style={styles.fieldErrorText}>{searchError}</span>
+                  )}
                 </div>
 
                 {/* Field 2: Select Olympiad */}
@@ -449,7 +464,7 @@ export default function Verification({ registrations = [] }) {
                     Enter the registration number to verify the authenticity of the award certificate.
                   </p>
 
-                  <form onSubmit={handleVerifySubmit} style={styles.verifyForm}>
+                  <form onSubmit={handleVerifySubmit} style={styles.verifyForm} noValidate>
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>
                         Registration Number <span style={styles.reqStar}>*</span>
@@ -457,10 +472,19 @@ export default function Verification({ registrations = [] }) {
                       <input 
                         type="text" 
                         placeholder="Enter registration number (e.g. TOL-2026-XXXXX)"
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(verifyError ? styles.inputError : {})
+                        }}
                         value={verifyCode}
-                        onChange={(e) => setVerifyCode(e.target.value)}
+                        onChange={(e) => {
+                          setVerifyCode(e.target.value);
+                          if (verifyError) setVerifyError('');
+                        }}
                       />
+                      {verifyError && (
+                        <span style={styles.fieldErrorText}>{verifyError}</span>
+                      )}
                     </div>
 
                     <button type="submit" style={styles.verifyBtnDark}>
@@ -861,6 +885,18 @@ const styles = {
     color: '#0f172a',
     transition: 'border-color 0.2s ease',
     boxSizing: 'border-box',
+  },
+  inputError: {
+    borderColor: '#ef4444 !important',
+    background: '#fef2f2 !important',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.12)'
+  },
+  fieldErrorText: {
+    color: '#dc2626',
+    fontSize: '0.74rem',
+    fontWeight: 600,
+    marginTop: '0.2rem',
+    display: 'block'
   },
   selectInput: {
     width: '100%',

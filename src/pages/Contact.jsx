@@ -18,8 +18,7 @@ import {
   Plus,
   Minus,
   ArrowRight,
-  CheckCircle2,
-  Sparkles
+  CheckCircle2
 } from 'lucide-react';
 
 export default function Contact() {
@@ -31,7 +30,18 @@ export default function Contact() {
     subject: '',
     message: ''
   });
+  const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+
+  const clearFieldError = (key) => {
+    if (fieldErrors[key]) {
+      setFieldErrors(prev => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
+  };
 
   // Accordion open/close state
   const [openFaq, setOpenFaq] = useState(null);
@@ -42,10 +52,22 @@ export default function Contact() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) {
-      alert("Please fill in all required fields.");
+    const errs = {};
+    if (!formData.name.trim()) errs.name = "This field cannot be left empty";
+    if (!formData.email.trim()) {
+      errs.email = "This field cannot be left empty";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email.trim())) {
+      errs.email = "Please enter a valid email address";
+    }
+    if (!formData.subject) errs.subject = "Please select a subject";
+    if (!formData.message.trim()) errs.message = "This field cannot be left empty";
+
+    if (Object.keys(errs).length > 0) {
+      setFieldErrors(errs);
       return;
     }
+
+    setFieldErrors({});
     setSubmitted(true);
   };
 
@@ -253,7 +275,7 @@ export default function Contact() {
                   </button>
                 </div>
               ) : (
-                <form onSubmit={handleSubmit} style={styles.contactForm}>
+                <form onSubmit={handleSubmit} style={styles.contactForm} noValidate>
                   <div style={styles.formRow2Col} className="contact-form-row">
                     {/* Your Name */}
                     <div style={styles.fieldCol}>
@@ -263,11 +285,19 @@ export default function Contact() {
                       <input 
                         type="text" 
                         placeholder="Enter your name"
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(fieldErrors.name ? styles.inputError : {})
+                        }}
                         value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        required
+                        onChange={(e) => {
+                          setFormData({ ...formData, name: e.target.value });
+                          clearFieldError('name');
+                        }}
                       />
+                      {fieldErrors.name && (
+                        <span style={styles.fieldError}>{fieldErrors.name}</span>
+                      )}
                     </div>
 
                     {/* Your Email */}
@@ -278,11 +308,19 @@ export default function Contact() {
                       <input 
                         type="email" 
                         placeholder="Enter your email"
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(fieldErrors.email ? styles.inputError : {})
+                        }}
                         value={formData.email}
-                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                        required
+                        onChange={(e) => {
+                          setFormData({ ...formData, email: e.target.value });
+                          clearFieldError('email');
+                        }}
                       />
+                      {fieldErrors.email && (
+                        <span style={styles.fieldError}>{fieldErrors.email}</span>
+                      )}
                     </div>
                   </div>
 
@@ -305,10 +343,15 @@ export default function Contact() {
                         Subject <span style={styles.reqStar}>*</span>
                       </label>
                       <select 
-                        style={styles.selectInput}
+                        style={{
+                          ...styles.selectInput,
+                          ...(fieldErrors.subject ? styles.inputError : {})
+                        }}
                         value={formData.subject}
-                        onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                        required
+                        onChange={(e) => {
+                          setFormData({ ...formData, subject: e.target.value });
+                          clearFieldError('subject');
+                        }}
                       >
                         <option value="">Select a subject</option>
                         <option value="Student Enquiry">Student Enquiry</option>
@@ -317,6 +360,9 @@ export default function Contact() {
                         <option value="Media Enquiries">Media Enquiries</option>
                         <option value="General Support">General Support</option>
                       </select>
+                      {fieldErrors.subject && (
+                        <span style={styles.fieldError}>{fieldErrors.subject}</span>
+                      )}
                     </div>
                   </div>
 
@@ -327,11 +373,19 @@ export default function Contact() {
                     </label>
                     <textarea 
                       placeholder="Type your message here..."
-                      style={styles.textAreaInput}
+                      style={{
+                        ...styles.textAreaInput,
+                        ...(fieldErrors.message ? styles.inputError : {})
+                      }}
                       value={formData.message}
-                      onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                      required
+                      onChange={(e) => {
+                        setFormData({ ...formData, message: e.target.value });
+                        clearFieldError('message');
+                      }}
                     />
+                    {fieldErrors.message && (
+                      <span style={styles.fieldError}>{fieldErrors.message}</span>
+                    )}
                   </div>
 
                   <button type="submit" style={styles.sendMsgBtn}>
@@ -810,6 +864,18 @@ const styles = {
     outline: 'none',
     fontFamily: 'inherit',
     boxSizing: 'border-box',
+  },
+  inputError: {
+    borderColor: '#ef4444 !important',
+    background: '#fef2f2 !important',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.12)'
+  },
+  fieldError: {
+    color: '#dc2626',
+    fontSize: '0.74rem',
+    fontWeight: 600,
+    marginTop: '0.15rem',
+    display: 'block'
   },
   sendMsgBtn: {
     width: '100%',

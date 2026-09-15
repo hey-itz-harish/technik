@@ -2,16 +2,16 @@ import React, { useState, useEffect } from 'react';
 import logoImg from '../assets/logo.png';
 import { Cpu, Sparkles, Shield, Trophy } from 'lucide-react';
 
-export default function CreativeLoader({ text = 'Initializing Technik Portal...' }) {
+const STATUS_MESSAGES = [
+  'Initializing Technik Cyber Core...',
+  'Loading Olympiad & School Roster...',
+  'Syncing Student Nominations & Credentials...',
+  'Optimizing High-Tech Experience...'
+];
+
+export default function CreativeLoader({ text }) {
   const [progress, setProgress] = useState(15);
   const [statusIndex, setStatusIndex] = useState(0);
-
-  const statusMessages = [
-    'Initializing Technik Cyber Core...',
-    'Loading Olympiad & School Roster...',
-    'Syncing Student Nominations & Credentials...',
-    'Optimizing High-Tech Experience...'
-  ];
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -19,7 +19,7 @@ export default function CreativeLoader({ text = 'Initializing Technik Portal...'
     }, 120);
 
     const statusTimer = setInterval(() => {
-      setStatusIndex((prev) => (prev + 1) % statusMessages.length);
+      setStatusIndex((prev) => (prev + 1) % STATUS_MESSAGES.length);
     }, 400);
 
     return () => {
@@ -49,7 +49,7 @@ export default function CreativeLoader({ text = 'Initializing Technik Portal...'
         {/* Dynamic Status Text */}
         <div style={styles.statusText} className="status-text-pulse">
           <Sparkles size={14} color="#38bdf8" style={{ marginRight: '6px' }} />
-          <span>{statusMessages[statusIndex]}</span>
+          <span>{text || STATUS_MESSAGES[statusIndex]}</span>
         </div>
 
         {/* Cyber Progress Bar */}

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, RefreshCw, ArrowRight, Award, Brain, CheckCircle2, Zap, Check, X, ShieldAlert, ChevronRight, Lock, Sparkles, Layers } from 'lucide-react';
+import { Compass, RefreshCw, ArrowRight, Award, CheckCircle2, Check, X, Layers } from 'lucide-react';
 
 export default function SkillCompass({ onSelectTrack }) {
   const navigate = useNavigate();

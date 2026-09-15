@@ -1,40 +1,56 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   School, 
   Users, 
   Trophy, 
-  MapPin, 
   Search, 
   PlusCircle, 
   CheckCircle2, 
-  Building, 
   BookOpen, 
   Award, 
-  Bot, 
-  Code, 
-  Cpu, 
-  ChevronRight, 
-  Sparkles, 
   ShieldCheck, 
-  UserCheck, 
-  X, 
   Trash2, 
   Upload, 
   User, 
-  GraduationCap, 
   ArrowRight, 
   FileCheck,
   Download,
-  Filter,
   LogOut,
-  Clock
+  Clock,
+  Check,
+  AlertCircle,
+  Loader2
 } from 'lucide-react';
+import {
+  getSchoolProfileApi,
+  getSchoolStudentsApi,
+  getPrideNominationsApi,
+  nominatePrideStudentsApi,
+  uploadNominationDocumentApi,
+  registerOlympiadStudentsApi
+} from '../services/api';
+
+// Helper to determine if class is junior or senior
+const isJuniorGrade = (gradeStr = '', catStr = '') => {
+  const combined = (gradeStr + ' ' + catStr).toLowerCase();
+  return combined.includes('jr') ||
+    combined.includes('junior') ||
+    combined.includes('grade 3') ||
+    combined.includes('grade 4') ||
+    combined.includes('grade 5') ||
+    combined.includes('class 3') ||
+    combined.includes('class 4') ||
+    combined.includes('class 5') ||
+    combined.includes('class iii') ||
+    combined.includes('class iv') ||
+    combined.includes('class v');
+};
 
 export default function Schools() {
   const navigate = useNavigate();
 
-  // Auth Guard: Ensure school is authenticated before viewing dashboard
+  // Auth Guard
   useEffect(() => {
     const isAuthenticated = sessionStorage.getItem('technik_school_authenticated') === 'true';
     if (!isAuthenticated) {
@@ -45,27 +61,41 @@ export default function Schools() {
   const handleLogout = () => {
     sessionStorage.removeItem('technik_school_authenticated');
     sessionStorage.removeItem('technik_school_auth_pending');
+    sessionStorage.removeItem('technik_csrf_token');
     navigate('/login');
   };
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedCity, setSelectedCity] = useState('All');
-  const [activeModalSchool, setActiveModalSchool] = useState(null);
-  
-  // Portal Main Active Tab: 'roster' (Students List) | 'nominate-pride' | 'olympiad-reg' | 'directory'
+
+  // Active Tab: 'roster' (All Students) | 'pride-nominated-list' | 'nominate-pride' | 'olympiad-reg'
   const [activeTab, setActiveTab] = useState('roster'); 
 
-  // Level Selection State for Form: 'junior' (Grade 3-5) vs 'senior' (Grade 6-8)
-  const [selectedLevelFilter, setSelectedLevelFilter] = useState('junior');
-
-  // Form Type Mode: 'olympiad' vs 'pride'
-  const [formType, setFormType] = useState('olympiad'); 
+  // Form Mode & Filter States
+  const [selectedLevelFilter, setSelectedLevelFilter] = useState('junior'); // 'junior' | 'senior'
+  const [formType, setFormType] = useState('olympiad'); // 'olympiad' | 'pride'
 
   // Roster Filter State
   const [rosterSearch, setRosterSearch] = useState('');
   const [rosterGradeFilter, setRosterGradeFilter] = useState('All');
   const [rosterYearFilter, setRosterYearFilter] = useState('All');
 
-  // Coordinator Details State
+  // Pride Nominations Filter State
+  const [prideSearch, setPrideSearch] = useState('');
+  const [prideYearFilter, setPrideYearFilter] = useState('All');
+
+  // School Profile Data
+  const [schoolProfile, setSchoolProfile] = useState({
+    id: '',
+    schoolCode: 'SCH-2026-TXI',
+    schoolName: 'St. Xavier International School',
+    city: 'Chennai',
+    state: 'Tamil Nadu',
+    principalName: 'Dr. R. Sundaram',
+    coordinatorName: 'Prof. S. Meenakshi',
+    coordinatorDesignation: 'STEM & Olympiad Coordinator',
+    coordinatorMobile: '+91 95004 28800',
+    coordinatorEmail: 'coordinator@stxaviers.edu.in'
+  });
+
+  // Coordinator Details State for Forms
   const [coordinator, setCoordinator] = useState({
     name: 'Prof. S. Meenakshi',
     designation: 'STEM & Olympiad Coordinator',
@@ -73,7 +103,7 @@ export default function Schools() {
     email: 'coordinator@stxaviers.edu.in'
   });
 
-  // Dynamic Student Nomination List State
+  // Dynamic Student Nomination / Registration List State
   const [studentList, setStudentList] = useState([
     {
       id: 1,
@@ -83,78 +113,198 @@ export default function Schools() {
       category: 'Robotics Olympiad',
       achievementTitle: '',
       description: '',
-      fileName: ''
+      fileName: '',
+      filePath: '',
+      uploading: false
     }
   ]);
 
-  // Form Declaration Checkbox State
+  // Form State & Feedback
   const [declaration, setDeclaration] = useState(true);
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [lastSubmittedType, setLastSubmittedType] = useState('');
+  const [formErrors, setFormErrors] = useState({});
+  const [submitError, setSubmitError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Live Enrolled Students Roster
-  const [submittedRoster, setSubmittedRoster] = useState([
-    { id: 1, name: 'Aarav Sharma', grade: 'Grade 4 (Jr Level)', track: 'Robotics Olympiad', date: '02 Sep 2026', status: 'Registered & Verified' },
-    { id: 2, name: 'Kavya Raman', grade: 'Grade 7 (Sr Level)', track: 'Coding & Algorithms', date: '03 Sep 2026', status: 'Registered & Verified' },
-    { id: 3, name: 'Rohan Gupta', grade: 'Grade 5 (Jr Level)', track: 'Technik Pride Award', date: '04 Sep 2026', status: 'Nomination Received' },
-    { id: 4, name: 'Diya Patel', grade: 'Grade 8 (Sr Level)', track: 'AI & Machine Learning', date: '04 Sep 2026', status: 'Registered & Verified' },
-    { id: 5, name: 'Siddharth M.', grade: 'Grade 3 (Jr Level)', track: 'Mental Maths Olympiad', date: '05 Sep 2026', status: 'Registered & Verified' },
-    { id: 6, name: 'Ananya Roy', grade: 'Grade 6 (Sr Level)', track: 'Technik Pride Award', date: '05 Sep 2026', status: 'Nomination Received' },
-    { id: 7, name: 'Vikramaditya K.', grade: 'Grade 8 (Sr Level)', track: 'Technik Pride Award', date: '10 Nov 2025', status: 'Pride Award Winner' },
-    { id: 8, name: 'Priya Sundaram', grade: 'Grade 5 (Jr Level)', track: 'Coding & Algorithms', date: '14 Oct 2025', status: 'Registered & Verified' },
-    { id: 9, name: 'Aditya Narayan', grade: 'Grade 7 (Sr Level)', track: 'Robotics Olympiad', date: '08 Dec 2024', status: 'Registered & Verified' }
-  ]);
+  // Live Backend Data
+  const [loadingRoster, setLoadingRoster] = useState(false);
+  const [loadingPride, setLoadingPride] = useState(false);
+  const [submittedRoster, setSubmittedRoster] = useState([]);
+  const [prideNominations, setPrideNominations] = useState([]);
 
-  // Initial Sample Partner Schools Directory
-  const [schoolsList, setSchoolsList] = useState([
-    {
-      id: 'SCH-101',
-      name: 'St. Xavier International School',
-      city: 'Chennai',
-      state: 'Tamil Nadu',
-      totalStudents: 420,
-      verified: true,
-      topTracks: ['Robotics', 'Coding & AI', 'Mental Maths'],
-      students: [
-        { name: 'Aarav Sharma', grade: 'Grade 4 (Jr Level)', track: 'Coding & Algorithms', stage: 'Stage 2 (District)' },
-        { name: 'Kavya Raman', grade: 'Grade 7 (Sr Level)', track: 'Robotics Olympiad', stage: 'Stage 3 (State)' },
-        { name: 'Rohan Gupta', grade: 'Grade 5 (Jr Level)', track: 'Mental Maths', stage: 'Stage 1 (School)' },
-        { name: 'Diya Patel', grade: 'Grade 8 (Sr Level)', track: 'Generative AI', stage: 'Stage 2 (District)' }
-      ]
-    },
-    {
-      id: 'SCH-102',
-      name: 'St. Joseph Higher Secondary School',
-      city: 'Coimbatore',
-      state: 'Tamil Nadu',
-      totalStudents: 385,
-      verified: true,
-      topTracks: ['Mental Maths', 'English', 'Robotics'],
-      students: [
-        { name: 'Vihaan K.', grade: 'Grade 5 (Jr Level)', track: 'Mental Maths', stage: 'Stage 3 (State)' },
-        { name: 'Sanjana Nair', grade: 'Grade 7 (Sr Level)', track: 'English Olympiad', stage: 'Stage 2 (District)' }
-      ]
-    },
-    {
-      id: 'SCH-103',
-      name: 'Bharatiya Vidya Bhavan',
-      city: 'Madurai',
-      state: 'Tamil Nadu',
-      totalStudents: 310,
-      verified: true,
-      topTracks: ['Coding', 'Technik Art', 'Generative AI'],
-      students: [
-        { name: 'Ananya R.', grade: 'Grade 7 (Sr Level)', track: 'Generative AI', stage: 'Stage 3 (State)' }
-      ]
+  // Fetch School Profile
+  useEffect(() => {
+    let isMounted = true;
+    async function loadProfile() {
+      try {
+        const data = await getSchoolProfileApi();
+        if (data && isMounted) {
+          const resolvedSchoolId = data.id || sessionStorage.getItem('technik_school_id') || '';
+          if (data.id) {
+            sessionStorage.setItem('technik_school_id', data.id);
+          }
+          setSchoolProfile(prev => ({
+            ...prev,
+            id: resolvedSchoolId || prev.id,
+            schoolCode: data.schoolCode || prev.schoolCode,
+            schoolName: data.schoolName || prev.schoolName,
+            city: data.city || prev.city,
+            state: data.state || prev.state,
+            principalName: data.principalName || prev.principalName,
+            coordinatorName: data.coordinatorName || prev.coordinatorName,
+            coordinatorDesignation: data.coordinatorDesignation || prev.coordinatorDesignation,
+            coordinatorMobile: data.coordinatorMobile || prev.coordinatorMobile,
+            coordinatorEmail: data.coordinatorEmail || prev.coordinatorEmail
+          }));
+          if (data.coordinatorName) {
+            setCoordinator({
+              name: data.coordinatorName,
+              designation: data.coordinatorDesignation || 'STEM & Olympiad Coordinator',
+              mobile: data.coordinatorMobile || '',
+              email: data.coordinatorEmail || data.email || ''
+            });
+          }
+        }
+      } catch (err) {
+        // Handled silently
+      }
     }
-  ]);
+    loadProfile();
+    return () => { isMounted = false; };
+  }, []);
 
-  // Add another student row dynamically
+  // Fetch All Enrolled Students Roster from Backend
+  const fetchStudents = useCallback(async () => {
+    setLoadingRoster(true);
+    const activeSchoolId = schoolProfile.id || sessionStorage.getItem('technik_school_id') || '';
+    try {
+      const res = await getSchoolStudentsApi({
+        search: rosterSearch,
+        gradeLevel: rosterGradeFilter,
+        year: rosterYearFilter,
+        schoolId: activeSchoolId
+      });
+      if (res && Array.isArray(res.students)) {
+        const mapped = res.students.map(st => {
+          const d = st.createdAt ? new Date(st.createdAt) : new Date();
+          const formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+          return {
+            id: st.id,
+            name: st.studentName,
+            grade: st.grade,
+            track: st.category || 'Robotics Olympiad',
+            date: formattedDate,
+            status: st.status || 'Registered & Verified',
+            year: st.academicYear || d.getFullYear()
+          };
+        });
+        setSubmittedRoster(mapped);
+      }
+    } catch (err) {
+      // Retain existing state
+    } finally {
+      setLoadingRoster(false);
+    }
+  }, [rosterSearch, rosterGradeFilter, rosterYearFilter, schoolProfile.id]);
+
+  // Fetch Pride Nominations from Backend
+  const fetchPrideNominations = useCallback(async () => {
+    setLoadingPride(true);
+    const activeSchoolId = schoolProfile.id || sessionStorage.getItem('technik_school_id') || '';
+    try {
+      const res = await getPrideNominationsApi({
+        year: prideYearFilter,
+        search: prideSearch,
+        schoolId: activeSchoolId
+      });
+      if (res && Array.isArray(res.nominations)) {
+        const mapped = res.nominations.map(nom => {
+          const d = nom.createdAt ? new Date(nom.createdAt) : new Date();
+          const formattedDate = d.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+          return {
+            id: nom.id,
+            studentName: nom.studentName,
+            class: nom.class,
+            classCategory: nom.classCategory || (isJuniorGrade(nom.class) ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)'),
+            achievementCategory: nom.achievementCategory || 'Technik Pride Award Nomination',
+            dateSubmitted: formattedDate,
+            nominationStatus: nom.nominationStatus || 'Submitted & Under Review',
+            adminStatus: nom.adminStatus || 'Forwarded to Technik Super Admin',
+            academicYear: nom.academicYear || d.getFullYear()
+          };
+        });
+        setPrideNominations(mapped);
+      }
+    } catch (err) {
+      // Retain existing state
+    } finally {
+      setLoadingPride(false);
+    }
+  }, [prideYearFilter, prideSearch, schoolProfile.id]);
+
+  useEffect(() => {
+    fetchStudents();
+  }, [fetchStudents]);
+
+  useEffect(() => {
+    fetchPrideNominations();
+  }, [fetchPrideNominations]);
+
+  // Quota Computations: 3 Junior (Grades 3-5) + 3 Senior (Grades 6-8) = 6 Total per Year
+  const currentYear = 2026;
+  const yearNominations = prideNominations.filter(n => (n.academicYear === currentYear || n.dateSubmitted?.includes(String(currentYear))));
+  const jrPrideCount = yearNominations.filter(n => isJuniorGrade(n.class, n.classCategory)).length;
+  const srPrideCount = yearNominations.filter(n => !isJuniorGrade(n.class, n.classCategory)).length;
+  const totalPrideCount = jrPrideCount + srPrideCount;
+
+  // Real-time Stepper Completion Validation
+  const isCoordStepComplete = Boolean(
+    coordinator.name.trim() && 
+    coordinator.designation.trim() && 
+    coordinator.mobile.trim() && 
+    coordinator.email.trim() && 
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coordinator.email.trim())
+  );
+
+  const isPrideStepComplete = studentList.length > 0 && studentList.every(s => 
+    s.name.trim() && 
+    s.gender !== 'Select Gender' && 
+    s.achievementTitle.trim() && 
+    s.description.trim()
+  );
+
+  const isOlympiadStepComplete = studentList.length > 0 && studentList.every(s => 
+    s.name.trim() && 
+    s.gender !== 'Select Gender' && 
+    s.category
+  );
+
+  const isReviewStepComplete = declaration === true;
+
+  const clearFormError = (key) => {
+    if (formErrors[key]) {
+      setFormErrors(prev => {
+        const updated = { ...prev };
+        delete updated[key];
+        return updated;
+      });
+    }
+  };
+
+  // Add another student row dynamically with quota enforcement
   const handleAddStudent = () => {
     if (formType === 'pride' || activeTab === 'nominate-pride') {
-      const existingPrideCount = submittedRoster.filter(r => r.track.includes('Pride')).length;
-      if (existingPrideCount + studentList.length >= 2) {
-        alert("Annual Quota Limit Reached: Each partner school can nominate a maximum of 2 students per year for the Technik Pride Award.");
+      const isJr = selectedLevelFilter === 'junior';
+      const existingInLevel = isJr ? jrPrideCount : srPrideCount;
+      const currentInFormForLevel = studentList.filter(s => isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
+
+      if (existingInLevel + currentInFormForLevel >= 3) {
+        alert(`Annual Quota Limit Reached: Maximum 3 nominations allowed for ${isJr ? 'Junior Level (Grades 3-5)' : 'Senior Level (Grades 6-8)'} per academic year. (You currently have ${existingInLevel} registered).`);
+        return;
+      }
+      if (totalPrideCount + studentList.length >= 6) {
+        alert("Annual Quota Limit Reached: Maximum 6 total nominations allowed per school for the Technik Pride Award in this academic year.");
         return;
       }
     }
@@ -170,7 +320,9 @@ export default function Schools() {
         category: formType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad',
         achievementTitle: '',
         description: '',
-        fileName: ''
+        fileName: '',
+        filePath: '',
+        uploading: false
       }
     ]);
   };
@@ -181,80 +333,234 @@ export default function Schools() {
     setStudentList(studentList.filter(s => s.id !== id));
   };
 
-  // Update specific student field
+  // Update student field
   const handleStudentChange = (id, field, value) => {
     setStudentList(studentList.map(s => s.id === id ? { ...s, [field]: value } : s));
   };
 
-  // Form Submit Handler for both Pride Award & Olympiad Reg
-  const handleSubmitForm = (e, currentType) => {
+  // Handle file upload to backend server
+  const handleFileUpload = async (studentId, file) => {
+    if (!file) return;
+    handleStudentChange(studentId, 'fileName', file.name);
+    handleStudentChange(studentId, 'uploading', true);
+
+    try {
+      const res = await uploadNominationDocumentApi(file);
+      if (res && res.filePath) {
+        handleStudentChange(studentId, 'filePath', res.filePath);
+      }
+    } catch (err) {
+      console.error('File upload failed, will continue with local file reference:', err);
+    } finally {
+      handleStudentChange(studentId, 'uploading', false);
+    }
+  };
+
+  // Form Submit Handler for both Pride Award & Olympiad Registration
+  const handleSubmitForm = async (e, currentType) => {
     e.preventDefault();
+    setSubmitError('');
+    const errs = {};
+
+    // Coordinator validation
+    if (!coordinator.name.trim()) errs.coordName = "This field cannot be left empty";
+    if (!coordinator.designation.trim()) errs.coordDesignation = "This field cannot be left empty";
+    if (!coordinator.mobile.trim()) errs.coordMobile = "This field cannot be left empty";
+    if (!coordinator.email.trim()) {
+      errs.coordEmail = "This field cannot be left empty";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coordinator.email.trim())) {
+      errs.coordEmail = "Please enter a valid email address";
+    }
+
+    // Students validation
+    studentList.forEach((s) => {
+      if (!s.name.trim()) {
+        errs[`student_name_${s.id}`] = "This field cannot be left empty";
+      }
+      if (s.gender === 'Select Gender') {
+        errs[`student_gender_${s.id}`] = "Please select gender";
+      }
+      if (currentType === 'pride') {
+        if (!s.achievementTitle.trim()) {
+          errs[`student_ach_${s.id}`] = "This field cannot be left empty";
+        }
+        if (!s.description.trim()) {
+          errs[`student_desc_${s.id}`] = "This field cannot be left empty";
+        }
+      }
+    });
+
     if (!declaration) {
-      alert("Please accept the declaration before submitting.");
+      errs.declaration = "Please accept the declaration before submitting.";
+    }
+
+    if (Object.keys(errs).length > 0) {
+      setFormErrors(errs);
       return;
     }
 
+    setFormErrors({});
     const validStudents = studentList.filter(s => s.name.trim() !== '');
-    if (validStudents.length === 0) {
-      alert("Please enter at least one student name.");
-      return;
-    }
 
+    // Quota validation on submit
     if (currentType === 'pride') {
-      const existingPrideCount = submittedRoster.filter(r => r.track.includes('Pride')).length;
-      if (existingPrideCount + validStudents.length > 2) {
-        alert(`Annual Quota Limit Exceeded: Each school can nominate a maximum of 2 students per year for the Technik Pride Award. You currently have ${existingPrideCount} registered nomination(s).`);
+      const incomingJr = validStudents.filter(s => isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
+      const incomingSr = validStudents.filter(s => !isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
+
+      if (jrPrideCount + incomingJr > 3) {
+        setSubmitError(`Annual Quota Exceeded: Junior Level allows max 3 nominations. You have ${jrPrideCount} registered and submitted ${incomingJr} more.`);
+        return;
+      }
+      if (srPrideCount + incomingSr > 3) {
+        setSubmitError(`Annual Quota Exceeded: Senior Level allows max 3 nominations. You have ${srPrideCount} registered and submitted ${incomingSr} more.`);
+        return;
+      }
+      if (totalPrideCount + validStudents.length > 6) {
+        setSubmitError(`Annual Quota Exceeded: Maximum 6 nominations allowed per year.`);
         return;
       }
     }
 
-    const newEntries = validStudents.map((s, idx) => ({
-      id: Date.now() + idx,
-      name: s.name,
-      grade: `${s.studentClass} (${selectedLevelFilter === 'junior' ? 'Jr Level' : 'Sr Level'})`,
-      track: s.category || (currentType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad'),
-      date: new Date().toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }),
-      status: currentType === 'pride' ? 'Nomination Received' : 'Registered & Verified'
-    }));
+    setIsSubmitting(true);
+    const activeSchoolId = schoolProfile.id || sessionStorage.getItem('technik_school_id') || undefined;
+    try {
+      if (currentType === 'pride') {
+        const payload = {
+          schoolId: activeSchoolId,
+          academicYear: currentYear,
+          nominations: validStudents.map(s => ({
+            studentName: s.name,
+            class: s.studentClass,
+            classCategory: selectedLevelFilter === 'junior' ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)',
+            gender: s.gender,
+            achievementCategory: s.category || 'Technik Pride Award',
+            achievementTitle: s.achievementTitle,
+            briefDescription: s.description,
+            supportingDocument: s.filePath || s.fileName || ''
+          }))
+        };
 
-    setSubmittedRoster([...newEntries, ...submittedRoster]);
-    setLastSubmittedType(currentType);
-    setFormSubmitted(true);
+        await nominatePrideStudentsApi(payload);
+        await fetchPrideNominations();
+        await fetchStudents();
+      } else {
+        const payload = {
+          schoolId: activeSchoolId,
+          academicYear: currentYear,
+          students: validStudents.map(s => ({
+            studentName: s.name,
+            class: s.studentClass,
+            classCategory: selectedLevelFilter === 'junior' ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)',
+            gender: s.gender,
+            olympiadTrack: s.category || 'Robotics Olympiad'
+          }))
+        };
 
-    // Auto-reset input list
-    setStudentList([
-      {
-        id: Date.now(),
-        name: '',
-        studentClass: selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7',
-        gender: 'Select Gender',
-        category: currentType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad',
-        achievementTitle: '',
-        description: '',
-        fileName: ''
+        await registerOlympiadStudentsApi(payload);
+        await fetchStudents();
       }
-    ]);
+
+      setLastSubmittedType(currentType);
+      setFormSubmitted(true);
+
+      // Reset student list
+      setStudentList([
+        {
+          id: Date.now(),
+          name: '',
+          studentClass: selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7',
+          gender: 'Select Gender',
+          category: currentType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad',
+          achievementTitle: '',
+          description: '',
+          fileName: '',
+          filePath: '',
+          uploading: false
+        }
+      ]);
+    } catch (err) {
+      console.error('Submission failed:', err);
+      setSubmitError(err.message || 'Submission failed. Please check details and try again.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
-  const filteredSchools = schoolsList.filter((sch) => {
-    const matchesSearch = sch.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
-                          sch.city.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCity = selectedCity === 'All' || sch.city === selectedCity;
-    return matchesSearch && matchesCity;
-  });
-
+  // Filtered Roster (Image 2)
   const filteredRoster = submittedRoster.filter((st) => {
     const matchesName = st.name.toLowerCase().includes(rosterSearch.toLowerCase()) || 
                         st.track.toLowerCase().includes(rosterSearch.toLowerCase());
-    const matchesGrade = rosterGradeFilter === 'All' || st.grade.includes(rosterGradeFilter);
-    const matchesYear = rosterYearFilter === 'All' || st.date.includes(rosterYearFilter);
+    const matchesGrade = rosterGradeFilter === 'All' || 
+                         (rosterGradeFilter === 'Jr Level' && (st.grade.includes('Jr') || isJuniorGrade(st.grade))) ||
+                         (rosterGradeFilter === 'Sr Level' && (st.grade.includes('Sr') || !isJuniorGrade(st.grade)));
+    const matchesYear = rosterYearFilter === 'All' || String(st.year || st.date).includes(rosterYearFilter);
     return matchesName && matchesGrade && matchesYear;
+  });
+
+  // Filtered Pride Nominations (Image 3)
+  const filteredPride = prideNominations.filter((st) => {
+    const matchesName = st.studentName.toLowerCase().includes(prideSearch.toLowerCase()) ||
+                        st.achievementCategory.toLowerCase().includes(prideSearch.toLowerCase());
+    const matchesYear = prideYearFilter === 'All' || String(st.academicYear || st.dateSubmitted).includes(prideYearFilter);
+    return matchesName && matchesYear;
   });
 
   return (
     <div style={styles.page}>
       
-      {/* HERO BANNER & PORTAL NAVIGATION HEADER */}
+      {/* Dynamic Keyframes and Mobile Responsiveness */}
+      <style>{`
+        @keyframes stepCheckPop {
+          0% { transform: scale(0.4) rotate(-20deg); opacity: 0; }
+          50% { transform: scale(1.3) rotate(8deg); opacity: 1; }
+          75% { transform: scale(0.92) rotate(-3deg); }
+          100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .step-check-anim {
+          animation: stepCheckPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+        @media (max-width: 768px) {
+          .school-portal-header-box {
+            padding: 1.25rem 1rem !important;
+          }
+          .school-metrics-row {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.65rem !important;
+          }
+          .school-tab-nav {
+            justify-content: flex-start !important;
+            overflow-x: auto !important;
+            padding-bottom: 0.5rem !important;
+            flex-wrap: nowrap !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .school-tab-btn {
+            white-space: nowrap !important;
+            flex-shrink: 0 !important;
+            padding: 0.65rem 1rem !important;
+            font-size: 0.82rem !important;
+          }
+          .school-filter-bar {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 0.75rem !important;
+          }
+          .school-filter-bar > div, .school-filter-bar input, .school-filter-bar select {
+            width: 100% !important;
+          }
+          .school-table-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+          }
+          .stepper-steps-wrapper {
+            overflow-x: auto !important;
+            padding-bottom: 0.5rem !important;
+          }
+        }
+      `}</style>
+
+      {/* HERO BANNER & PORTAL NAVIGATION HEADER (IMAGE 1) */}
       <section style={styles.heroSection}>
         <div className="container" style={styles.heroContainer}>
           
@@ -265,7 +571,7 @@ export default function Schools() {
             <span style={styles.breadcrumbCurrent}>School Portal Dashboard</span>
           </div>
 
-          <div style={styles.portalHeaderBox}>
+          <div style={styles.portalHeaderBox} className="school-portal-header-box">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '1rem', width: '100%' }}>
               <div style={styles.schoolTitleGroup}>
                 <div style={styles.schoolIconCircleLg}>
@@ -274,11 +580,11 @@ export default function Schools() {
                 <div>
                   <div style={styles.portalBadgeRow}>
                     <span className="badge badge-gold">VERIFIED INSTITUTIONAL PARTNER</span>
-                    <span style={styles.schoolCodePill}>CODE: SCH-2026-TXI</span>
+                    <span style={styles.schoolCodePill}>CODE: {schoolProfile.schoolCode}</span>
                   </div>
-                  <h1 style={styles.schoolPortalName}>St. Xavier International School</h1>
+                  <h1 style={styles.schoolPortalName}>{schoolProfile.schoolName}</h1>
                   <p style={styles.schoolPortalSub}>
-                    Chennai, Tamil Nadu &nbsp;|&nbsp; Principal: Dr. R. Sundaram &nbsp;|&nbsp; Coordinator: {coordinator.name}
+                    {schoolProfile.city}, {schoolProfile.state} &nbsp;|&nbsp; Principal: {schoolProfile.principalName} &nbsp;|&nbsp; Coordinator: {coordinator.name}
                   </p>
                 </div>
               </div>
@@ -306,25 +612,26 @@ export default function Schools() {
             </div>
 
             {/* Quick Metrics Bar */}
-            <div style={styles.portalMetricsRow}>
+            <div style={styles.portalMetricsRow} className="school-metrics-row">
               <div style={styles.metricPill}>
                 <Users size={16} color="#38bdf8" />
-                <span>Total Enrolled: <strong>{420 + submittedRoster.length} Students</strong></span>
+                <span>Total Enrolled: <strong>{submittedRoster.length} Students</strong></span>
               </div>
               <div style={styles.metricPill}>
                 <Trophy size={16} color="#fbbf24" />
-                <span>Pride Award Nominations: <strong>{submittedRoster.filter(r => r.track.includes('Pride')).length + 12}</strong></span>
+                <span>Pride Award Nominations: <strong>{prideNominations.length}</strong></span>
               </div>
               <div style={styles.metricPill}>
                 <FileCheck size={16} color="#4ade80" />
-                <span>Verified Certificates: <strong>385</strong></span>
+                <span>Verified Certificates: <strong>{submittedRoster.filter(r => r.status.includes('Verified')).length}</strong></span>
               </div>
             </div>
           </div>
 
-          {/* DEDICATED SCHOOL PORTAL OPTIONS NAVIGATION TABS */}
-          <div style={styles.tabNavRow}>
+          {/* DEDICATED SCHOOL PORTAL OPTIONS NAVIGATION TABS (IMAGE 1) */}
+          <div style={styles.tabNavRow} className="school-tab-nav">
             <button 
+              className="school-tab-btn"
               style={{
                 ...styles.tabNavBtn,
                 ...(activeTab === 'roster' ? styles.tabNavBtnActiveBlue : {})
@@ -336,33 +643,36 @@ export default function Schools() {
             </button>
 
             <button 
+              className="school-tab-btn"
               style={{
                 ...styles.tabNavBtn,
                 ...(activeTab === 'pride-nominated-list' ? styles.tabNavBtnActiveGold : {})
               }}
-              onClick={() => setActiveTab('pride-nominated-list')}
+              onClick={() => { setActiveTab('pride-nominated-list'); fetchPrideNominations(); }}
             >
-              <Trophy size={16} color="#f59e0b" />
-              <span>Nominated for Pride Award ({submittedRoster.filter(r => r.track.includes('Pride')).length})</span>
+              <Trophy size={16} color={activeTab === 'pride-nominated-list' ? '#041026' : '#fbbf24'} />
+              <span>Nominated for Pride Award ({prideNominations.length})</span>
             </button>
 
             <button 
+              className="school-tab-btn"
               style={{
                 ...styles.tabNavBtn,
                 ...(activeTab === 'nominate-pride' ? styles.tabNavBtnActiveGold : {})
               }}
-              onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }}
+              onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); setSubmitError(''); }}
             >
               <Trophy size={16} />
               <span>+ Nominate Student</span>
             </button>
 
             <button 
+              className="school-tab-btn"
               style={{
                 ...styles.tabNavBtn,
                 ...(activeTab === 'olympiad-reg' ? styles.tabNavBtnActiveOrange : {})
               }}
-              onClick={() => { setActiveTab('olympiad-reg'); setFormType('olympiad'); setFormSubmitted(false); }}
+              onClick={() => { setActiveTab('olympiad-reg'); setFormType('olympiad'); setFormSubmitted(false); setSubmitError(''); }}
             >
               <BookOpen size={16} />
               <span>Olympiad Registration</span>
@@ -373,7 +683,7 @@ export default function Schools() {
       </section>
 
       {/* ========================================================================= */}
-      {/* OPTION 1: STUDENTS LIST VIEW                                             */}
+      {/* OPTION 1: ALL ENROLLED STUDENTS LIST VIEW (IMAGE 2)                       */}
       {/* ========================================================================= */}
       {activeTab === 'roster' && (
         <section style={styles.sectionPadding}>
@@ -385,17 +695,17 @@ export default function Schools() {
               <div style={styles.rosterHeaderRow}>
                 <div>
                   <h2 style={styles.rosterTitle}>Enrolled Students &amp; Achievers List</h2>
-                  <p style={styles.rosterSub}>Manage, search, and export registered students from St. Xavier International School.</p>
+                  <p style={styles.rosterSub}>Manage, search, and export registered students from {schoolProfile.schoolName}.</p>
                 </div>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <button 
-                    onClick={() => { setActiveTab('olympiad-reg'); setFormType('olympiad'); }} 
+                    onClick={() => { setActiveTab('olympiad-reg'); setFormType('olympiad'); setFormSubmitted(false); }} 
                     style={styles.actionBtnOrange}
                   >
                     <BookOpen size={15} /> + Register for Olympiad
                   </button>
                   <button 
-                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); }} 
+                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }} 
                     style={styles.actionBtnGold}
                   >
                     <Trophy size={15} /> + Nominate for Pride Award
@@ -403,7 +713,7 @@ export default function Schools() {
                 </div>
               </div>
 
-              {/* Roster Controls: Search & Filter */}
+              {/* Roster Controls: Search & Filter (IMAGE 2) */}
               <div style={styles.rosterControlRow}>
                 <div style={styles.rosterSearchBox}>
                   <Search size={17} color="#64748b" style={{ marginRight: '0.4rem' }} />
@@ -442,58 +752,80 @@ export default function Schools() {
                 </div>
               </div>
 
-              {/* Enrolled Students Roster Table */}
+              {/* Enrolled Students Roster Table (IMAGE 2) */}
               <div style={styles.tableResponsive}>
-                <table style={styles.rosterTable}>
-                  <thead>
-                    <tr style={styles.tableHeaderRow}>
-                      <th style={styles.thCell}>Student Name</th>
-                      <th style={styles.thCell}>Class / Level</th>
-                      <th style={styles.thCell}>Category / Track</th>
-                      <th style={styles.thCell}>Enrolled Date</th>
-                      <th style={styles.thCell}>Status</th>
-                      <th style={styles.thCell}>Actions</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {filteredRoster.map((st, i) => (
-                      <tr key={i} style={styles.tableBodyRow}>
-                        <td style={styles.tdCellBold}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                            <div style={styles.avatarCircle}>{st.name.charAt(0)}</div>
-                            <span>{st.name}</span>
-                          </div>
-                        </td>
-                        <td style={styles.tdCell}>{st.grade}</td>
-                        <td style={styles.tdCell}>
-                          <span style={st.track.includes('Pride') ? styles.trackBadgeGold : styles.trackBadgeBlue}>
-                            {st.track}
-                          </span>
-                        </td>
-                        <td style={styles.tdCell}>{st.date || '04 Sep 2026'}</td>
-                        <td style={styles.tdCell}>
-                          <span style={{
-                            ...styles.rosterStatusTag,
-                            background: st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.1)' : 'rgba(249, 115, 22, 0.1)',
-                            color: st.status.includes('Verified') ? '#16a34a' : '#ea580c',
-                          }}>
-                            <CheckCircle2 size={13} style={{ marginRight: '4px' }} />
-                            {st.status}
-                          </span>
-                        </td>
-                        <td style={styles.tdCell}>
-                          <button 
-                            type="button" 
-                            style={styles.tableActionBtn}
-                            onClick={() => alert(`Downloading Admit Card & Certificate for ${st.name}`)}
-                          >
-                            <Download size={13} /> Admit Card
-                          </button>
-                        </td>
+                {loadingRoster ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                    <Loader2 size={28} className="spin" style={{ margin: '0 auto 0.5rem auto' }} />
+                    <p>Loading student roster...</p>
+                  </div>
+                ) : (
+                  <table style={styles.rosterTable}>
+                    <thead>
+                      <tr style={styles.tableHeaderRow}>
+                        <th style={styles.thCell}>STUDENT NAME</th>
+                        <th style={styles.thCell}>CLASS / LEVEL</th>
+                        <th style={styles.thCell}>CATEGORY / TRACK</th>
+                        <th style={styles.thCell}>ENROLLED DATE</th>
+                        <th style={styles.thCell}>STATUS</th>
+                        <th style={styles.thCell}>ACTIONS</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
+                    </thead>
+                    <tbody>
+                      {filteredRoster.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                            No students match the selected filters.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredRoster.map((st, i) => (
+                          <tr key={st.id || i} style={styles.tableBodyRow}>
+                            <td style={styles.tdCellBold}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                                <div style={{
+                                  ...styles.avatarCircle,
+                                  background: st.track.includes('Pride') ? '#041026' : '#041026',
+                                  color: '#ffffff'
+                                }}>
+                                  {st.name.charAt(0)}
+                                </div>
+                                <span style={{ fontWeight: 700, color: '#0f172a' }}>{st.name}</span>
+                              </div>
+                            </td>
+                            <td style={styles.tdCell}>{st.grade}</td>
+                            <td style={styles.tdCell}>
+                              <span style={st.track.includes('Pride') ? styles.trackBadgeGold : styles.trackBadgeBlue}>
+                                {st.track}
+                              </span>
+                            </td>
+                            <td style={styles.tdCell}>{st.date || '04 Sep 2026'}</td>
+                            <td style={styles.tdCell}>
+                              <span style={{
+                                ...styles.rosterStatusTag,
+                                background: st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.1)' : 'rgba(249, 115, 22, 0.1)',
+                                color: st.status.includes('Verified') ? '#16a34a' : '#ea580c',
+                                border: `1px solid ${st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.2)' : 'rgba(249, 115, 22, 0.2)'}`
+                              }}>
+                                <CheckCircle2 size={13} style={{ marginRight: '4px' }} />
+                                {st.status}
+                              </span>
+                            </td>
+                            <td style={styles.tdCell}>
+                              <button 
+                                type="button" 
+                                style={styles.tableActionBtn}
+                                onClick={() => alert(`Downloading Admit Card & Examination Pass for ${st.name}`)}
+                              >
+                                <Download size={13} /> Admit Card
+                              </button>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
 
             </div>
@@ -503,26 +835,40 @@ export default function Schools() {
       )}
 
       {/* ========================================================================= */}
-      {/* PRIDE AWARD NOMINATED STUDENTS LIST VIEW                                  */}
+      {/* OPTION 2: NOMINATED FOR PRIDE AWARD LIST VIEW (IMAGE 3)                   */}
       {/* ========================================================================= */}
       {activeTab === 'pride-nominated-list' && (
         <section style={styles.sectionPadding}>
           <div className="container">
             <div style={styles.rosterCardWrapper}>
               
-              <div style={{ ...styles.rosterHeaderRow, background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)', padding: '1.25rem 1.5rem', borderRadius: '12px', border: '1px solid #fde047', marginBottom: '1.5rem' }}>
-                <div>
-                  <h2 style={{ ...styles.rosterTitle, color: '#92400e', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <Trophy size={22} color="#d97706" />
-                    Students Nominated for Technik Pride Award
-                  </h2>
-                  <p style={{ ...styles.rosterSub, color: '#b45309' }}>
-                    List of students nominated by St. Xavier International School. Submitted for review by Technik Super Admin & Olympiad Committee.
-                  </p>
+              {/* Header Box (IMAGE 3) */}
+              <div style={{ 
+                background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)', 
+                padding: '1.25rem 1.5rem', 
+                borderRadius: '14px', 
+                border: '1px solid #fde047', 
+                marginBottom: '1.5rem',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '1rem'
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.85rem' }}>
+                  <Trophy size={28} color="#d97706" />
+                  <div>
+                    <h2 style={{ fontSize: '1.2rem', fontWeight: 800, color: '#92400e', margin: 0 }}>
+                      Students Nominated for Technik Pride Award
+                    </h2>
+                    <p style={{ margin: '4px 0 0 0', fontSize: '0.86rem', color: '#b45309' }}>
+                      List of students nominated by {schoolProfile.schoolName}. Submitted for review by Technik Super Admin &amp; Olympiad Committee.
+                    </p>
+                  </div>
                 </div>
                 <div>
                   <button 
-                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); }} 
+                    onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); setSubmitError(''); }} 
                     style={styles.actionBtnGold}
                   >
                     <Trophy size={15} /> + Nominate Student
@@ -530,68 +876,107 @@ export default function Schools() {
                 </div>
               </div>
 
-              {/* Roster Table */}
+              {/* Pride Filter Bar */}
+              <div style={styles.rosterControlRow}>
+                <div style={styles.rosterSearchBox}>
+                  <Search size={17} color="#64748b" style={{ marginRight: '0.4rem' }} />
+                  <input
+                    type="text"
+                    placeholder="Search nominated students..."
+                    value={prideSearch}
+                    onChange={(e) => setPrideSearch(e.target.value)}
+                    style={styles.rosterSearchInput}
+                  />
+                </div>
+
+                <div style={styles.rosterFilterGroup}>
+                  <label style={styles.filterLabel}>Academic Year:</label>
+                  <select 
+                    value={prideYearFilter}
+                    onChange={(e) => setPrideYearFilter(e.target.value)}
+                    style={styles.selectFilter}
+                  >
+                    <option value="All">All Years</option>
+                    <option value="2026">2026</option>
+                    <option value="2025">2025</option>
+                    <option value="2024">2024</option>
+                  </select>
+                </div>
+              </div>
+
+              {/* Roster Table (IMAGE 3) */}
               <div style={styles.tableResponsive}>
-                <table style={styles.rosterTable}>
-                  <thead>
-                    <tr style={styles.tableHeaderRow}>
-                      <th style={styles.thCell}>Student Name</th>
-                      <th style={styles.thCell}>Class / Level</th>
-                      <th style={styles.thCell}>Nominated Category</th>
-                      <th style={styles.thCell}>Date Submitted</th>
-                      <th style={styles.thCell}>Nomination Status</th>
-                      <th style={styles.thCell}>Admin Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {submittedRoster.filter(st => st.track.includes('Pride')).length === 0 ? (
-                      <tr>
-                        <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
-                          No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
-                        </td>
+                {loadingPride ? (
+                  <div style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                    <Loader2 size={28} className="spin" style={{ margin: '0 auto 0.5rem auto' }} />
+                    <p>Loading pride nominations...</p>
+                  </div>
+                ) : (
+                  <table style={styles.rosterTable}>
+                    <thead>
+                      <tr style={styles.tableHeaderRow}>
+                        <th style={styles.thCell}>STUDENT NAME</th>
+                        <th style={styles.thCell}>CLASS / LEVEL</th>
+                        <th style={styles.thCell}>NOMINATED CATEGORY</th>
+                        <th style={styles.thCell}>DATE SUBMITTED</th>
+                        <th style={styles.thCell}>NOMINATION STATUS</th>
+                        <th style={styles.thCell}>ADMIN STATUS</th>
                       </tr>
-                    ) : (
-                      submittedRoster.filter(st => st.track.includes('Pride')).map((st, i) => (
-                        <tr key={i} style={styles.tableBodyRow}>
-                          <td style={styles.tdCellBold}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                              <div style={{ ...styles.avatarCircle, background: '#f59e0b', color: '#ffffff' }}>{st.name.charAt(0)}</div>
-                              <span>{st.name}</span>
-                            </div>
-                          </td>
-                          <td style={styles.tdCell}>{st.grade}</td>
-                          <td style={styles.tdCell}>
-                            <span style={{ fontSize: '0.82rem', fontWeight: 700, color: '#b45309' }}>
-                              Technik Pride Award Nomination
-                            </span>
-                          </td>
-                          <td style={styles.tdCell}>{st.date}</td>
-                          <td style={styles.tdCell}>
-                            <span style={{
-                              display: 'inline-flex',
-                              alignItems: 'center',
-                              padding: '0.25rem 0.65rem',
-                              borderRadius: '20px',
-                              fontSize: '0.75rem',
-                              fontWeight: 700,
-                              background: '#fef3c7',
-                              color: '#d97706',
-                              border: '1px solid #fde047'
-                            }}>
-                              <Clock size={12} style={{ marginRight: '4px' }} />
-                              Submitted &amp; Under Review
-                            </span>
-                          </td>
-                          <td style={styles.tdCell}>
-                            <span style={{ fontSize: '0.78rem', color: '#0284c7', fontWeight: 600 }}>
-                              Forwarded to Technik Super Admin
-                            </span>
+                    </thead>
+                    <tbody>
+                      {filteredPride.length === 0 ? (
+                        <tr>
+                          <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                            No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
                           </td>
                         </tr>
-                      ))
-                    )}
-                  </tbody>
-                </table>
+                      ) : (
+                        filteredPride.map((st, i) => (
+                          <tr key={st.id || i} style={styles.tableBodyRow}>
+                            <td style={styles.tdCellBold}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                                <div style={{ ...styles.avatarCircle, background: '#f59e0b', color: '#ffffff' }}>
+                                  {st.studentName.charAt(0)}
+                                </div>
+                                <span style={{ fontWeight: 700, color: '#0f172a' }}>{st.studentName}</span>
+                              </div>
+                            </td>
+                            <td style={styles.tdCell}>
+                              {st.class} ({isJuniorGrade(st.class, st.classCategory) ? 'Jr Level' : 'Sr Level'})
+                            </td>
+                            <td style={styles.tdCell}>
+                              <span style={{ fontSize: '0.84rem', fontWeight: 700, color: '#b45309' }}>
+                                Technik Pride Award Nomination
+                              </span>
+                            </td>
+                            <td style={styles.tdCell}>{st.dateSubmitted}</td>
+                            <td style={styles.tdCell}>
+                              <span style={{
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                padding: '0.3rem 0.75rem',
+                                borderRadius: '20px',
+                                fontSize: '0.78rem',
+                                fontWeight: 700,
+                                background: '#fef3c7',
+                                color: '#d97706',
+                                border: '1px solid #fde047'
+                              }}>
+                                <Clock size={13} style={{ marginRight: '5px' }} />
+                                {st.nominationStatus || 'Submitted & Under Review'}
+                              </span>
+                            </td>
+                            <td style={styles.tdCell}>
+                              <span style={{ fontSize: '0.82rem', color: '#0284c7', fontWeight: 600 }}>
+                                {st.adminStatus || 'Forwarded to Technik Super Admin'}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                )}
               </div>
 
             </div>
@@ -600,37 +985,85 @@ export default function Schools() {
       )}
 
       {/* ========================================================================= */}
-      {/* OPTION 2: NOMINATE STUDENTS FOR PRIDE AWARD VIEW                          */}
+      {/* OPTION 3: + NOMINATE STUDENT FOR PRIDE AWARD VIEW (IMAGE 4)               */}
       {/* ========================================================================= */}
       {activeTab === 'nominate-pride' && (
         <section style={styles.sectionPadding}>
           <div className="container">
             
-            {/* Stepper Progress Bar */}
+            {/* STEPPER PROGRESS BAR (IMAGE 4) WITH TICK COMPLETION ANIMATION */}
             <div style={styles.stepperBar}>
-              <div style={{ ...styles.stepItem, ...styles.stepItemActive }}>
-                <div style={{ ...styles.stepCircle, background: '#d97706', color: '#ffffff' }}>1</div>
+              
+              {/* Step 1: Coordinator Details */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isCoordStepComplete ? '#16a34a' : '#d97706',
+                  color: '#ffffff',
+                  boxShadow: isCoordStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : '0 2px 8px rgba(217, 119, 6, 0.3)'
+                }}>
+                  {isCoordStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '1'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Coordinator Details</div>
                   <div style={styles.stepItemSub}>Add contact person</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
-              <div style={{ ...styles.stepItem, ...styles.stepItemActive }}>
-                <div style={{ ...styles.stepCircle, background: '#d97706', color: '#ffffff' }}>2</div>
+
+              <div style={{
+                ...styles.stepDivider,
+                background: isCoordStepComplete ? '#86efac' : '#e2e8f0'
+              }} />
+
+              {/* Step 2: Pride Award Nomination */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isPrideStepComplete ? '#16a34a' : '#d97706',
+                  color: '#ffffff',
+                  boxShadow: isPrideStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : '0 2px 8px rgba(217, 119, 6, 0.3)'
+                }}>
+                  {isPrideStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '2'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Pride Award Nomination</div>
                   <div style={styles.stepItemSub}>Nominate outstanding students</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
-              <div style={styles.stepItem}>
-                <div style={{ ...styles.stepCircle, background: '#94a3b8', color: '#ffffff' }}>3</div>
+
+              <div style={{
+                ...styles.stepDivider,
+                background: isPrideStepComplete ? '#86efac' : '#e2e8f0'
+              }} />
+
+              {/* Step 3: Review & Submit */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isReviewStepComplete ? '#16a34a' : '#94a3b8',
+                  color: '#ffffff',
+                  boxShadow: isReviewStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : 'none'
+                }}>
+                  {isReviewStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '3'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Review &amp; Submit</div>
                   <div style={styles.stepItemSub}>Confirm and submit</div>
                 </div>
               </div>
+
             </div>
 
             {/* FORM CONTAINER CARD */}
@@ -645,7 +1078,7 @@ export default function Schools() {
                 </div>
               </div>
 
-              {/* ANNUAL QUOTA NOTICE BANNER */}
+              {/* ANNUAL QUOTA NOTICE BANNER: 3 JUNIOR + 3 SENIOR = 6 TOTAL */}
               <div style={{
                 background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)',
                 border: '1px solid #fde047',
@@ -675,31 +1108,67 @@ export default function Schools() {
                   </div>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: '#92400e' }}>
-                      Annual Quota: Max 2 Students per School / Academic Year
+                      Annual Quota: Max 3 Junior &amp; 3 Senior Students per Year (Total 6)
                     </h4>
                     <p style={{ margin: '3px 0 0 0', fontSize: '0.86rem', color: '#b45309', lineHeight: 1.4 }}>
-                      Each partner school can nominate a maximum of <strong>2 students per year</strong> for the Technik Pride Award (e.g. 1 Junior &amp; 1 Senior, or up to 2 total).
+                      Each school can nominate a maximum of <strong>3 students for Junior Level (Grades 3-5)</strong> and <strong>3 students for Senior Level (Grades 6-8)</strong> per academic year.
                     </p>
                   </div>
                 </div>
 
-                <div style={{
-                  background: '#ffffff',
-                  border: '1.5px solid #f59e0b',
-                  padding: '0.45rem 0.9rem',
-                  borderRadius: '30px',
-                  fontSize: '0.84rem',
-                  fontWeight: 800,
-                  color: '#b45309',
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
-                }}>
-                  <Award size={16} color="#d97706" />
-                  <span>2026 Quota Status: <strong>{submittedRoster.filter(r => r.track.includes('Pride')).length} / 2 Used</strong></span>
+                <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1.5px solid #f59e0b',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '30px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#b45309',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
+                  }}>
+                    <Award size={15} color="#d97706" />
+                    <span>Jr Level: <strong>{jrPrideCount} / 3 Used</strong></span>
+                  </div>
+                  <div style={{
+                    background: '#ffffff',
+                    border: '1.5px solid #f59e0b',
+                    padding: '0.45rem 0.85rem',
+                    borderRadius: '30px',
+                    fontSize: '0.82rem',
+                    fontWeight: 800,
+                    color: '#b45309',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px',
+                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
+                  }}>
+                    <Award size={15} color="#d97706" />
+                    <span>Sr Level: <strong>{srPrideCount} / 3 Used</strong></span>
+                  </div>
                 </div>
               </div>
+
+              {/* ERROR BANNER */}
+              {submitError && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #f87171',
+                  borderRadius: '12px',
+                  padding: '0.9rem 1.25rem',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  color: '#991b1b'
+                }}>
+                  <AlertCircle size={20} color="#dc2626" />
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600 }}>{submitError}</span>
+                </div>
+              )}
 
               {/* SUCCESS TOAST BANNER */}
               {formSubmitted && lastSubmittedType === 'pride' && (
@@ -708,16 +1177,16 @@ export default function Schools() {
                   <div>
                     <h4 style={styles.successBannerTitle}>Pride Award Nomination Submitted Successfully!</h4>
                     <p style={styles.successBannerSub}>
-                      Nominated students have been added to St. Xavier International School roster. Confirmation email sent to <strong>{coordinator.email}</strong>.
+                      Nominated students have been submitted to Technik Super Admin and added to {schoolProfile.schoolName} roster. Confirmation email sent to <strong>{coordinator.email}</strong>.
                     </p>
                   </div>
-                  <button onClick={() => setActiveTab('roster')} style={styles.resetFormBtn}>
-                    View Enrolled Students List &rarr;
+                  <button onClick={() => setActiveTab('pride-nominated-list')} style={styles.resetFormBtn}>
+                    View Nominated Students &rarr;
                   </button>
                 </div>
               )}
 
-              <form onSubmit={(e) => handleSubmitForm(e, 'pride')}>
+              <form onSubmit={(e) => handleSubmitForm(e, 'pride')} noValidate>
                 
                 {/* SECTION 1: COORDINATOR DETAILS */}
                 <div style={styles.formCardSection}>
@@ -736,48 +1205,80 @@ export default function Schools() {
                       <label style={styles.fieldLabel}>Coordinator Name <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="text" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordName ? styles.inputError : {})
+                        }}
                         value={coordinator.name}
-                        onChange={(e) => setCoordinator({ ...coordinator, name: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, name: e.target.value });
+                          clearFormError('coordName');
+                        }}
                         placeholder="Enter coordinator name"
                       />
+                      {formErrors.coordName && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordName}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Designation <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="text" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordDesignation ? styles.inputError : {})
+                        }}
                         value={coordinator.designation}
-                        onChange={(e) => setCoordinator({ ...coordinator, designation: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, designation: e.target.value });
+                          clearFormError('coordDesignation');
+                        }}
                         placeholder="Enter designation"
                       />
+                      {formErrors.coordDesignation && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordDesignation}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Mobile Number <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="tel" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordMobile ? styles.inputError : {})
+                        }}
                         value={coordinator.mobile}
-                        onChange={(e) => setCoordinator({ ...coordinator, mobile: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, mobile: e.target.value });
+                          clearFormError('coordMobile');
+                        }}
                         placeholder="Enter mobile number"
                       />
+                      {formErrors.coordMobile && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordMobile}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Email ID <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="email" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordEmail ? styles.inputError : {})
+                        }}
                         value={coordinator.email}
-                        onChange={(e) => setCoordinator({ ...coordinator, email: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, email: e.target.value });
+                          clearFormError('coordEmail');
+                        }}
                         placeholder="Enter email address"
                       />
+                      {formErrors.coordEmail && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordEmail}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -803,7 +1304,14 @@ export default function Schools() {
                           ...styles.levelBtn,
                           ...(selectedLevelFilter === 'junior' ? styles.levelBtnActiveGreen : {})
                         }}
-                        onClick={() => setSelectedLevelFilter('junior')}
+                        onClick={() => {
+                          setSelectedLevelFilter('junior');
+                          studentList.forEach(s => {
+                            if (!['Grade 3', 'Grade 4', 'Grade 5'].includes(s.studentClass)) {
+                              handleStudentChange(s.id, 'studentClass', 'Grade 4');
+                            }
+                          });
+                        }}
                       >
                         Grade 3 to 5 (Jr Level)
                       </button>
@@ -814,7 +1322,14 @@ export default function Schools() {
                           ...styles.levelBtn,
                           ...(selectedLevelFilter === 'senior' ? styles.levelBtnActiveBlue : {})
                         }}
-                        onClick={() => setSelectedLevelFilter('senior')}
+                        onClick={() => {
+                          setSelectedLevelFilter('senior');
+                          studentList.forEach(s => {
+                            if (!['Grade 6', 'Grade 7', 'Grade 8'].includes(s.studentClass)) {
+                              handleStudentChange(s.id, 'studentClass', 'Grade 7');
+                            }
+                          });
+                        }}
                       >
                         Grade 6 to 8 (Senior Level)
                       </button>
@@ -845,12 +1360,20 @@ export default function Schools() {
                             <label style={styles.fieldLabel}>Student Name <span style={styles.reqStar}>*</span></label>
                             <input 
                               type="text" 
-                              required
                               placeholder="Enter student name"
-                              style={styles.textInput}
+                              style={{
+                                ...styles.textInput,
+                                ...(formErrors[`student_name_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.name}
-                              onChange={(e) => handleStudentChange(student.id, 'name', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'name', e.target.value);
+                                clearFormError(`student_name_${student.id}`);
+                              }}
                             />
+                            {formErrors[`student_name_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_name_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
@@ -879,15 +1402,24 @@ export default function Schools() {
                           <div style={styles.fieldCol}>
                             <label style={styles.fieldLabel}>Gender <span style={styles.reqStar}>*</span></label>
                             <select 
-                              style={styles.selectInput}
+                              style={{
+                                ...styles.selectInput,
+                                ...(formErrors[`student_gender_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.gender}
-                              onChange={(e) => handleStudentChange(student.id, 'gender', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'gender', e.target.value);
+                                clearFormError(`student_gender_${student.id}`);
+                              }}
                             >
                               <option value="Select Gender">Select Gender</option>
                               <option value="Male">Male</option>
                               <option value="Female">Female</option>
                               <option value="Other">Other</option>
                             </select>
+                            {formErrors[`student_gender_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_gender_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
@@ -911,21 +1443,39 @@ export default function Schools() {
                             <input 
                               type="text" 
                               placeholder="Enter achievement title"
-                              style={styles.textInput}
+                              style={{
+                                ...styles.textInput,
+                                ...(formErrors[`student_ach_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.achievementTitle}
-                              onChange={(e) => handleStudentChange(student.id, 'achievementTitle', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'achievementTitle', e.target.value);
+                                clearFormError(`student_ach_${student.id}`);
+                              }}
                             />
+                            {formErrors[`student_ach_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_ach_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
                             <label style={styles.fieldLabel}>Brief Description <span style={styles.reqStar}>*</span></label>
                             <textarea 
                               placeholder="Describe the achievement (Max 300 characters)"
-                              style={styles.textAreaInput}
+                              style={{
+                                ...styles.textAreaInput,
+                                ...(formErrors[`student_desc_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.description}
-                              onChange={(e) => handleStudentChange(student.id, 'description', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'description', e.target.value);
+                                clearFormError(`student_desc_${student.id}`);
+                              }}
                               maxLength={300}
                             />
+                            {formErrors[`student_desc_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_desc_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
@@ -935,14 +1485,16 @@ export default function Schools() {
                                 type="file" 
                                 id={`file-${student.id}`} 
                                 style={{ display: 'none' }}
+                                accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
                                 onChange={(e) => {
-                                  if (e.target.files[0]) {
-                                    handleStudentChange(student.id, 'fileName', e.target.files[0].name);
+                                  if (e.target.files && e.target.files[0]) {
+                                    handleFileUpload(student.id, e.target.files[0]);
                                   }
                                 }}
                               />
                               <label htmlFor={`file-${student.id}`} style={styles.fileChooseBtn}>
-                                Choose File
+                                {student.uploading ? <Loader2 size={13} className="spin" /> : <Upload size={13} />}
+                                <span>{student.uploading ? 'Uploading...' : 'Choose File'}</span>
                               </label>
                               <span style={styles.fileNameDisplay}>
                                 {student.fileName || 'No file chosen'}
@@ -960,10 +1512,16 @@ export default function Schools() {
                     <button 
                       type="button" 
                       onClick={handleAddStudent}
-                      disabled={submittedRoster.filter(r => r.track.includes('Pride')).length + studentList.length >= 2}
+                      disabled={
+                        (selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3) ||
+                        (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3) ||
+                        (totalPrideCount + studentList.length >= 6)
+                      }
                       style={{
                         ...styles.addAnotherBtnGold,
-                        ...(submittedRoster.filter(r => r.track.includes('Pride')).length + studentList.length >= 2 ? {
+                        ...((selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3) ||
+                            (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3) ||
+                            (totalPrideCount + studentList.length >= 6) ? {
                           opacity: 0.6,
                           cursor: 'not-allowed',
                           background: '#f1f5f9',
@@ -974,8 +1532,10 @@ export default function Schools() {
                     >
                       <PlusCircle size={18} />
                       <span>
-                        {submittedRoster.filter(r => r.track.includes('Pride')).length + studentList.length >= 2
-                          ? 'MAX QUOTA REACHED (2/2 NOMINATIONS PER YEAR)'
+                        {(selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3)
+                          ? 'MAX QUOTA REACHED FOR JUNIOR LEVEL (3/3 STUDENTS)'
+                          : (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3)
+                          ? 'MAX QUOTA REACHED FOR SENIOR LEVEL (3/3 STUDENTS)'
                           : '+ ADD ANOTHER STUDENT'
                         }
                       </span>
@@ -998,30 +1558,49 @@ export default function Schools() {
                     <input 
                       type="checkbox"
                       checked={declaration}
-                      onChange={(e) => setDeclaration(e.target.checked)}
+                      onChange={(e) => {
+                        setDeclaration(e.target.checked);
+                        clearFormError('declaration');
+                      }}
                       style={styles.checkboxInput}
                     />
                     <span>
                       We hereby confirm that the information provided is true and correct. We have obtained the consent from the students and parents/guardians to nominate them for the Technik Pride Award.
                     </span>
                   </label>
+                  {formErrors.declaration && (
+                    <span style={styles.fieldErrorText}>{formErrors.declaration}</span>
+                  )}
                 </div>
 
                 <div style={styles.formFooterRow}>
                   <button 
                     type="button"
-                    onClick={() => setActiveTab('roster')}
+                    onClick={() => setActiveTab('pride-nominated-list')}
                     style={styles.backBtn}
                   >
-                    &larr; Back to Students List
+                    &larr; View Nominated Students List
                   </button>
 
                   <button 
                     type="submit"
-                    style={styles.submitReviewBtnGold}
+                    disabled={isSubmitting}
+                    style={{
+                      ...styles.submitReviewBtnGold,
+                      ...(isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {})
+                    }}
                   >
-                    <span>Submit Pride Award Nomination</span>
-                    <ArrowRight size={18} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="spin" />
+                        <span>Submitting Nominations...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Submit Pride Award Nomination</span>
+                        <ArrowRight size={18} />
+                      </>
+                    )}
                   </button>
                 </div>
 
@@ -1033,37 +1612,85 @@ export default function Schools() {
       )}
 
       {/* ========================================================================= */}
-      {/* OPTION 3: OLYMPIAD REGISTRATION VIEW                                      */}
+      {/* OPTION 4: OLYMPIAD REGISTRATION VIEW                                      */}
       {/* ========================================================================= */}
       {activeTab === 'olympiad-reg' && (
         <section style={styles.sectionPadding}>
           <div className="container">
             
-            {/* Stepper Progress Bar */}
+            {/* STEPPER PROGRESS BAR WITH TICK COMPLETION ANIMATION */}
             <div style={styles.stepperBar}>
-              <div style={{ ...styles.stepItem, ...styles.stepItemActive }}>
-                <div style={{ ...styles.stepCircle, background: '#ea580c', color: '#ffffff' }}>1</div>
+              
+              {/* Step 1: Coordinator Details */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isCoordStepComplete ? '#16a34a' : '#ea580c',
+                  color: '#ffffff',
+                  boxShadow: isCoordStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : '0 2px 8px rgba(234, 88, 12, 0.3)'
+                }}>
+                  {isCoordStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '1'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Coordinator Details</div>
                   <div style={styles.stepItemSub}>Add contact person</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
-              <div style={{ ...styles.stepItem, ...styles.stepItemActive }}>
-                <div style={{ ...styles.stepCircle, background: '#ea580c', color: '#ffffff' }}>2</div>
+
+              <div style={{
+                ...styles.stepDivider,
+                background: isCoordStepComplete ? '#86efac' : '#e2e8f0'
+              }} />
+
+              {/* Step 2: Olympiad Registration */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isOlympiadStepComplete ? '#16a34a' : '#ea580c',
+                  color: '#ffffff',
+                  boxShadow: isOlympiadStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : '0 2px 8px rgba(234, 88, 12, 0.3)'
+                }}>
+                  {isOlympiadStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '2'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Olympiad Registration</div>
                   <div style={styles.stepItemSub}>Register students for 8 tracks</div>
                 </div>
               </div>
-              <div style={styles.stepDivider} />
-              <div style={styles.stepItem}>
-                <div style={{ ...styles.stepCircle, background: '#94a3b8', color: '#ffffff' }}>3</div>
+
+              <div style={{
+                ...styles.stepDivider,
+                background: isOlympiadStepComplete ? '#86efac' : '#e2e8f0'
+              }} />
+
+              {/* Step 3: Review & Submit */}
+              <div style={{ ...styles.stepItem, opacity: 1 }}>
+                <div style={{
+                  ...styles.stepCircle,
+                  background: isReviewStepComplete ? '#16a34a' : '#94a3b8',
+                  color: '#ffffff',
+                  boxShadow: isReviewStepComplete ? '0 2px 8px rgba(22, 163, 74, 0.3)' : 'none'
+                }}>
+                  {isReviewStepComplete ? (
+                    <Check size={18} strokeWidth={3} className="step-check-anim" />
+                  ) : (
+                    '3'
+                  )}
+                </div>
                 <div>
                   <div style={styles.stepItemTitle}>Review &amp; Submit</div>
                   <div style={styles.stepItemSub}>Confirm and submit</div>
                 </div>
               </div>
+
             </div>
 
             {/* FORM CONTAINER CARD */}
@@ -1078,6 +1705,24 @@ export default function Schools() {
                 </div>
               </div>
 
+              {/* ERROR BANNER */}
+              {submitError && (
+                <div style={{
+                  background: '#fef2f2',
+                  border: '1px solid #f87171',
+                  borderRadius: '12px',
+                  padding: '0.9rem 1.25rem',
+                  marginBottom: '1.5rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.75rem',
+                  color: '#991b1b'
+                }}>
+                  <AlertCircle size={20} color="#dc2626" />
+                  <span style={{ fontSize: '0.88rem', fontWeight: 600 }}>{submitError}</span>
+                </div>
+              )}
+
               {/* SUCCESS TOAST BANNER */}
               {formSubmitted && lastSubmittedType === 'olympiad' && (
                 <div style={styles.successBanner}>
@@ -1085,7 +1730,7 @@ export default function Schools() {
                   <div>
                     <h4 style={styles.successBannerTitle}>Olympiad Registration Submitted Successfully!</h4>
                     <p style={styles.successBannerSub}>
-                      Students have been registered into St. Xavier International School roster. Confirmation email sent to <strong>{coordinator.email}</strong>.
+                      Students have been registered into {schoolProfile.schoolName} roster. Confirmation email sent to <strong>{coordinator.email}</strong>.
                     </p>
                   </div>
                   <button onClick={() => setActiveTab('roster')} style={styles.resetFormBtn}>
@@ -1094,7 +1739,7 @@ export default function Schools() {
                 </div>
               )}
 
-              <form onSubmit={(e) => handleSubmitForm(e, 'olympiad')}>
+              <form onSubmit={(e) => handleSubmitForm(e, 'olympiad')} noValidate>
                 
                 {/* SECTION 1: COORDINATOR DETAILS */}
                 <div style={styles.formCardSection}>
@@ -1113,48 +1758,80 @@ export default function Schools() {
                       <label style={styles.fieldLabel}>Coordinator Name <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="text" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordName ? styles.inputError : {})
+                        }}
                         value={coordinator.name}
-                        onChange={(e) => setCoordinator({ ...coordinator, name: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, name: e.target.value });
+                          clearFormError('coordName');
+                        }}
                         placeholder="Enter coordinator name"
                       />
+                      {formErrors.coordName && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordName}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Designation <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="text" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordDesignation ? styles.inputError : {})
+                        }}
                         value={coordinator.designation}
-                        onChange={(e) => setCoordinator({ ...coordinator, designation: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, designation: e.target.value });
+                          clearFormError('coordDesignation');
+                        }}
                         placeholder="Enter designation"
                       />
+                      {formErrors.coordDesignation && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordDesignation}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Mobile Number <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="tel" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordMobile ? styles.inputError : {})
+                        }}
                         value={coordinator.mobile}
-                        onChange={(e) => setCoordinator({ ...coordinator, mobile: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, mobile: e.target.value });
+                          clearFormError('coordMobile');
+                        }}
                         placeholder="Enter mobile number"
                       />
+                      {formErrors.coordMobile && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordMobile}</span>
+                      )}
                     </div>
 
                     <div style={styles.fieldCol}>
                       <label style={styles.fieldLabel}>Email ID <span style={styles.reqStar}>*</span></label>
                       <input 
                         type="email" 
-                        required
-                        style={styles.textInput}
+                        style={{
+                          ...styles.textInput,
+                          ...(formErrors.coordEmail ? styles.inputError : {})
+                        }}
                         value={coordinator.email}
-                        onChange={(e) => setCoordinator({ ...coordinator, email: e.target.value })}
+                        onChange={(e) => {
+                          setCoordinator({ ...coordinator, email: e.target.value });
+                          clearFormError('coordEmail');
+                        }}
                         placeholder="Enter email address"
                       />
+                      {formErrors.coordEmail && (
+                        <span style={styles.fieldErrorText}>{formErrors.coordEmail}</span>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -1180,7 +1857,14 @@ export default function Schools() {
                           ...styles.levelBtn,
                           ...(selectedLevelFilter === 'junior' ? styles.levelBtnActiveGreen : {})
                         }}
-                        onClick={() => setSelectedLevelFilter('junior')}
+                        onClick={() => {
+                          setSelectedLevelFilter('junior');
+                          studentList.forEach(s => {
+                            if (!['Grade 3', 'Grade 4', 'Grade 5'].includes(s.studentClass)) {
+                              handleStudentChange(s.id, 'studentClass', 'Grade 4');
+                            }
+                          });
+                        }}
                       >
                         Grade 3 to 5 (Jr Level)
                       </button>
@@ -1191,7 +1875,14 @@ export default function Schools() {
                           ...styles.levelBtn,
                           ...(selectedLevelFilter === 'senior' ? styles.levelBtnActiveBlue : {})
                         }}
-                        onClick={() => setSelectedLevelFilter('senior')}
+                        onClick={() => {
+                          setSelectedLevelFilter('senior');
+                          studentList.forEach(s => {
+                            if (!['Grade 6', 'Grade 7', 'Grade 8'].includes(s.studentClass)) {
+                              handleStudentChange(s.id, 'studentClass', 'Grade 7');
+                            }
+                          });
+                        }}
                       >
                         Grade 6 to 8 (Senior Level)
                       </button>
@@ -1222,12 +1913,20 @@ export default function Schools() {
                             <label style={styles.fieldLabel}>Student Name <span style={styles.reqStar}>*</span></label>
                             <input 
                               type="text" 
-                              required
                               placeholder="Enter student name"
-                              style={styles.textInput}
+                              style={{
+                                ...styles.textInput,
+                                ...(formErrors[`student_name_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.name}
-                              onChange={(e) => handleStudentChange(student.id, 'name', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'name', e.target.value);
+                                clearFormError(`student_name_${student.id}`);
+                              }}
                             />
+                            {formErrors[`student_name_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_name_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
@@ -1256,15 +1955,24 @@ export default function Schools() {
                           <div style={styles.fieldCol}>
                             <label style={styles.fieldLabel}>Gender <span style={styles.reqStar}>*</span></label>
                             <select 
-                              style={styles.selectInput}
+                              style={{
+                                ...styles.selectInput,
+                                ...(formErrors[`student_gender_${student.id}`] ? styles.inputError : {})
+                              }}
                               value={student.gender}
-                              onChange={(e) => handleStudentChange(student.id, 'gender', e.target.value)}
+                              onChange={(e) => {
+                                handleStudentChange(student.id, 'gender', e.target.value);
+                                clearFormError(`student_gender_${student.id}`);
+                              }}
                             >
                               <option value="Select Gender">Select Gender</option>
                               <option value="Male">Male</option>
                               <option value="Female">Female</option>
                               <option value="Other">Other</option>
                             </select>
+                            {formErrors[`student_gender_${student.id}`] && (
+                              <span style={styles.fieldErrorText}>{formErrors[`student_gender_${student.id}`]}</span>
+                            )}
                           </div>
 
                           <div style={styles.fieldCol}>
@@ -1317,13 +2025,19 @@ export default function Schools() {
                     <input 
                       type="checkbox"
                       checked={declaration}
-                      onChange={(e) => setDeclaration(e.target.checked)}
+                      onChange={(e) => {
+                        setDeclaration(e.target.checked);
+                        clearFormError('declaration');
+                      }}
                       style={styles.checkboxInput}
                     />
                     <span>
                       We hereby confirm that the information provided is true and correct. We have obtained the consent from the students and parents/guardians to register them for the Technik Olympiad.
                     </span>
                   </label>
+                  {formErrors.declaration && (
+                    <span style={styles.fieldErrorText}>{formErrors.declaration}</span>
+                  )}
                 </div>
 
                 <div style={styles.formFooterRow}>
@@ -1337,10 +2051,23 @@ export default function Schools() {
 
                   <button 
                     type="submit"
-                    style={styles.submitReviewBtnOrange}
+                    disabled={isSubmitting}
+                    style={{
+                      ...styles.submitReviewBtnOrange,
+                      ...(isSubmitting ? { opacity: 0.7, cursor: 'not-allowed' } : {})
+                    }}
                   >
-                    <span>Register Students for Olympiad</span>
-                    <ArrowRight size={18} />
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={18} className="spin" />
+                        <span>Submitting Registrations...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Register Students for Olympiad</span>
+                        <ArrowRight size={18} />
+                      </>
+                    )}
                   </button>
                 </div>
 
@@ -1511,14 +2238,8 @@ const styles = {
     borderColor: '#ea580c',
     boxShadow: '0 4px 14px rgba(234, 88, 12, 0.35)',
   },
-  tabNavBtnActiveDark: {
-    background: '#ffffff',
-    color: '#041026',
-    borderColor: '#ffffff',
-    boxShadow: '0 4px 14px rgba(255, 255, 255, 0.25)',
-  },
 
-  /* STEPPER PROGRESS BAR (1 -> 2 -> 3) */
+  /* STEPPER PROGRESS BAR */
   stepperBar: {
     background: '#ffffff',
     borderRadius: '14px',
@@ -1529,14 +2250,13 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-around',
     marginBottom: '1.25rem',
+    flexWrap: 'wrap',
+    gap: '0.75rem',
   },
   stepItem: {
     display: 'flex',
     alignItems: 'center',
     gap: '0.75rem',
-  },
-  stepItemActive: {
-    opacity: 1,
   },
   stepCircle: {
     width: '34px',
@@ -1548,6 +2268,7 @@ const styles = {
     fontWeight: 800,
     fontSize: '0.9rem',
     fontFamily: 'var(--font-heading)',
+    transition: 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
   },
   stepItemTitle: {
     fontSize: '0.88rem',
@@ -1563,6 +2284,210 @@ const styles = {
     width: '60px',
     height: '2px',
     background: '#e2e8f0',
+    transition: 'background 0.3s ease',
+  },
+
+  /* ROSTER TABLE CARD */
+  rosterCardWrapper: {
+    background: '#ffffff',
+    borderRadius: '16px',
+    border: '1px solid #e2e8f0',
+    padding: '1.75rem',
+    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
+  },
+  rosterHeaderRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    marginBottom: '1.5rem',
+  },
+  rosterTitle: {
+    fontSize: '1.35rem',
+    fontWeight: 800,
+    color: '#0f172a',
+    fontFamily: 'var(--font-heading)',
+    marginBottom: '0.2rem',
+  },
+  rosterSub: {
+    fontSize: '0.85rem',
+    color: '#64748b',
+  },
+  actionBtnOrange: {
+    background: '#ea580c',
+    color: '#ffffff',
+    border: 'none',
+    padding: '0.55rem 1.1rem',
+    borderRadius: '8px',
+    fontWeight: 800,
+    fontSize: '0.82rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.45rem',
+    boxShadow: '0 4px 12px rgba(234, 88, 12, 0.25)',
+  },
+  actionBtnGold: {
+    background: '#f59e0b',
+    color: '#041026',
+    border: 'none',
+    padding: '0.55rem 1.1rem',
+    borderRadius: '8px',
+    fontWeight: 800,
+    fontSize: '0.82rem',
+    cursor: 'pointer',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.45rem',
+    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.25)',
+  },
+
+  /* CONTROLS: SEARCH & FILTER */
+  rosterControlRow: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'wrap',
+    gap: '1rem',
+    marginBottom: '1.25rem',
+    background: '#f8fafc',
+    padding: '0.75rem 1rem',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+  },
+  rosterSearchBox: {
+    display: 'flex',
+    alignItems: 'center',
+    background: '#ffffff',
+    border: '1px solid #cbd5e1',
+    borderRadius: '8px',
+    padding: '0.45rem 0.85rem',
+    flex: '1',
+    minWidth: '240px',
+    maxWidth: '400px',
+  },
+  rosterSearchInput: {
+    border: 'none',
+    outline: 'none',
+    fontSize: '0.84rem',
+    color: '#0f172a',
+    width: '100%',
+  },
+  rosterFilterGroup: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '0.5rem',
+    flexWrap: 'wrap',
+  },
+  filterLabel: {
+    fontSize: '0.8rem',
+    fontWeight: 700,
+    color: '#64748b',
+  },
+  selectFilter: {
+    padding: '0.4rem 0.75rem',
+    borderRadius: '6px',
+    border: '1px solid #cbd5e1',
+    background: '#ffffff',
+    fontSize: '0.8rem',
+    fontWeight: 600,
+    color: '#0f172a',
+    outline: 'none',
+  },
+
+  /* TABLE STYLES */
+  tableResponsive: {
+    overflowX: 'auto',
+    borderRadius: '10px',
+    border: '1px solid #e2e8f0',
+  },
+  rosterTable: {
+    width: '100%',
+    borderCollapse: 'collapse',
+    textAlign: 'left',
+  },
+  tableHeaderRow: {
+    background: '#f1f5f9',
+    borderBottom: '1px solid #e2e8f0',
+  },
+  thCell: {
+    padding: '0.85rem 1rem',
+    fontSize: '0.76rem',
+    fontWeight: 800,
+    color: '#475569',
+    textTransform: 'uppercase',
+    letterSpacing: '0.04em',
+    fontFamily: 'var(--font-heading)',
+  },
+  tableBodyRow: {
+    borderBottom: '1px solid #f1f5f9',
+    transition: 'background 0.15s ease',
+  },
+  tdCell: {
+    padding: '0.85rem 1rem',
+    fontSize: '0.84rem',
+    color: '#334155',
+    verticalAlign: 'middle',
+  },
+  tdCellBold: {
+    padding: '0.85rem 1rem',
+    fontSize: '0.84rem',
+    color: '#0f172a',
+    verticalAlign: 'middle',
+  },
+  avatarCircle: {
+    width: '32px',
+    height: '32px',
+    borderRadius: '50%',
+    background: '#041026',
+    color: '#ffffff',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    fontWeight: 800,
+    fontSize: '0.82rem',
+    flexShrink: 0,
+  },
+  trackBadgeBlue: {
+    display: 'inline-block',
+    padding: '0.25rem 0.65rem',
+    borderRadius: '6px',
+    fontSize: '0.78rem',
+    fontWeight: 700,
+    background: '#e0f2fe',
+    color: '#0284c7',
+  },
+  trackBadgeGold: {
+    display: 'inline-block',
+    padding: '0.25rem 0.65rem',
+    borderRadius: '6px',
+    fontSize: '0.78rem',
+    fontWeight: 700,
+    background: '#fef3c7',
+    color: '#b45309',
+  },
+  rosterStatusTag: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    padding: '0.25rem 0.65rem',
+    borderRadius: '20px',
+    fontSize: '0.75rem',
+    fontWeight: 700,
+  },
+  tableActionBtn: {
+    background: '#f8fafc',
+    border: '1px solid #cbd5e1',
+    color: '#0284c7',
+    padding: '0.35rem 0.75rem',
+    borderRadius: '6px',
+    fontSize: '0.78rem',
+    fontWeight: 700,
+    cursor: 'pointer',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '4px',
+    transition: 'all 0.2s',
   },
 
   /* MAIN FORM CARD */
@@ -1616,6 +2541,7 @@ const styles = {
     padding: '1rem 1.25rem',
     borderRadius: '12px',
     marginBottom: '1.5rem',
+    flexWrap: 'wrap',
   },
   successBannerTitle: {
     fontSize: '0.95rem',
@@ -1779,6 +2705,18 @@ const styles = {
     width: '100%',
     boxSizing: 'border-box',
   },
+  inputError: {
+    borderColor: '#ef4444 !important',
+    background: '#fef2f2 !important',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.12)'
+  },
+  fieldErrorText: {
+    color: '#dc2626',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+    marginTop: '0.2rem',
+    display: 'block'
+  },
 
   /* STUDENT ENTRY CARDS */
   studentCardsList: {
@@ -1841,6 +2779,9 @@ const styles = {
     color: '#334155',
     cursor: 'pointer',
     whiteSpace: 'nowrap',
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px',
   },
   fileNameDisplay: {
     fontSize: '0.78rem',
@@ -1912,504 +2853,47 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: '1.5rem',
+    flexWrap: 'wrap',
+    gap: '1rem',
   },
   backBtn: {
     background: '#ffffff',
+    color: '#475569',
     border: '1px solid #cbd5e1',
-    padding: '0.75rem 1.5rem',
+    padding: '0.75rem 1.25rem',
     borderRadius: '8px',
-    color: '#0f172a',
     fontWeight: 700,
-    fontSize: '0.88rem',
+    fontSize: '0.85rem',
     cursor: 'pointer',
   },
   submitReviewBtnGold: {
-    background: 'linear-gradient(135deg, #fbbf24 0%, #d97706 100%)',
-    color: '#041026',
+    background: '#d97706',
+    color: '#ffffff',
     border: 'none',
-    padding: '0.85rem 2rem',
+    padding: '0.75rem 1.75rem',
     borderRadius: '8px',
     fontWeight: 800,
-    fontSize: '0.92rem',
-    fontFamily: 'var(--font-heading)',
+    fontSize: '0.9rem',
     cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
     boxShadow: '0 4px 14px rgba(217, 119, 6, 0.3)',
+    transition: 'all 0.2s ease',
   },
   submitReviewBtnOrange: {
-    background: 'linear-gradient(135deg, #f97316 0%, #ea580c 100%)',
+    background: '#ea580c',
     color: '#ffffff',
     border: 'none',
-    padding: '0.85rem 2rem',
+    padding: '0.75rem 1.75rem',
     borderRadius: '8px',
     fontWeight: 800,
-    fontSize: '0.92rem',
-    fontFamily: 'var(--font-heading)',
+    fontSize: '0.9rem',
     cursor: 'pointer',
     display: 'inline-flex',
     alignItems: 'center',
     gap: '0.5rem',
     boxShadow: '0 4px 14px rgba(234, 88, 12, 0.3)',
+    transition: 'all 0.2s ease',
   },
-
-  /* STUDENTS LIST ROSTER VIEW STYLES */
-  rosterCardWrapper: {
-    background: '#ffffff',
-    borderRadius: '16px',
-    border: '1px solid #e2e8f0',
-    padding: '2rem',
-    boxShadow: '0 4px 20px rgba(0,0,0,0.03)',
-  },
-  rosterHeaderRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-    gap: '1rem',
-    marginBottom: '1.75rem',
-    paddingBottom: '1rem',
-    borderBottom: '1px solid #f1f5f9',
-  },
-  rosterTitle: {
-    fontSize: '1.45rem',
-    fontWeight: 900,
-    color: '#0f172a',
-    fontFamily: 'var(--font-heading)',
-    marginBottom: '0.2rem',
-  },
-  rosterSub: {
-    fontSize: '0.85rem',
-    color: '#64748b',
-  },
-  actionBtnOrange: {
-    background: '#ea580c',
-    color: '#ffffff',
-    border: 'none',
-    padding: '0.65rem 1.1rem',
-    borderRadius: '8px',
-    fontWeight: 800,
-    fontSize: '0.82rem',
-    fontFamily: 'var(--font-heading)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-  },
-  actionBtnGold: {
-    background: '#fbbf24',
-    color: '#041026',
-    border: 'none',
-    padding: '0.65rem 1.1rem',
-    borderRadius: '8px',
-    fontWeight: 800,
-    fontSize: '0.82rem',
-    fontFamily: 'var(--font-heading)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-  },
-
-  rosterControlRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '1rem',
-    marginBottom: '1.5rem',
-  },
-  rosterSearchBox: {
-    display: 'flex',
-    alignItems: 'center',
-    background: '#f8fafc',
-    border: '1px solid #cbd5e1',
-    borderRadius: '8px',
-    padding: '0.5rem 0.85rem',
-    flex: 1,
-    maxWidth: '380px',
-  },
-  rosterSearchInput: {
-    border: 'none',
-    background: 'transparent',
-    outline: 'none',
-    fontSize: '0.88rem',
-    width: '100%',
-  },
-  rosterFilterGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  filterLabel: {
-    fontSize: '0.82rem',
-    fontWeight: 700,
-    color: '#64748b',
-  },
-  selectFilter: {
-    padding: '0.5rem 0.85rem',
-    borderRadius: '8px',
-    border: '1px solid #cbd5e1',
-    fontSize: '0.85rem',
-    background: '#ffffff',
-    color: '#0f172a',
-    outline: 'none',
-  },
-
-  tableResponsive: {
-    overflowX: 'auto',
-  },
-  rosterTable: {
-    width: '100%',
-    borderCollapse: 'collapse',
-    textAlign: 'left',
-  },
-  tableHeaderRow: {
-    background: '#f1f5f9',
-    borderBottom: '2px solid #cbd5e1',
-  },
-  thCell: {
-    padding: '0.85rem 1rem',
-    fontSize: '0.78rem',
-    fontWeight: 800,
-    color: '#475569',
-    textTransform: 'uppercase',
-    letterSpacing: '0.04em',
-    fontFamily: 'var(--font-heading)',
-  },
-  tableBodyRow: {
-    borderBottom: '1px solid #e2e8f0',
-    transition: 'background 0.2s ease',
-  },
-  tdCell: {
-    padding: '0.95rem 1rem',
-    fontSize: '0.88rem',
-    color: '#334155',
-  },
-  tdCellBold: {
-    padding: '0.95rem 1rem',
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    color: '#0f172a',
-  },
-  avatarCircle: {
-    width: '32px',
-    height: '32px',
-    borderRadius: '50%',
-    background: '#041026',
-    color: '#ffffff',
-    fontWeight: 800,
-    fontSize: '0.82rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  trackBadgeBlue: {
-    background: '#e0f2fe',
-    color: '#0369a1',
-    padding: '0.2rem 0.6rem',
-    borderRadius: '6px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-  },
-  trackBadgeGold: {
-    background: '#fef3c7',
-    color: '#b45309',
-    padding: '0.2rem 0.6rem',
-    borderRadius: '6px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-  },
-  rosterStatusTag: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    padding: '0.25rem 0.65rem',
-    borderRadius: '20px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-  },
-  tableActionBtn: {
-    background: '#ffffff',
-    border: '1px solid #cbd5e1',
-    padding: '0.35rem 0.75rem',
-    borderRadius: '6px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    color: '#0284c7',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-  },
-
-  /* DIRECTORY STYLES */
-  searchBarRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    gap: '1rem',
-    marginBottom: '2rem',
-  },
-  searchBox: {
-    display: 'flex',
-    alignItems: 'center',
-    background: '#ffffff',
-    border: '1px solid #cbd5e1',
-    padding: '0.65rem 1rem',
-    borderRadius: '10px',
-    flex: 1,
-    maxWidth: '450px',
-  },
-  searchInput: {
-    border: 'none',
-    outline: 'none',
-    width: '100%',
-    fontSize: '0.9rem',
-  },
-  filterGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-  },
-  directoryGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-    gap: '1.5rem',
-  },
-  schoolCard: {
-    background: '#ffffff',
-    border: '1px solid #e2e8f0',
-    borderRadius: '14px',
-    padding: '1.5rem',
-    boxShadow: '0 4px 15px rgba(0,0,0,0.02)',
-  },
-  schoolCardHeader: {
-    display: 'flex',
-    gap: '0.85rem',
-    alignItems: 'flex-start',
-  },
-  schoolIconCircle: {
-    width: '42px',
-    height: '42px',
-    borderRadius: '10px',
-    background: '#eff6ff',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexShrink: 0,
-  },
-  schoolName: {
-    fontSize: '1.05rem',
-    fontWeight: 800,
-    color: '#0f172a',
-    fontFamily: 'var(--font-heading)',
-    marginBottom: '0.2rem',
-  },
-  schoolLocation: {
-    fontSize: '0.78rem',
-    color: '#64748b',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  schoolDivider: {
-    height: '1px',
-    background: '#f1f5f9',
-    margin: '1rem 0',
-  },
-  schoolMetaRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '1.25rem',
-  },
-  metaLabel: {
-    fontSize: '0.72rem',
-    color: '#64748b',
-    display: 'block',
-  },
-  metaVal: {
-    fontSize: '0.92rem',
-    fontWeight: 800,
-    color: '#0f172a',
-  },
-  verifiedBadge: {
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    color: '#059669',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  viewStudentsBtn: {
-    width: '100%',
-    background: '#f8fafc',
-    border: '1px solid #cbd5e1',
-    color: '#2563eb',
-    fontWeight: 800,
-    fontSize: '0.78rem',
-    fontFamily: 'var(--font-heading)',
-    padding: '0.65rem',
-    borderRadius: '8px',
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-
-  /* MODAL STYLES */
-  modalOverlay: {
-    position: 'fixed',
-    inset: 0,
-    background: 'rgba(15, 23, 42, 0.75)',
-    backdropFilter: 'blur(4px)',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    zIndex: 9999,
-    padding: '1.5rem',
-  },
-  modalBox: {
-    background: '#ffffff',
-    borderRadius: '20px',
-    maxWidth: '600px',
-    width: '100%',
-    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-    overflow: 'hidden',
-  },
-  modalHeader: {
-    padding: '1.5rem',
-    borderBottom: '1px solid #e2e8f0',
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    background: '#f8fafc',
-  },
-  modalTitle: {
-    fontSize: '1.25rem',
-    fontWeight: 800,
-    color: '#0f172a',
-  },
-  modalSub: {
-    fontSize: '0.82rem',
-    color: '#64748b',
-  },
-  closeBtn: {
-    background: 'transparent',
-    border: 'none',
-    cursor: 'pointer',
-    color: '#64748b',
-  },
-  modalBody: {
-    padding: '1.5rem',
-    maxHeight: '400px',
-    overflowY: 'auto',
-  },
-  modalListHeading: {
-    fontSize: '0.88rem',
-    fontWeight: 800,
-    color: '#0f172a',
-    marginBottom: '1rem',
-  },
-  studentTable: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '0.75rem',
-  },
-  studentRow: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '0.75rem 1rem',
-    background: '#f8fafc',
-    borderRadius: '8px',
-    border: '1px solid #e2e8f0',
-  },
-  stName: {
-    fontSize: '0.9rem',
-    fontWeight: 700,
-    color: '#0f172a',
-  },
-  stGrade: {
-    fontSize: '0.75rem',
-    color: '#64748b',
-  },
-  stTrackPill: {
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    background: '#e0f2fe',
-    color: '#0284c7',
-    padding: '0.2rem 0.6rem',
-    borderRadius: '6px',
-  },
-  stStagePill: {
-    fontSize: '0.75rem',
-    fontWeight: 700,
-    background: '#fef3c7',
-    color: '#b45309',
-    padding: '0.2rem 0.6rem',
-    borderRadius: '6px',
-  },
-  modalFooter: {
-    padding: '1rem 1.5rem',
-    borderTop: '1px solid #e2e8f0',
-    background: '#f8fafc',
-    textAlign: 'right',
-  },
-  modalCloseAction: {
-    background: '#041026',
-    color: '#ffffff',
-    border: 'none',
-    padding: '0.6rem 1.25rem',
-    borderRadius: '8px',
-    fontWeight: 700,
-    fontSize: '0.85rem',
-    cursor: 'pointer',
-  }
 };
-
-// Add responsive styling for Schools portal
-if (typeof document !== 'undefined') {
-  let styleSheet = document.getElementById('schools-responsive-styles');
-  if (!styleSheet) {
-    styleSheet = document.createElement("style");
-    styleSheet.id = 'schools-responsive-styles';
-    document.head.appendChild(styleSheet);
-  }
-  styleSheet.innerText = `
-    @media (max-width: 991px) {
-      .schools-hero-grid,
-      div[style*="heroContentGrid"] {
-        grid-template-columns: 1fr !important;
-        gap: 1.5rem !important;
-      }
-    }
-    @media (max-width: 768px) {
-      div[style*="1fr 1.5fr 1fr"],
-      div[style*="gridTemplateColumns: '1fr 1.5fr 1fr'"],
-      div[style*="grid-template-columns: 1fr 1.5fr 1fr"],
-      div[style*="repeat(auto-fit, minmax(200px, 1fr))"],
-      div[style*="repeat(auto-fill, minmax(300px, 1fr))"],
-      div[style*="repeat(auto-fit, minmax(180px, 1fr))"] {
-        grid-template-columns: 1fr !important;
-        gap: 0.85rem !important;
-      }
-      div[style*="display: flex"][style*="justifyContent: 'space-between'"][style*="alignItems: 'center'"] {
-        flex-wrap: wrap !important;
-        gap: 0.75rem !important;
-      }
-      div[style*="formCardSection"] {
-        padding: 1.25rem 1rem !important;
-      }
-      div[style*="studentEntryCard"] {
-        padding: 1rem 0.85rem !important;
-      }
-      div[style*="rosterControlRow"] {
-        flex-direction: column !important;
-        align-items: stretch !important;
-        gap: 0.75rem !important;
-      }
-      div[style*="rosterSearchBox"] {
-        max-width: 100% !important;
-      }
-    }
-  `;
-}

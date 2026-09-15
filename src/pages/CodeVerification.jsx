@@ -87,7 +87,13 @@ export default function CodeVerification() {
     setErrorMessage('');
 
     try {
-      await verifyCodeApi({ email, code, mode, rememberMe });
+      const res = await verifyCodeApi({ email, code, mode, rememberMe });
+      if (res && res.csrfToken) {
+        sessionStorage.setItem('technik_csrf_token', res.csrfToken);
+      }
+      if (res && res.school && res.school.id) {
+        sessionStorage.setItem('technik_school_id', res.school.id);
+      }
       sessionStorage.setItem('technik_school_authenticated', 'true');
       navigate('/schools');
     } catch (err) {
@@ -176,8 +182,8 @@ export default function CodeVerification() {
             </div>
           </div>
 
-          <form onSubmit={handleVerifySubmit} style={styles.formStack}>
-            <div style={styles.otpInputGroup}>
+          <form onSubmit={handleVerifySubmit} style={styles.formStack} noValidate>
+            <div style={styles.otpInputGroup} className="otp-input-group">
               {otp.map((digit, idx) => (
                 <input
                   key={idx}
@@ -187,6 +193,7 @@ export default function CodeVerification() {
                   value={digit}
                   onChange={(e) => handleOtpChange(idx, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(idx, e)}
+                  className="otp-box-input"
                   style={{
                     ...styles.otpBox,
                     ...(digit ? styles.otpBoxFilled : {}),
@@ -427,3 +434,30 @@ const styles = {
     boxShadow: '0 6px 20px rgba(2, 132, 199, 0.35)',
   },
 };
+
+// Responsive styling for CodeVerification
+if (typeof document !== 'undefined') {
+  const styleId = 'code-verify-responsive-styles';
+  if (!document.getElementById(styleId)) {
+    const st = document.createElement('style');
+    st.id = styleId;
+    st.innerHTML = `
+      @media (max-width: 440px) {
+        .verify-card-header {
+          flex-direction: column !important;
+          align-items: center !important;
+          text-align: center !important;
+        }
+        .otp-input-group {
+          gap: 0.35rem !important;
+        }
+        .otp-box-input {
+          width: 38px !important;
+          height: 46px !important;
+          font-size: 1.15rem !important;
+        }
+      }
+    `;
+    document.head.appendChild(st);
+  }
+}

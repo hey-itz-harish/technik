@@ -1,18 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
-import exactHeroBoyImg from '../assets/exact_hero_boy.jpg';
-import prideTrophyHighres from '../assets/pride_trophy_highres.jpg';
-import aiRobot1080p from '../assets/ai_robot_1080p.jpg';
 import kalamSpeechPhoto from '../assets/kalam_speech_photo.jpg';
-import ctaStudentImg from '../assets/cta_student_hero.jpg';
-import certGraphic from '../assets/cert_graphic.jpg';
-import prideBookGraphic from '../assets/pride_book_graphic.jpg';
-import specialHonoursGraphic from '../assets/special_honours_graphic.jpg';
-import schoolCardImg from '../assets/school_card_img.jpg';
-import handshakeCardImg from '../assets/handshake_card_img.jpg';
-import news1Img from '../assets/news1.jpg';
-import news2Img from '../assets/news2.jpg';
-import news3Img from '../assets/news3.jpg';
 import {
   Trophy,
   Award,
