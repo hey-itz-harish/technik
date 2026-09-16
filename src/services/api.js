@@ -1,6 +1,5 @@
-// Technik School Portal API Service
-
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || 'http://localhost:8080').trim();
+const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
 
 let cachedCsrfToken = '';
 
