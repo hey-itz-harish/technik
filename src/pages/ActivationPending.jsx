@@ -20,11 +20,28 @@ export default function ActivationPending() {
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
-  const token = searchParams.get('token');
-  const type = searchParams.get('type') || 'school';
+  // Robust token & type extractor supporting HashRouter and standard URL queries
+  const getParam = (key) => {
+    const fromSearchParam = searchParams.get(key);
+    if (fromSearchParam) return fromSearchParam;
+    if (typeof window !== 'undefined') {
+      const urlParams = new URLSearchParams(window.location.search);
+      const val = urlParams.get(key);
+      if (val) return val;
+      if (window.location.hash.includes('?')) {
+        const hashQuery = window.location.hash.substring(window.location.hash.indexOf('?'));
+        const hashParams = new URLSearchParams(hashQuery);
+        return hashParams.get(key);
+      }
+    }
+    return null;
+  };
 
-  const initialEmail = location.state?.email || '';
-  const initialSchoolName = location.state?.schoolName || '';
+  const token = getParam('token');
+  const type = getParam('type') || 'school';
+
+  const initialEmail = location.state?.email || (typeof window !== 'undefined' ? localStorage.getItem('technik_pending_activation_email') : '') || '';
+  const initialSchoolName = location.state?.schoolName || (typeof window !== 'undefined' ? localStorage.getItem('technik_pending_school_name') : '') || '';
 
   // 'waiting' | 'activating' | 'success' | 'error'
   const [phase, setPhase] = useState(token ? 'activating' : 'waiting');
@@ -41,6 +58,109 @@ export default function ActivationPending() {
   const [resendCooldown, setResendCooldown] = useState(0);
 
   const hasActivatedRef = useRef(false);
+
+  // Persist pending registration details locally for cross-tab or refresh resilience
+  useEffect(() => {
+    if (initialEmail) {
+      localStorage.setItem('technik_pending_activation_email', initialEmail);
+    }
+    if (initialSchoolName) {
+      localStorage.setItem('technik_pending_school_name', initialSchoolName);
+    }
+  }, [initialEmail, initialSchoolName]);
+
+  // Broadcast activation success across open tabs and storage
+  const notifyActivationSuccess = (payload) => {
+    try {
+      localStorage.setItem('technik_activation_success_event', JSON.stringify({ ...payload, ts: Date.now() }));
+    } catch {
+      // Ignore localStorage errors
+    }
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const bc = new BroadcastChannel('technik_activation_channel');
+        bc.postMessage(payload);
+        bc.close();
+      }
+    } catch {
+      // Ignore BroadcastChannel errors
+    }
+  };
+
+  // Cross-tab synchronization listener (Tab A updates immediately when Tab B activates)
+  useEffect(() => {
+    if (phase === 'success') return;
+
+    const handleSuccessPayload = (payload) => {
+      if (!payload) return;
+      setActivatedInfo((prev) => ({
+        email: payload.email || prev.email || initialEmail,
+        schoolName: payload.schoolName || prev.schoolName || initialSchoolName,
+        mfaSetupToken: payload.mfaSetupToken || prev.mfaSetupToken || ''
+      }));
+      setPhase('success');
+    };
+
+    const handleStorage = (e) => {
+      if (e.key === 'technik_activation_success_event' && e.newValue) {
+        try {
+          const data = JSON.parse(e.newValue);
+          handleSuccessPayload(data);
+        } catch {
+          // ignore
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorage);
+
+    let bc = null;
+    try {
+      if ('BroadcastChannel' in window) {
+        bc = new BroadcastChannel('technik_activation_channel');
+        bc.onmessage = (event) => {
+          if (event.data) {
+            handleSuccessPayload(event.data);
+          }
+        };
+      }
+    } catch {
+      // ignore
+    }
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+      if (bc) bc.close();
+    };
+  }, [phase, initialEmail, initialSchoolName]);
+
+  // Active polling in 'waiting' phase: checks backend status every 3s so original tab advances seamlessly
+  useEffect(() => {
+    if (phase !== 'waiting') return;
+    const targetEmail = activatedInfo.email || initialEmail;
+    if (!targetEmail) return;
+
+    const pollStatus = async () => {
+      try {
+        const res = await getActivationStatusApi({ email: targetEmail, type });
+        if (res && res.isActivated) {
+          const payload = {
+            email: res.email || targetEmail,
+            schoolName: res.schoolName || activatedInfo.schoolName || initialSchoolName,
+            mfaSetupToken: res.mfaSetupToken || ''
+          };
+          setActivatedInfo(payload);
+          notifyActivationSuccess(payload);
+          setPhase('success');
+        }
+      } catch {
+        // Silently retry on next tick
+      }
+    };
+
+    const intervalId = setInterval(pollStatus, 3000);
+    return () => clearInterval(intervalId);
+  }, [phase, activatedInfo.email, activatedInfo.schoolName, initialEmail, initialSchoolName, type]);
 
   // Auto-activate when a token is present in the URL (user clicked email link)
   useEffect(() => {
@@ -59,24 +179,25 @@ export default function ActivationPending() {
         const schoolName = res?.schoolName || initialSchoolName;
         const mfaSetupToken = res?.mfaSetupToken || '';
 
-        setActivatedInfo({
-          email,
-          schoolName,
-          mfaSetupToken
-        });
+        const payload = { email, schoolName, mfaSetupToken };
+        setActivatedInfo(payload);
+        notifyActivationSuccess(payload);
         setPhase('success');
       })
       .catch(async (err) => {
         // Fallback: If token was already used / cleared, check if account is already activated
-        if (initialEmail) {
+        const targetEmail = initialEmail || activatedInfo.email;
+        if (targetEmail) {
           try {
-            const statusRes = await getActivationStatusApi({ email: initialEmail, type });
+            const statusRes = await getActivationStatusApi({ email: targetEmail, type });
             if (statusRes?.isActivated) {
-              setActivatedInfo({
-                email: statusRes.email || initialEmail,
+              const payload = {
+                email: statusRes.email || targetEmail,
                 schoolName: statusRes.schoolName || initialSchoolName,
-                mfaSetupToken: ''
-              });
+                mfaSetupToken: statusRes.mfaSetupToken || ''
+              };
+              setActivatedInfo(payload);
+              notifyActivationSuccess(payload);
               setPhase('success');
               return;
             }
