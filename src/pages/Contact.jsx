@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import contactGirlImg from '../assets/contact_banner_girl_sign.jpg';
+import { submitContactEnquiryApi } from '../services/api';
 import {
   Phone,
   Mail,
@@ -18,20 +19,43 @@ import {
   Plus,
   Minus,
   ArrowRight,
-  CheckCircle2
+  CheckCircle2,
+  Loader2,
+  AlertCircle
 } from 'lucide-react';
 
 export default function Contact() {
+  const [searchParams] = useSearchParams();
+  const formRef = useRef(null);
+
   // Form State
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     phone: '',
-    subject: '',
+    subject: searchParams.get('subject') || '',
     message: ''
   });
   const [fieldErrors, setFieldErrors] = useState({});
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [serverError, setServerError] = useState('');
+
+  // Prefill subject from URL query parameters (e.g. /contact?subject=Hosting%20Partner)
+  useEffect(() => {
+    const subjParam = searchParams.get('subject');
+    if (subjParam) {
+      setFormData(prev => ({ ...prev, subject: subjParam }));
+    }
+  }, [searchParams]);
+
+  const handleQuickEnquiry = (subj) => {
+    setFormData(prev => ({ ...prev, subject: subj }));
+    clearFieldError('subject');
+    if (formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  };
 
   const clearFieldError = (key) => {
     if (fieldErrors[key]) {
@@ -50,8 +74,9 @@ export default function Contact() {
     setOpenFaq(openFaq === index ? null : index);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setServerError('');
     const errs = {};
     if (!formData.name.trim()) errs.name = "This field cannot be left empty";
     if (!formData.email.trim()) {
@@ -68,7 +93,23 @@ export default function Contact() {
     }
 
     setFieldErrors({});
-    setSubmitted(true);
+    setIsSubmitting(true);
+
+    try {
+      await submitContactEnquiryApi({
+        name: formData.name.trim(),
+        email: formData.email.trim(),
+        phone: formData.phone.trim(),
+        subject: formData.subject,
+        message: formData.message.trim(),
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error("Failed to submit contact enquiry:", err);
+      setServerError(err.message || "Failed to send your message. Please try again or email us directly at support@technikolympiad.com");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // FAQ List
@@ -207,8 +248,8 @@ export default function Contact() {
                 <Mail size={22} color="#ffffff" />
               </div>
               <h3 style={styles.cardTitle}>Email Us</h3>
-              <a href="mailto:support@technikolympaid.com" style={styles.cardHighlightText}>
-                support@technikolympaid.com
+              <a href="mailto:support@technikolympiad.com" style={styles.cardHighlightText}>
+                support@technikolympiad.com
               </a>
               <p style={styles.cardSubText}>
                 We usually respond within 24 hours.
@@ -222,7 +263,7 @@ export default function Contact() {
               </div>
               <h3 style={styles.cardTitle}>Our Office</h3>
               <span style={styles.cardCompanyText}>
-                Technik Olympiad Private Limited
+                Technik Olympiad
               </span>
               <p style={styles.cardSubText}>
                 Vijayawada, Andhra Pradesh <br />
@@ -249,7 +290,7 @@ export default function Contact() {
           <div style={styles.middleTwoColGrid} className="contact-middle-grid">
             
             {/* LEFT COL: SEND US A MESSAGE FORM */}
-            <div style={styles.formContainerCard}>
+            <div ref={formRef} style={styles.formContainerCard}>
               <div style={styles.sectionHeaderRow}>
                 <div style={styles.sectionIconBadge}>
                   <Send size={22} color="#1d4ed8" />
@@ -260,12 +301,31 @@ export default function Contact() {
                 </div>
               </div>
 
+              {serverError && (
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '0.5rem',
+                  padding: '0.85rem 1rem',
+                  background: '#fef2f2',
+                  border: '1px solid #fecaca',
+                  borderRadius: '10px',
+                  color: '#dc2626',
+                  fontSize: '0.88rem',
+                  marginBottom: '1.25rem',
+                  fontWeight: 500
+                }}>
+                  <AlertCircle size={18} style={{ flexShrink: 0 }} />
+                  <span>{serverError}</span>
+                </div>
+              )}
+
               {submitted ? (
                 <div style={styles.successBox}>
                   <CheckCircle2 size={48} color="#16a34a" />
                   <h4 style={styles.successTitle}>Thank You, {formData.name}!</h4>
                   <p style={styles.successDesc}>
-                    Your message has been received. Our team will contact you at <strong>{formData.email}</strong> shortly.
+                    Your message has been sent to our team at <strong>support@technikolympiad.com</strong>. We will review your inquiry and get back to you at <strong>{formData.email}</strong> shortly.
                   </p>
                   <button 
                     style={styles.resetBtn}
@@ -354,8 +414,9 @@ export default function Contact() {
                         }}
                       >
                         <option value="">Select a subject</option>
-                        <option value="Student Enquiry">Student Enquiry</option>
+                        <option value="Hosting Partner">Hosting Partner</option>
                         <option value="School Partnership">School Partnership</option>
+                        <option value="Student Enquiry">Student Enquiry</option>
                         <option value="Sponsorship & Collaboration">Sponsorship & Collaboration</option>
                         <option value="Media Enquiries">Media Enquiries</option>
                         <option value="General Support">General Support</option>
@@ -388,9 +449,26 @@ export default function Contact() {
                     )}
                   </div>
 
-                  <button type="submit" style={styles.sendMsgBtn}>
-                    <Send size={16} />
-                    <span>Send Message</span>
+                  <button 
+                    type="submit" 
+                    style={{
+                      ...styles.sendMsgBtn,
+                      opacity: isSubmitting ? 0.75 : 1,
+                      cursor: isSubmitting ? 'not-allowed' : 'pointer'
+                    }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 size={16} className="spin-slow" />
+                        <span>Sending Message...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Send size={16} />
+                        <span>Send Message</span>
+                      </>
+                    )}
                   </button>
                 </form>
               )}
@@ -431,84 +509,7 @@ export default function Contact() {
 
           </div>
 
-          {/* 4. QUICK ENQUIRIES CATEGORY BAR */}
-          <div style={styles.quickEnquiriesWrapper}>
-            <div style={styles.sectionHeaderRow}>
-              <div style={styles.sectionIconBadge}>
-                <MessageCircle size={22} color="#1d4ed8" />
-              </div>
-              <div>
-                <h3 style={styles.sectionTitle}>Quick Enquiries</h3>
-                <p style={styles.sectionSub}>Choose a category to get faster support.</p>
-              </div>
-            </div>
-
-            <div style={styles.quickPillsGrid} className="contact-quick-pills">
-              
-              {/* Category 1 */}
-              <div 
-                style={styles.quickPillCard}
-                onClick={() => setFormData({ ...formData, subject: 'Student Enquiry' })}
-              >
-                <div style={styles.pillLeftGroup}>
-                  <GraduationCap size={18} color="#2563eb" />
-                  <span style={styles.pillTitle}>Student Enquiry</span>
-                </div>
-                <ArrowRight size={16} color="#2563eb" />
-              </div>
-
-              {/* Category 2 */}
-              <div 
-                style={styles.quickPillCard}
-                onClick={() => setFormData({ ...formData, subject: 'School Partnership' })}
-              >
-                <div style={styles.pillLeftGroup}>
-                  <Building2 size={18} color="#2563eb" />
-                  <span style={styles.pillTitle}>School Partnership</span>
-                </div>
-                <ArrowRight size={16} color="#2563eb" />
-              </div>
-
-              {/* Category 3 */}
-              <div 
-                style={styles.quickPillCard}
-                onClick={() => setFormData({ ...formData, subject: 'Sponsorship & Collaboration' })}
-              >
-                <div style={styles.pillLeftGroup}>
-                  <Handshake size={18} color="#2563eb" />
-                  <span style={styles.pillTitle}>Sponsorship & Collaboration</span>
-                </div>
-                <ArrowRight size={16} color="#2563eb" />
-              </div>
-
-              {/* Category 4 */}
-              <div 
-                style={styles.quickPillCard}
-                onClick={() => setFormData({ ...formData, subject: 'Media Enquiries' })}
-              >
-                <div style={styles.pillLeftGroup}>
-                  <Volume2 size={18} color="#2563eb" />
-                  <span style={styles.pillTitle}>Media Enquiries</span>
-                </div>
-                <ArrowRight size={16} color="#2563eb" />
-              </div>
-
-              {/* Category 5 */}
-              <div 
-                style={styles.quickPillCard}
-                onClick={() => setFormData({ ...formData, subject: 'General Support' })}
-              >
-                <div style={styles.pillLeftGroup}>
-                  <Headset size={18} color="#2563eb" />
-                  <span style={styles.pillTitle}>General Support</span>
-                </div>
-                <ArrowRight size={16} color="#2563eb" />
-              </div>
-
-            </div>
-          </div>
-
-          {/* 5. FREQUENTLY ASKED QUESTIONS ACCORDION */}
+          {/* 4. FREQUENTLY ASKED QUESTIONS ACCORDION */}
           <div style={styles.faqSectionWrapper}>
             <div style={styles.faqHeaderRow}>
               <div style={styles.sectionHeaderRow}>
@@ -968,45 +969,7 @@ const styles = {
     marginTop: '0.1rem',
   },
 
-  /* 4. QUICK ENQUIRIES CATEGORY BAR */
-  quickEnquiriesWrapper: {
-    background: '#ffffff',
-    borderRadius: '14px',
-    padding: '1.25rem',
-    border: '1px solid #e2e8f0',
-    boxShadow: '0 3px 12px rgba(0,0,0,0.025)',
-    marginTop: '1rem',
-  },
-  quickPillsGrid: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
-    gap: '0.6rem',
-    marginTop: '0.75rem',
-  },
-  quickPillCard: {
-    background: '#f8fafc',
-    border: '1px solid #e2e8f0',
-    borderRadius: '8px',
-    padding: '0.6rem 0.75rem',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-  pillLeftGroup: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.45rem',
-  },
-  pillTitle: {
-    fontSize: '0.8rem',
-    fontWeight: 800,
-    color: '#0c1e45',
-    fontFamily: 'var(--font-heading)',
-  },
-
-  /* 5. FREQUENTLY ASKED QUESTIONS */
+  /* 4. FREQUENTLY ASKED QUESTIONS */
   faqSectionWrapper: {
     background: '#ffffff',
     borderRadius: '14px',

@@ -25,6 +25,22 @@ import TermsConditions from './pages/TermsConditions';
 import RefundPolicy from './pages/RefundPolicy';
 import NotFound from './pages/NotFound';
 
+function ScrollToTop() {
+  const { pathname, search } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'instant',
+    });
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, [pathname, search]);
+
+  return null;
+}
+
 function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegisterSuccess }) {
   const location = useLocation();
   const navigate = useNavigate();
@@ -53,14 +69,17 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
 
   useEffect(() => {
     setIsLoading(true);
+    window.scrollTo(0, 0);
     const timer = setTimeout(() => {
       setIsLoading(false);
+      window.scrollTo(0, 0);
     }, 650);
     return () => clearTimeout(timer);
-  }, [location.pathname]);
+  }, [location.pathname, location.search]);
 
   return (
     <div className="app-container">
+      <ScrollToTop />
       {isLoading && <CreativeLoader />}
       <TopNav />
       <main className="main-content">

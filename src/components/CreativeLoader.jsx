@@ -44,7 +44,6 @@ export default function CreativeLoader({ text }) {
         <div style={styles.brandTitle}>
           TECHNIK <span style={{ color: '#f97316' }}>OLYMPIAD</span>
         </div>
-        <div style={styles.brandSubtitle}>PRIVATE LIMITED</div>
 
         {/* Dynamic Status Text */}
         <div style={styles.statusText} className="status-text-pulse">

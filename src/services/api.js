@@ -420,3 +420,20 @@ export async function createAdminUserApi(payload) {
   return parseJsonOrThrow(response);
 }
 
+/**
+ * Submit a message from the Contact Us page to support@technikolympiad.com
+ * @param {{ name: string, email: string, phone?: string, subject: string, message: string }} payload
+ */
+export async function submitContactEnquiryApi(payload) {
+  const response = await fetch(`${API_BASE_URL}/api/contact`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRF-Token': getCsrfToken()
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload)
+  });
+  return parseJsonOrThrow(response);
+}
+
