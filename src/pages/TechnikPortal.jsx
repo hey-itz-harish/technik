@@ -269,7 +269,7 @@ export default function TechnikPortal() {
         role: 'Regional Olympiad Admin',
         zone: 'South Zone (Chennai)'
       });
-      showToast('success', 'Technik User Added Successfully!', `Registered new Technik Conducting Professional: ${created.name} (${created.id})`);
+      showToast('success', 'User Registered & Email Dispatched!', `Registered ${created.name}. Official portal passcode has been emailed to ${created.email} from noreply@technikolympiad.com.`);
     } catch (err) {
       showToast('error', 'Registration Failed', err.message || 'Failed to create user. Ensure the username / email is unique.');
     } finally {
