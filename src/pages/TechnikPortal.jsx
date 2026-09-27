@@ -22,7 +22,19 @@ import {
   X, 
   AlertCircle, 
   Eye, 
-  EyeOff 
+  EyeOff,
+  BellRing,
+  CalendarDays,
+  PlusCircle,
+  Edit3,
+  Trash2,
+  ExternalLink,
+  Globe,
+  Tag,
+  MapPin,
+  Calendar,
+  Newspaper,
+  Megaphone
 } from 'lucide-react';
 import {
   loginAdminApi,
@@ -31,7 +43,11 @@ import {
   updatePrideStatusApi,
   getAdminOlympiadRegistrationsApi,
   getAdminUsersApi,
-  createAdminUserApi
+  createAdminUserApi,
+  getNewsEventsApi,
+  createNewsEventApi,
+  updateNewsEventApi,
+  deleteNewsEventApi
 } from '../services/api';
 
 export default function TechnikPortal() {
@@ -78,6 +94,27 @@ export default function TechnikPortal() {
   // Live State for Olympiad Registered Students
   const [olympiadRegistrations, setOlympiadRegistrations] = useState([]);
 
+  // Live State for Latest News & Upcoming Events
+  const [newsEventsList, setNewsEventsList] = useState([]);
+  const [newsTypeFilter, setNewsTypeFilter] = useState('All');
+  const [newsStatusFilter, setNewsStatusFilter] = useState('All');
+  const [newsSearchTerm, setNewsSearchTerm] = useState('');
+  const [showNewsEventModal, setShowNewsEventModal] = useState(false);
+  const [isEditingNewsEvent, setIsEditingNewsEvent] = useState(false);
+  const [isSavingNewsEvent, setIsSavingNewsEvent] = useState(false);
+  const [newsEventForm, setNewsEventForm] = useState({
+    id: '',
+    type: 'NEWS',
+    title: '',
+    category: 'Olympiad Announcement',
+    date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+    location: '',
+    description: '',
+    imageUrl: '',
+    linkUrl: '/catalog',
+    isPublished: true
+  });
+
   // Live Data Fetching for Technik Portal Dashboard
   useEffect(() => {
     if (!isAuthenticated) return;
@@ -85,10 +122,11 @@ export default function TechnikPortal() {
 
     async function loadAdminData() {
       try {
-        const [nomsRes, olymRes, usersRes] = await Promise.allSettled([
+        const [nomsRes, olymRes, usersRes, newsRes] = await Promise.allSettled([
           getAdminPrideNominationsApi(),
           getAdminOlympiadRegistrationsApi(),
-          getAdminUsersApi()
+          getAdminUsersApi(),
+          getNewsEventsApi()
         ]);
 
         if (isMounted) {
@@ -110,6 +148,9 @@ export default function TechnikPortal() {
               addedDate: u.createdAt ? new Date(u.createdAt).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }) : '01 Aug 2026'
             }));
             setAdminUsersList(mappedUsers);
+          }
+          if (newsRes.status === 'fulfilled' && newsRes.value?.items) {
+            setNewsEventsList(newsRes.value.items);
           }
         }
       } catch (err) {
@@ -273,6 +314,114 @@ export default function TechnikPortal() {
     }
   };
 
+  // News & Events Management Handlers
+  const handleOpenAddNewsEvent = () => {
+    setIsEditingNewsEvent(false);
+    setNewsEventForm({
+      id: '',
+      type: 'NEWS',
+      title: '',
+      category: 'Olympiad Announcement',
+      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      location: '',
+      description: '',
+      imageUrl: '',
+      linkUrl: '/catalog',
+      isPublished: true
+    });
+    setShowNewsEventModal(true);
+  };
+
+  const handleOpenEditNewsEvent = (item) => {
+    setIsEditingNewsEvent(true);
+    setNewsEventForm({
+      id: item.id,
+      type: item.type || 'NEWS',
+      title: item.title || '',
+      category: item.category || 'Olympiad Announcement',
+      date: item.date || '',
+      location: item.location || '',
+      description: item.description || '',
+      imageUrl: item.imageUrl || '',
+      linkUrl: item.linkUrl || '',
+      isPublished: item.isPublished !== undefined ? item.isPublished : true
+    });
+    setShowNewsEventModal(true);
+  };
+
+  const handleSaveNewsEventSubmit = async (e) => {
+    e.preventDefault();
+    if (!newsEventForm.title.trim()) {
+      showToast('error', 'Validation Error', 'Please enter an announcement / event title.');
+      return;
+    }
+
+    setIsSavingNewsEvent(true);
+    try {
+      if (isEditingNewsEvent && newsEventForm.id) {
+        // PUT API: Update existing news/event
+        const res = await updateNewsEventApi(newsEventForm.id, newsEventForm);
+        const updatedItem = res.item || { ...newsEventForm };
+        setNewsEventsList(prev =>
+          prev.map(item => item.id === newsEventForm.id ? { ...item, ...updatedItem } : item)
+        );
+        showToast('success', 'Update Saved', `"${updatedItem.title}" updated successfully! Changes reflect on the website live.`);
+      } else {
+        // POST API: Create new news/event
+        const res = await createNewsEventApi(newsEventForm);
+        const newItem = res.item || {
+          ...newsEventForm,
+          id: `${newsEventForm.type.toLowerCase()}-${Date.now()}`,
+          createdAt: new Date().toISOString()
+        };
+        setNewsEventsList(prev => [newItem, ...prev]);
+        showToast('success', 'Published Successfully', `New ${newsEventForm.type === 'EVENT' ? 'Upcoming Event' : 'Latest News'} published to website!`);
+      }
+      setShowNewsEventModal(false);
+    } catch (err) {
+      showToast('error', 'Save Failed', err.message || 'Failed to save update in database.');
+    } finally {
+      setIsSavingNewsEvent(false);
+    }
+  };
+
+  const handleDeleteNewsEvent = async (id, title) => {
+    if (!window.confirm(`Are you sure you want to delete "${title}"?`)) {
+      return;
+    }
+    setActionLoadingId(`delete-news-${id}`);
+    try {
+      await deleteNewsEventApi(id);
+      setNewsEventsList(prev => prev.filter(item => item.id !== id));
+      showToast('info', 'Deleted', `"${title}" has been removed.`);
+    } catch (err) {
+      // Fallback local remove
+      setNewsEventsList(prev => prev.filter(item => item.id !== id));
+      showToast('info', 'Deleted', `"${title}" removed.`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleTogglePublishStatus = async (item) => {
+    const updatedStatus = !item.isPublished;
+    setActionLoadingId(`toggle-publish-${item.id}`);
+    try {
+      await updateNewsEventApi(item.id, { ...item, isPublished: updatedStatus });
+      setNewsEventsList(prev =>
+        prev.map(i => i.id === item.id ? { ...i, isPublished: updatedStatus } : i)
+      );
+      showToast('success', updatedStatus ? 'Published Live' : 'Moved to Draft', `"${item.title}" is now ${updatedStatus ? 'visible live on homepage' : 'hidden (draft)'}.`);
+    } catch (err) {
+      setNewsEventsList(prev =>
+        prev.map(i => i.id === item.id ? { ...i, isPublished: updatedStatus } : i)
+      );
+      showToast('success', updatedStatus ? 'Published Live' : 'Moved to Draft', `"${item.title}" is now ${updatedStatus ? 'visible live on homepage' : 'hidden (draft)'}.`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
   // Filter Logic
   const filteredPride = prideNominations.filter(item => {
     const matchesSearch = 
@@ -296,9 +445,25 @@ export default function TechnikPortal() {
     return matchesSearch && matchesGrade && matchesTrack && matchesYear;
   });
 
+  const filteredNewsEvents = newsEventsList.filter(item => {
+    const matchesSearch = 
+      (item.title || '').toLowerCase().includes(newsSearchTerm.toLowerCase()) ||
+      (item.category || '').toLowerCase().includes(newsSearchTerm.toLowerCase()) ||
+      (item.location || '').toLowerCase().includes(newsSearchTerm.toLowerCase()) ||
+      (item.description || '').toLowerCase().includes(newsSearchTerm.toLowerCase());
+    const matchesType = newsTypeFilter === 'All' || item.type === newsTypeFilter;
+    const matchesStatus = 
+      newsStatusFilter === 'All' || 
+      (newsStatusFilter === 'Published' && item.isPublished) ||
+      (newsStatusFilter === 'Draft' && !item.isPublished);
+    return matchesSearch && matchesType && matchesStatus;
+  });
+
   const totalPrideCount = prideNominations.length;
   const pendingPrideCount = prideNominations.filter(i => i.status === 'Pending Review').length;
   const totalOlympiadCount = olympiadRegistrations.length;
+  const totalNewsCount = newsEventsList.filter(i => i.type === 'NEWS').length;
+  const totalEventsCount = newsEventsList.filter(i => i.type === 'EVENT').length;
 
   // =========================================================================
   // VIEW 1: UNAUTHENTICATED LOGIN & EMAIL OTP VERIFICATION SCREEN
@@ -621,8 +786,20 @@ export default function TechnikPortal() {
             </p>
           </div>
 
-          {/* Top Actions: "+ Add User" & "Sign Out" */}
+          {/* Top Actions: "+ Add News / Event", "+ Add User" & "Sign Out" */}
           <div style={styles.headerActionsBox}>
+            <button 
+              onClick={handleOpenAddNewsEvent}
+              style={{
+                ...styles.addUserHeaderBtn,
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
+                boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)'
+              }}
+            >
+              <Megaphone size={16} />
+              <span>+ Add News / Event</span>
+            </button>
+
             <button 
               onClick={() => setShowAddUserModal(true)}
               style={styles.addUserHeaderBtn}
@@ -665,12 +842,12 @@ export default function TechnikPortal() {
         </div>
 
         <div style={styles.metricCard}>
-          <div style={{ ...styles.metricIcon, background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b' }}>
-            <Clock size={24} />
+          <div style={{ ...styles.metricIcon, background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6' }}>
+            <BellRing size={24} />
           </div>
           <div>
-            <div style={styles.metricVal}>{pendingPrideCount}</div>
-            <div style={styles.metricLbl}>Pending Admin Approvals</div>
+            <div style={styles.metricVal}>{newsEventsList.length}</div>
+            <div style={styles.metricLbl}>News &amp; Event Updates ({totalNewsCount} News, {totalEventsCount} Events)</div>
           </div>
         </div>
 
@@ -714,6 +891,19 @@ export default function TechnikPortal() {
         </button>
 
         <button 
+          onClick={() => setActiveTab('news-events')}
+          style={{
+            ...styles.tabBtn,
+            borderBottom: activeTab === 'news-events' ? '3px solid #8b5cf6' : '3px solid transparent',
+            color: activeTab === 'news-events' ? '#8b5cf6' : '#64748b',
+            fontWeight: activeTab === 'news-events' ? 700 : 600
+          }}
+        >
+          <BellRing size={16} style={{ marginRight: '6px' }} />
+          Latest News &amp; Upcoming Events Updates ({newsEventsList.length})
+        </button>
+
+        <button 
           onClick={() => setActiveTab('admin-users')}
           style={{
             ...styles.tabBtn,
@@ -727,8 +917,48 @@ export default function TechnikPortal() {
         </button>
       </div>
 
-      {/* Filter Control Bar */}
-      {activeTab !== 'admin-users' && (
+      {/* Filter Control Bar for News & Events */}
+      {activeTab === 'news-events' && (
+        <div style={styles.filterBar}>
+          <div style={styles.searchWrapper}>
+            <Search size={16} color="#94a3b8" style={{ marginLeft: '10px' }} />
+            <input 
+              type="text" 
+              placeholder="Search news & events by title, category or venue..."
+              value={newsSearchTerm}
+              onChange={(e) => setNewsSearchTerm(e.target.value)}
+              style={styles.searchInput}
+            />
+          </div>
+
+          <div style={styles.filterGroup}>
+            <span style={styles.filterLabel}><Filter size={13} /> Type:</span>
+            <select 
+              value={newsTypeFilter} 
+              onChange={(e) => setNewsTypeFilter(e.target.value)}
+              style={styles.selectInput}
+            >
+              <option value="All">All Updates ({newsEventsList.length})</option>
+              <option value="NEWS">Latest News Only ({totalNewsCount})</option>
+              <option value="EVENT">Upcoming Events Only ({totalEventsCount})</option>
+            </select>
+
+            <span style={styles.filterLabel}>Visibility:</span>
+            <select 
+              value={newsStatusFilter} 
+              onChange={(e) => setNewsStatusFilter(e.target.value)}
+              style={styles.selectInput}
+            >
+              <option value="All">All Visibility</option>
+              <option value="Published">Published Live on Home</option>
+              <option value="Draft">Draft (Hidden)</option>
+            </select>
+          </div>
+        </div>
+      )}
+
+      {/* Filter Control Bar for Nominations & Registrations */}
+      {activeTab !== 'admin-users' && activeTab !== 'news-events' && (
         <div style={styles.filterBar}>
           <div style={styles.searchWrapper}>
             <Search size={16} color="#94a3b8" style={{ marginLeft: '10px' }} />
@@ -1059,6 +1289,389 @@ export default function TechnikPortal() {
                 ))}
               </tbody>
             </table>
+          </div>
+        </div>
+      )}
+
+      {/* TAB CONTENT 4: LATEST NEWS & UPCOMING EVENTS MANAGEMENT */}
+      {activeTab === 'news-events' && (
+        <div style={styles.tableCard}>
+          <div style={{ ...styles.tableHeader, display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
+            <div>
+              <h3 style={styles.tableTitle}>
+                <BellRing size={18} color="#8b5cf6" style={{ marginRight: '8px' }} />
+                Latest News &amp; Upcoming Events Updates
+              </h3>
+              <span style={styles.tableSubtitle}>
+                Add, update, publish and manage announcements that appear live on the website cards.
+              </span>
+            </div>
+            <button 
+              onClick={handleOpenAddNewsEvent}
+              style={{
+                ...styles.addUserBtnSmall,
+                background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
+              }}
+            >
+              <PlusCircle size={15} /> + Add News / Event
+            </button>
+          </div>
+
+          <div style={styles.tableResponsive}>
+            <table style={styles.table}>
+              <thead>
+                <tr style={styles.thRow}>
+                  <th style={styles.th}>Type &amp; Title</th>
+                  <th style={styles.th}>Category</th>
+                  <th style={styles.th}>Date / Schedule</th>
+                  <th style={styles.th}>Location / Target</th>
+                  <th style={styles.th}>Status</th>
+                  <th style={styles.th}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredNewsEvents.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" style={styles.emptyTd}>No news or events found matching filter criteria. Click "+ Add News / Event" to publish an update.</td>
+                  </tr>
+                ) : (
+                  filteredNewsEvents.map((item) => (
+                    <tr key={item.id} style={styles.tr}>
+                      <td style={styles.td}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                          <span style={{
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px',
+                            fontSize: '0.72rem',
+                            fontWeight: 800,
+                            padding: '0.2rem 0.55rem',
+                            borderRadius: '6px',
+                            textTransform: 'uppercase',
+                            background: item.type === 'EVENT' ? '#ffedd5' : '#ede9fe',
+                            color: item.type === 'EVENT' ? '#c2410c' : '#6d28d9',
+                            border: `1px solid ${item.type === 'EVENT' ? '#fdba74' : '#ddd6fe'}`
+                          }}>
+                            {item.type === 'EVENT' ? <CalendarDays size={11} /> : <Newspaper size={11} />}
+                            {item.type}
+                          </span>
+                          <div style={{ fontWeight: 800, color: '#0f172a', fontSize: '0.9rem' }}>
+                            {item.title}
+                          </div>
+                        </div>
+                        {item.description && (
+                          <div style={{ fontSize: '0.78rem', color: '#64748b', marginTop: '4px', lineHeight: '1.4', maxWidth: '420px' }}>
+                            {item.description.length > 90 ? `${item.description.substring(0, 90)}...` : item.description}
+                          </div>
+                        )}
+                      </td>
+                      <td style={styles.td}>
+                        <span style={{
+                          display: 'inline-block',
+                          fontSize: '0.76rem',
+                          fontWeight: 700,
+                          color: '#2563eb',
+                          background: '#eff6ff',
+                          border: '1px solid #bfdbfe',
+                          padding: '0.2rem 0.6rem',
+                          borderRadius: '6px'
+                        }}>
+                          {item.category || 'General'}
+                        </span>
+                      </td>
+                      <td style={styles.td}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.82rem', fontWeight: 600, color: '#334155' }}>
+                          <Clock size={13} color="#64748b" />
+                          {item.date || 'Active / Live'}
+                        </div>
+                      </td>
+                      <td style={styles.td}>
+                        <div style={{ fontSize: '0.82rem', color: '#475569', fontWeight: 500 }}>
+                          {item.location || (item.linkUrl ? `Link: ${item.linkUrl}` : 'Website Homepage')}
+                        </div>
+                      </td>
+                      <td style={styles.td}>
+                        <button
+                          onClick={() => handleTogglePublishStatus(item)}
+                          disabled={actionLoadingId === `toggle-publish-${item.id}`}
+                          style={{
+                            background: item.isPublished ? 'rgba(16, 185, 129, 0.15)' : 'rgba(100, 116, 139, 0.15)',
+                            color: item.isPublished ? '#10b981' : '#64748b',
+                            border: `1px solid ${item.isPublished ? 'rgba(16, 185, 129, 0.3)' : 'rgba(100, 116, 139, 0.3)'}`,
+                            padding: '0.3rem 0.65rem',
+                            borderRadius: '20px',
+                            fontSize: '0.74rem',
+                            fontWeight: 700,
+                            cursor: 'pointer',
+                            display: 'inline-flex',
+                            alignItems: 'center',
+                            gap: '4px'
+                          }}
+                          title="Click to toggle live website visibility"
+                        >
+                          {item.isPublished ? (
+                            <>
+                              <CheckCircle2 size={12} /> Live on Home
+                            </>
+                          ) : (
+                            <>
+                              <Clock size={12} /> Draft (Hidden)
+                            </>
+                          )}
+                        </button>
+                      </td>
+                      <td style={styles.td}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <button
+                            onClick={() => handleOpenEditNewsEvent(item)}
+                            style={{
+                              background: '#f1f5f9',
+                              border: '1px solid #cbd5e1',
+                              borderRadius: '6px',
+                              padding: '0.35rem 0.6rem',
+                              color: '#2563eb',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontSize: '0.78rem',
+                              fontWeight: 700
+                            }}
+                            title="Edit News / Event (PUT)"
+                          >
+                            <Edit3 size={13} /> Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteNewsEvent(item.id, item.title)}
+                            disabled={actionLoadingId === `delete-news-${item.id}`}
+                            style={{
+                              background: '#fef2f2',
+                              border: '1px solid #fecaca',
+                              borderRadius: '6px',
+                              padding: '0.35rem 0.6rem',
+                              color: '#ef4444',
+                              cursor: 'pointer',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontSize: '0.78rem',
+                              fontWeight: 700
+                            }}
+                            title="Delete item"
+                          >
+                            <Trash2 size={13} /> Delete
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {/* ========================================================================= */}
+      {/* MODAL: "+ ADD / EDIT NEWS & EVENT" (Add / Update via POST / PUT API)       */}
+      {/* ========================================================================= */}
+      {showNewsEventModal && (
+        <div style={styles.modalOverlay}>
+          <div style={{ ...styles.addUserModalCard, maxWidth: '640px' }}>
+            <div style={styles.modalHeaderRow}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <Megaphone size={20} color="#8b5cf6" />
+                <h3 style={styles.modalHeaderTitle}>
+                  {isEditingNewsEvent ? 'Update News / Event Announcement' : 'Add Latest News or Upcoming Event'}
+                </h3>
+              </div>
+              <button 
+                onClick={() => setShowNewsEventModal(false)}
+                style={styles.closeModalBtn}
+              >
+                <X size={18} />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveNewsEventSubmit} style={styles.modalForm}>
+              {/* Type selector */}
+              <div style={styles.formField}>
+                <label style={styles.formLabel}>Update Category Type <span style={{ color: '#ef4444' }}>*</span></label>
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+                  <button
+                    type="button"
+                    onClick={() => setNewsEventForm({ ...newsEventForm, type: 'NEWS' })}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: newsEventForm.type === 'NEWS' ? '2px solid #8b5cf6' : '1px solid #cbd5e1',
+                      background: newsEventForm.type === 'NEWS' ? '#f5f3ff' : '#ffffff',
+                      color: newsEventForm.type === 'NEWS' ? '#6d28d9' : '#475569',
+                      fontWeight: 800,
+                      fontSize: '0.88rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <Newspaper size={16} /> Latest News Article
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setNewsEventForm({ ...newsEventForm, type: 'EVENT' })}
+                    style={{
+                      padding: '0.75rem',
+                      borderRadius: '10px',
+                      border: newsEventForm.type === 'EVENT' ? '2px solid #ea580c' : '1px solid #cbd5e1',
+                      background: newsEventForm.type === 'EVENT' ? '#fff7ed' : '#ffffff',
+                      color: newsEventForm.type === 'EVENT' ? '#c2410c' : '#475569',
+                      fontWeight: 800,
+                      fontSize: '0.88rem',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '0.5rem',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    <CalendarDays size={16} /> Upcoming Event Schedule
+                  </button>
+                </div>
+              </div>
+
+              {/* Title */}
+              <div style={styles.formField}>
+                <label style={styles.formLabel}>Title / Headline <span style={{ color: '#ef4444' }}>*</span></label>
+                <input 
+                  type="text"
+                  placeholder={newsEventForm.type === 'EVENT' ? 'e.g. National Robotics Championship 2026' : 'e.g. Technik Pride Award 2026 Registrations Open'}
+                  value={newsEventForm.title}
+                  onChange={(e) => setNewsEventForm({ ...newsEventForm, title: e.target.value })}
+                  style={styles.modalInput}
+                  required
+                />
+              </div>
+
+              {/* Category & Date in 2 cols */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={styles.formField}>
+                  <label style={styles.formLabel}>Category Tag</label>
+                  <select 
+                    value={newsEventForm.category}
+                    onChange={(e) => setNewsEventForm({ ...newsEventForm, category: e.target.value })}
+                    style={styles.modalSelect}
+                  >
+                    <option value="Olympiad Announcement">Olympiad Announcement</option>
+                    <option value="Technik Pride Award">Technik Pride Award</option>
+                    <option value="National Championship">National Championship</option>
+                    <option value="District Level Schedule">District Level Schedule</option>
+                    <option value="State Level Competition">State Level Competition</option>
+                    <option value="Results & Merit List">Results &amp; Merit List</option>
+                    <option value="Curriculum & Guidelines">Curriculum &amp; Guidelines</option>
+                    <option value="Webinar & Workshop">Webinar &amp; Workshop</option>
+                  </select>
+                </div>
+
+                <div style={styles.formField}>
+                  <label style={styles.formLabel}>Date / Timeline Display</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. 15 Oct 2026 or Ongoing"
+                    value={newsEventForm.date}
+                    onChange={(e) => setNewsEventForm({ ...newsEventForm, date: e.target.value })}
+                    style={styles.modalInput}
+                  />
+                </div>
+              </div>
+
+              {/* Location & Link in 2 cols */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+                <div style={styles.formField}>
+                  <label style={styles.formLabel}>Venue / Location {newsEventForm.type === 'EVENT' ? '(For Event)' : '(Optional)'}</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. Online & State Centers"
+                    value={newsEventForm.location}
+                    onChange={(e) => setNewsEventForm({ ...newsEventForm, location: e.target.value })}
+                    style={styles.modalInput}
+                  />
+                </div>
+
+                <div style={styles.formField}>
+                  <label style={styles.formLabel}>Action Link / Route</label>
+                  <input 
+                    type="text"
+                    placeholder="e.g. /catalog, /awards, /verification"
+                    value={newsEventForm.linkUrl}
+                    onChange={(e) => setNewsEventForm({ ...newsEventForm, linkUrl: e.target.value })}
+                    style={styles.modalInput}
+                  />
+                </div>
+              </div>
+
+              {/* Description */}
+              <div style={styles.formField}>
+                <label style={styles.formLabel}>Summary / Description</label>
+                <textarea 
+                  rows={3}
+                  placeholder="Enter detailed description or announcement details..."
+                  value={newsEventForm.description}
+                  onChange={(e) => setNewsEventForm({ ...newsEventForm, description: e.target.value })}
+                  style={{ ...styles.modalInput, resize: 'vertical', minHeight: '75px' }}
+                />
+              </div>
+
+              {/* Is Published Toggle */}
+              <div style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+                <input
+                  type="checkbox"
+                  id="publishLiveCheck"
+                  checked={newsEventForm.isPublished}
+                  onChange={(e) => setNewsEventForm({ ...newsEventForm, isPublished: e.target.checked })}
+                  style={{ width: '18px', height: '18px', cursor: 'pointer', accentColor: '#8b5cf6' }}
+                />
+                <label htmlFor="publishLiveCheck" style={{ fontSize: '0.86rem', fontWeight: 700, color: '#1e293b', cursor: 'pointer' }}>
+                  Publish immediately and display live on Homepage cards
+                </label>
+              </div>
+
+              <div style={styles.modalFooterRow}>
+                <button 
+                  type="button" 
+                  onClick={() => setShowNewsEventModal(false)}
+                  style={styles.cancelBtn}
+                >
+                  Cancel
+                </button>
+
+                <button 
+                  type="submit"
+                  disabled={isSavingNewsEvent}
+                  style={{
+                    ...styles.submitUserBtn,
+                    background: 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)',
+                    boxShadow: '0 4px 14px rgba(139, 92, 246, 0.35)',
+                    opacity: isSavingNewsEvent ? 0.75 : 1,
+                    cursor: isSavingNewsEvent ? 'wait' : 'pointer'
+                  }}
+                >
+                  {isSavingNewsEvent ? (
+                    <>
+                      <RefreshCw size={16} className="spin-loader" />
+                      <span>Saving Update in PostgreSQL...</span>
+                    </>
+                  ) : (
+                    <>
+                      <CheckCircle2 size={16} />
+                      <span>{isEditingNewsEvent ? 'Update & Save Changes (PUT)' : 'Publish Update to PostgreSQL (POST)'}</span>
+                    </>
+                  )}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

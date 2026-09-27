@@ -31,13 +31,56 @@ import {
   Headphones,
   Search
 } from 'lucide-react';
+import { getNewsEventsApi } from '../services/api';
 
 export default function Home() {
   const [mouseTilt, setMouseTilt] = useState({ x: 0, y: 0 });
+  const [newsList, setNewsList] = useState([]);
+  const [upcomingEvents, setUpcomingEvents] = useState([]);
   const heroVisualRef = useRef(null);
 
-  // Setup scroll-reveal IntersectionObserver
+  // Setup scroll-reveal IntersectionObserver & Fetch Live News & Events
   useEffect(() => {
+    let isMounted = true;
+
+    async function loadLiveNewsEvents() {
+      try {
+        const res = await getNewsEventsApi('', true);
+        if (isMounted && res?.items) {
+          const liveNews = res.items
+            .filter(item => item.type === 'NEWS' && item.isPublished !== false)
+            .map((item, idx) => ({
+              id: item.id,
+              title: item.title,
+              date: item.date || 'Latest Update',
+              image: item.imageUrl || (idx % 3 === 0 ? news1Img : idx % 3 === 1 ? news2Img : news3Img),
+              link: item.linkUrl || '/catalog',
+              category: item.category
+            }));
+
+          setNewsList(liveNews.slice(0, 5));
+
+          const liveEvents = res.items
+            .filter(item => item.type === 'EVENT' && item.isPublished !== false)
+            .map(item => ({
+              id: item.id,
+              title: item.title,
+              date: item.date || 'Upcoming',
+              category: item.category || 'Olympiad Event',
+              location: item.location || 'Online & Centers',
+              description: item.description,
+              link: item.linkUrl || '/catalog'
+            }));
+
+          setUpcomingEvents(liveEvents.slice(0, 5));
+        }
+      } catch (err) {
+        // Keeps empty arrays on error
+      }
+    }
+
+    loadLiveNewsEvents();
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -52,7 +95,10 @@ export default function Home() {
     const elements = document.querySelectorAll('.reveal-on-scroll');
     elements.forEach((el) => observer.observe(el));
 
-    return () => observer.disconnect();
+    return () => {
+      isMounted = false;
+      observer.disconnect();
+    };
   }, []);
 
   const handleMouseMoveHero = (e) => {
@@ -97,7 +143,7 @@ export default function Home() {
               For Students from Play School to Class 12
             </div>
 
-            <div style={styles.heroActions} className="hero-stagger-7 home-hero-actions">
+            <div style={styles.heroActions} className="hero-stagger-7 home-hero-actions desktop-hero-actions">
               <Link to="/register" className="btn-hero-gold">
                 REGISTER YOUR SCHOOL
               </Link>
@@ -206,6 +252,20 @@ export default function Home() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Hero Actions for Mobile Layout (Rendered below the Visual/Badge on mobile) */}
+          <div style={styles.heroActions} className="hero-stagger-7 home-hero-actions mobile-hero-actions">
+            <Link to="/register" className="btn-hero-gold">
+              REGISTER YOUR SCHOOL
+            </Link>
+            <Link to="/catalog" className="btn-hero-blue">
+              EXPLORE OLYMPIADS
+            </Link>
+            <Link to="/awards" className="btn-hero-outline">
+              <Star size={15} color="#fbbf24" style={{ marginRight: '0.35rem' }} />
+              TECHNIK PRIDE AWARD
+            </Link>
           </div>
         </div>
       </section>
@@ -445,55 +505,102 @@ export default function Home() {
             <div style={styles.gridCardBox}>
               <div style={styles.cardHeaderRow}>
                 <h3 style={styles.gridCardHeaderTitle}>UPCOMING EVENTS</h3>
+                {upcomingEvents.length > 0 && (
+                  <Link to="/catalog" style={styles.viewAllLink}>View schedule</Link>
+                )}
               </div>
 
-              <div style={styles.launchedSoonBox}>
-                <div style={styles.launchedIconCircle}>
-                  <Rocket size={28} color="#2563eb" />
+              {upcomingEvents.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
+                  {upcomingEvents.slice(0, 5).map((ev) => (
+                    <div key={ev.id} style={{
+                      padding: '0.85rem',
+                      borderRadius: '12px',
+                      background: 'linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%)',
+                      border: '1px solid #bfdbfe',
+                      transition: 'transform 0.2s ease',
+                      boxShadow: '0 2px 8px rgba(37, 99, 235, 0.05)'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '0.35rem', gap: '0.5rem' }}>
+                        <span style={{
+                          fontSize: '0.72rem',
+                          fontWeight: 800,
+                          color: '#c2410c',
+                          background: '#ffedd5',
+                          border: '1px solid #fed7aa',
+                          padding: '0.15rem 0.5rem',
+                          borderRadius: '4px',
+                          textTransform: 'uppercase'
+                        }}>
+                          {ev.category}
+                        </span>
+                        <span style={{ fontSize: '0.75rem', fontWeight: 700, color: '#2563eb', display: 'inline-flex', alignItems: 'center', gap: '3px', whiteSpace: 'nowrap' }}>
+                          <Calendar size={12} /> {ev.date}
+                        </span>
+                      </div>
+                      <h4 style={{ fontSize: '0.88rem', fontWeight: 800, color: '#0f172a', marginBottom: '0.25rem', lineHeight: '1.3' }}>
+                        {ev.title}
+                      </h4>
+                      {ev.description && (
+                        <p style={{ fontSize: '0.78rem', color: '#64748b', lineHeight: '1.4', marginBottom: '0.45rem' }}>
+                          {ev.description.length > 80 ? `${ev.description.substring(0, 80)}...` : ev.description}
+                        </p>
+                      )}
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        {ev.location && (
+                          <span style={{ fontSize: '0.72rem', color: '#475569', display: 'inline-flex', alignItems: 'center', gap: '3px' }}>
+                            <MapPin size={11} color="#0284c7" /> {ev.location}
+                          </span>
+                        )}
+                        <Link to={ev.link || '/catalog'} style={{ fontSize: '0.76rem', fontWeight: 800, color: '#2563eb', textDecoration: 'none', marginLeft: 'auto' }}>
+                          Explore &rarr;
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
                 </div>
-                <h4 style={styles.launchedTitle}>WILL BE LAUNCHED SOON</h4>
-                <p style={styles.launchedDesc}>
-                  Exciting new Olympiad events and competition schedules will be announced shortly. Stay tuned!
-                </p>
-                <span style={styles.badgeComingSoonLarge}>Coming Soon</span>
-              </div>
+              ) : (
+                <div style={{ padding: '2.5rem 1rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.86rem' }}>
+                  No upcoming events scheduled at this moment.
+                </div>
+              )}
             </div>
 
             {/* LATEST NEWS */}
             <div style={styles.gridCardBox}>
               <div style={styles.cardHeaderRow}>
                 <h3 style={styles.gridCardHeaderTitle}>LATEST NEWS</h3>
-                <Link to="/coming-soon" style={styles.viewAllLink}>View all</Link>
+                {newsList.length > 0 && (
+                  <Link to="/catalog" style={styles.viewAllLink}>View all</Link>
+                )}
               </div>
 
-              <div style={styles.newsList}>
-                {/* News 1 */}
-                <div style={styles.newsRowItem}>
-                  <img src={news1Img} alt="News 1" style={styles.newsThumbImg} />
-                  <div>
-                    <h4 style={styles.newsItemTitle}>Technik Pride Award Nominations Open for 2026</h4>
-                    <p style={styles.newsItemDate}>01 Aug 2026</p>
-                  </div>
+              {newsList.length > 0 ? (
+                <div style={styles.newsList}>
+                  {newsList.slice(0, 5).map((item) => (
+                    <Link 
+                      key={item.id} 
+                      to={item.link || '/catalog'}
+                      style={{ ...styles.newsRowItem, textDecoration: 'none', color: 'inherit' }}
+                    >
+                      <img 
+                        src={item.image} 
+                        alt={item.title} 
+                        style={styles.newsThumbImg}
+                        onError={(e) => { e.target.src = news1Img; }}
+                      />
+                      <div>
+                        <h4 style={styles.newsItemTitle}>{item.title}</h4>
+                        <p style={styles.newsItemDate}>{item.date}</p>
+                      </div>
+                    </Link>
+                  ))}
                 </div>
-
-                {/* News 2 */}
-                <div style={styles.newsRowItem}>
-                  <img src={news2Img} alt="News 2" style={styles.newsThumbImg} />
-                  <div>
-                    <h4 style={styles.newsItemTitle}>District Level Olympiad Dates Announced</h4>
-                    <p style={styles.newsItemDate}>28 Jul 2026</p>
-                  </div>
+              ) : (
+                <div style={{ padding: '2.5rem 1rem', textAlign: 'center', color: '#94a3b8', fontSize: '0.86rem' }}>
+                  No latest news updates published at this moment.
                 </div>
-
-                {/* News 3 */}
-                <div style={styles.newsRowItem}>
-                  <img src={news3Img} alt="News 3" style={styles.newsThumbImg} />
-                  <div>
-                    <h4 style={styles.newsItemTitle}>Congratulations to All State Toppers! Results Are Live Now</h4>
-                    <p style={styles.newsItemDate}>25 Jul 2026</p>
-                  </div>
-                </div>
-              </div>
+              )}
             </div>
 
             {/* OUR FOCUS */}
@@ -2089,11 +2196,27 @@ styleSheet.innerText = `
     background: #09204a;
   }
 
+  .desktop-hero-actions {
+    display: flex !important;
+  }
+  .mobile-hero-actions {
+    display: none !important;
+  }
+
   /* RESPONSIVE BREAKPOINTS */
   @media (max-width: 991px) {
+    .desktop-hero-actions {
+      display: none !important;
+    }
+    .mobile-hero-actions {
+      display: flex !important;
+      justify-content: center !important;
+      width: 100% !important;
+      margin-top: 0.5rem !important;
+    }
     .home-hero-container {
       grid-template-columns: 1fr !important;
-      gap: 2rem !important;
+      gap: 1.5rem !important;
     }
     .home-hero-left {
       align-items: center !important;
@@ -2107,15 +2230,11 @@ styleSheet.innerText = `
       line-height: 1.15 !important;
       text-align: center !important;
     }
-    .home-hero-actions {
-      justify-content: center !important;
-      width: 100% !important;
-    }
     .home-hero-right-col {
       width: 100% !important;
       display: flex !important;
       justify-content: center !important;
-      margin-top: 0.5rem !important;
+      margin-top: 0.25rem !important;
     }
     .home-stats-grid {
       grid-template-columns: repeat(2, 1fr) !important;

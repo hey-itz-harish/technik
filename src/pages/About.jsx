@@ -35,7 +35,7 @@ export default function About() {
           <div style={styles.heroBgOverlay} />
         </div>
 
-        <div className="container about-hero-container" style={styles.heroContainer}>
+        <div className="about-hero-container" style={styles.heroContainer}>
           {/* Left Text & Values Block (Right side left completely open for background image) */}
           <div style={styles.heroLeftContent} className="about-hero-left">
             {/* Eyebrow */}
@@ -121,9 +121,9 @@ export default function About() {
             </div>
 
             {/* Right Initiative Cards */}
-            <div style={styles.initiativesCol}>
+            <div style={styles.initiativesCol} className="about-initiatives-col">
               {/* Technik Pride Award Card */}
-              <div style={styles.initiativeCardPride}>
+              <div style={styles.initiativeCardPride} className="about-initiative-card">
                 <div style={styles.img3DWrapper}>
                   <img
                     src={prideTrophy3DImg}
@@ -142,7 +142,7 @@ export default function About() {
               </div>
 
               {/* Technik Olympiad Card */}
-              <div style={styles.initiativeCardOlympiad}>
+              <div style={styles.initiativeCardOlympiad} className="about-initiative-card">
                 <div style={styles.img3DWrapper}>
                   <img
                     src={olympiadRocket3DImg}
@@ -174,9 +174,9 @@ export default function About() {
 
           <h2 style={styles.sectionMainTitle}>A JOURNEY OF PURPOSE</h2>
 
-          <div style={styles.timelineGrid}>
+          <div style={styles.timelineGrid} className="about-timeline-grid">
             {/* 2018 */}
-            <div style={styles.timelineNodeCard}>
+            <div style={styles.timelineNodeCard} className="about-timeline-node">
               <div style={{ ...styles.timelineIconCircle, background: '#1e3a8a' }}>
                 <Rocket size={22} color="#ffffff" />
               </div>
@@ -187,10 +187,10 @@ export default function About() {
               </p>
             </div>
 
-            <div style={styles.timelineArrow}>&rarr;</div>
+            <div style={styles.timelineArrow} className="about-timeline-arrow">&rarr;</div>
 
             {/* 2020 */}
-            <div style={styles.timelineNodeCard}>
+            <div style={styles.timelineNodeCard} className="about-timeline-node">
               <div style={{ ...styles.timelineIconCircle, background: '#1e3a8a' }}>
                 <Users size={22} color="#ffffff" />
               </div>
@@ -201,10 +201,10 @@ export default function About() {
               </p>
             </div>
 
-            <div style={styles.timelineArrow}>&rarr;</div>
+            <div style={styles.timelineArrow} className="about-timeline-arrow">&rarr;</div>
 
             {/* 2023 */}
-            <div style={styles.timelineNodeCard}>
+            <div style={styles.timelineNodeCard} className="about-timeline-node">
               <div style={{ ...styles.timelineIconCircle, background: '#1e3a8a' }}>
                 <BarChart2 size={22} color="#ffffff" />
               </div>
@@ -215,10 +215,10 @@ export default function About() {
               </p>
             </div>
 
-            <div style={styles.timelineArrow}>&rarr;</div>
+            <div style={styles.timelineArrow} className="about-timeline-arrow">&rarr;</div>
 
             {/* 2026 */}
-            <div style={styles.timelineNodeCard}>
+            <div style={styles.timelineNodeCard} className="about-timeline-node">
               <div style={{ ...styles.timelineIconCircle, background: '#d97706' }}>
                 <Building2 size={22} color="#ffffff" />
               </div>
@@ -229,10 +229,10 @@ export default function About() {
               </p>
             </div>
 
-            <div style={styles.timelineArrow}>&rarr;</div>
+            <div style={styles.timelineArrow} className="about-timeline-arrow">&rarr;</div>
 
             {/* Beyond 2026 */}
-            <div style={styles.timelineNodeCard}>
+            <div style={styles.timelineNodeCard} className="about-timeline-node">
               <div style={{ ...styles.timelineIconCircle, background: '#1e3a8a' }}>
                 <Globe size={22} color="#ffffff" />
               </div>
@@ -254,11 +254,11 @@ export default function About() {
             <span style={styles.eyebrowText}>OUR VISION & MISSION</span>
           </div>
 
-          <div style={styles.vmGrid}>
+          <div style={styles.vmGrid} className="about-vm-grid">
             {/* Left Cards */}
-            <div style={styles.vmCardsCol}>
+            <div style={styles.vmCardsCol} className="about-vm-cards-col">
               {/* Vision Card */}
-              <div style={styles.vmCard}>
+              <div style={styles.vmCard} className="about-vm-card">
                 <div style={styles.vmIconCircleBlue}>
                   <Eye size={24} color="#2563eb" />
                 </div>
@@ -271,7 +271,7 @@ export default function About() {
               </div>
 
               {/* Mission Card */}
-              <div style={styles.vmCard}>
+              <div style={styles.vmCard} className="about-vm-card">
                 <div style={styles.vmIconCircleOrange}>
                   <Target size={24} color="#f97316" />
                 </div>
@@ -285,7 +285,7 @@ export default function About() {
             </div>
 
             {/* Right Journey Image Card */}
-            <div style={styles.vmImgCard}>
+            <div style={styles.vmImgCard} className="about-vm-img-card">
               <img
                 src={studentBackpackImg}
                 alt="Student backpacker walking towards mountains"
@@ -309,9 +309,9 @@ export default function About() {
             <span style={styles.eyebrowText}>OUR LEADERSHIP</span>
           </div>
 
-          <div style={styles.leadershipGrid}>
+          <div style={styles.leadershipGrid} className="about-leadership-grid">
             {/* Leader 1 */}
-            <div style={styles.leaderCard}>
+            <div style={styles.leaderCard} className="about-leader-card">
               <div style={{ ...styles.leaderAvatar, background: '#fef3c7' }}>
                 <Users size={32} color="#d97706" />
               </div>
@@ -323,7 +323,7 @@ export default function About() {
             </div>
 
             {/* Leader 2 */}
-            <div style={styles.leaderCard}>
+            <div style={styles.leaderCard} className="about-leader-card">
               <div style={{ ...styles.leaderAvatar, background: '#e0f2fe' }}>
                 <Users size={32} color="#0284c7" />
               </div>
@@ -335,7 +335,7 @@ export default function About() {
             </div>
 
             {/* Leader 3 */}
-            <div style={styles.leaderCard}>
+            <div style={styles.leaderCard} className="about-leader-card">
               <div style={{ ...styles.leaderAvatar, background: '#f1f5f9' }}>
                 <Users size={32} color="#0c1e45" />
               </div>
@@ -357,9 +357,9 @@ export default function About() {
             <span style={styles.eyebrowText}>WHY TECHNIK</span>
           </div>
 
-          <div style={styles.whyGrid}>
+          <div style={styles.whyGrid} className="about-why-grid">
             {/* Box 1 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <Users size={18} color="#0c1e45" />
               </div>
@@ -367,7 +367,7 @@ export default function About() {
             </div>
 
             {/* Box 2 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <ShieldCheck size={18} color="#0c1e45" />
               </div>
@@ -375,7 +375,7 @@ export default function About() {
             </div>
 
             {/* Box 3 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <Lightbulb size={18} color="#0c1e45" />
               </div>
@@ -383,7 +383,7 @@ export default function About() {
             </div>
 
             {/* Box 4 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <Trophy size={18} color="#0c1e45" />
               </div>
@@ -391,7 +391,7 @@ export default function About() {
             </div>
 
             {/* Box 5 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <MapPin size={18} color="#0c1e45" />
               </div>
@@ -402,7 +402,7 @@ export default function About() {
             </div>
 
             {/* Box 6 */}
-            <div style={styles.whyCard}>
+            <div style={styles.whyCard} className="about-why-card">
               <div style={styles.whyIconCircle}>
                 <Star size={18} color="#0c1e45" />
               </div>
@@ -467,13 +467,13 @@ const styles = {
   /* 1. HERO SECTION */
   heroSection: {
     position: 'relative',
-    minHeight: '340px',
+    minHeight: '400px',
     display: 'flex',
     alignItems: 'center',
     background: '#04102d',
     color: '#ffffff',
     overflow: 'hidden',
-    padding: '1.75rem 0',
+    padding: '3rem 0',
   },
   heroBgImageWrapper: {
     position: 'absolute',
@@ -484,40 +484,40 @@ const styles = {
     width: '100%',
     height: '100%',
     objectFit: 'cover',
-    objectPosition: 'center top',
-    transform: 'scale(1.15)',
-    transformOrigin: 'center top',
+    objectPosition: '68% 10%',
   },
   heroBgOverlay: {
     position: 'absolute',
     inset: 0,
-    background: 'linear-gradient(90deg, rgba(4, 16, 45, 0.95) 0%, rgba(4, 16, 45, 0.75) 45%, rgba(4, 16, 45, 0.15) 100%)',
+    background: 'linear-gradient(90deg, rgba(4, 16, 45, 0.96) 0%, rgba(4, 16, 45, 0.82) 42%, rgba(4, 16, 45, 0.2) 72%, rgba(4, 16, 45, 0.5) 100%)',
   },
   heroContainer: {
     position: 'relative',
     zIndex: 2,
     display: 'flex',
     justifyContent: 'space-between',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     flexWrap: 'wrap',
-    gap: '1.25rem',
-    padding: '0 1rem',
+    gap: '2rem',
+    width: '100%',
+    maxWidth: '1400px',
+    margin: '0 auto',
+    padding: '0 1.5rem',
   },
   heroLeftContent: {
-    maxWidth: '580px',
+    maxWidth: '650px',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    flex: '1 1 340px',
-    marginLeft: '-0.5rem',
+    flex: '1 1 380px',
   },
   heroRightBottom: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    gap: '0.5rem',
+    gap: '0.65rem',
     flex: '0 1 auto',
-    paddingBottom: '0.25rem',
+    paddingBottom: '0.5rem',
   },
   eyebrowRowHero: {
     display: 'flex',
@@ -972,12 +972,13 @@ const styles = {
 // Add responsive CSS styling
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
+  /* Tablet & below (<= 991px) */
   @media (max-width: 991px) {
     .about-hero-container {
       flex-direction: column !important;
       align-items: flex-start !important;
-      gap: 1.5rem !important;
-      padding: 0 1rem !important;
+      gap: 1.75rem !important;
+      padding: 0 1.25rem !important;
     }
     .about-hero-left {
       margin-left: 0 !important;
@@ -989,16 +990,75 @@ styleSheet.innerText = `
     .about-hero-right {
       align-items: flex-start !important;
       width: 100% !important;
+      padding-bottom: 0 !important;
     }
     .about-technik-grid {
       grid-template-columns: 1fr !important;
+      gap: 1.5rem !important;
+    }
+    .about-timeline-arrow {
+      display: none !important;
+    }
+    .about-timeline-grid {
+      display: grid !important;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+      gap: 1rem !important;
+    }
+    .about-timeline-node {
+      background: #f8fafc !important;
+      border: 1px solid #e2e8f0 !important;
+      border-radius: 12px !important;
+      padding: 1rem 0.75rem !important;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.03) !important;
+    }
+    .about-vm-grid {
+      grid-template-columns: 1fr !important;
     }
   }
+
+  /* Mobile Portrait & below (<= 640px) */
   @media (max-width: 640px) {
-    .about-hero-title {
-      font-size: clamp(1.75rem, 7vw, 2.1rem) !important;
+    .about-hero-container {
+      padding: 0 1rem !important;
+      gap: 1.5rem !important;
     }
-    .about-technik-grid {
+    .about-hero-title {
+      font-size: clamp(1.85rem, 8vw, 2.15rem) !important;
+      line-height: 1.15 !important;
+    }
+    .about-initiatives-col {
+      grid-template-columns: 1fr !important;
+    }
+    .about-timeline-grid {
+      grid-template-columns: 1fr !important;
+      gap: 0.75rem !important;
+    }
+    .about-timeline-node {
+      flex-direction: row !important;
+      text-align: left !important;
+      align-items: flex-start !important;
+      gap: 0.85rem !important;
+      padding: 0.9rem 1rem !important;
+    }
+    .about-leadership-grid {
+      grid-template-columns: 1fr !important;
+      gap: 1rem !important;
+    }
+    .about-why-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 0.65rem !important;
+    }
+    .about-vm-card {
+      padding: 1rem !important;
+    }
+    .about-vm-img-card {
+      height: 220px !important;
+    }
+  }
+
+  /* Extra Small Mobile (<= 400px) */
+  @media (max-width: 400px) {
+    .about-why-grid {
       grid-template-columns: 1fr !important;
     }
   }

@@ -420,10 +420,6 @@ export async function createAdminUserApi(payload) {
   return parseJsonOrThrow(response);
 }
 
-/**
- * Submit a message from the Contact Us page to support@technikolympiad.com
- * @param {{ name: string, email: string, phone?: string, subject: string, message: string }} payload
- */
 export async function submitContactEnquiryApi(payload) {
   const response = await fetch(`${API_BASE_URL}/api/contact`, {
     method: 'POST',
@@ -436,4 +432,51 @@ export async function submitContactEnquiryApi(payload) {
   });
   return parseJsonOrThrow(response);
 }
+
+/**
+ * News & Events APIs (For Technik Portal & Frontend Cards)
+ */
+export async function getNewsEventsApi(type = '', publishedOnly = false) {
+  const params = new URLSearchParams();
+  if (type) params.append('type', type);
+  if (publishedOnly) params.append('published', 'true');
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+
+  const response = await fetch(`${API_BASE_URL}/api/news-events${queryStr}`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
+  return parseJsonOrThrow(response);
+}
+
+export async function createNewsEventApi(payload) {
+  const response = await fetch(`${API_BASE_URL}/api/admin/news-events`, {
+    method: 'POST',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
+    body: JSON.stringify(payload)
+  });
+  return parseJsonOrThrow(response);
+}
+
+export async function updateNewsEventApi(id, payload) {
+  const response = await fetch(`${API_BASE_URL}/api/admin/news-events/${id}`, {
+    method: 'PUT',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
+    body: JSON.stringify(payload)
+  });
+  return parseJsonOrThrow(response);
+}
+
+export async function deleteNewsEventApi(id) {
+  const response = await fetch(`${API_BASE_URL}/api/admin/news-events/${id}`, {
+    method: 'DELETE',
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
+  return parseJsonOrThrow(response);
+}
+
 
