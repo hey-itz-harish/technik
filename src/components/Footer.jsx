@@ -113,9 +113,9 @@ export default function Footer() {
                 <Phone size={14} color="#38bdf8" style={{ flexShrink: 0 }} />
                 <span>+91 95004 28800</span>
               </a>
-              <a href="mailto:support@technikolympaid.com" style={{ ...styles.contactItem, textDecoration: 'none', color: '#cbd5e1' }}>
+              <a href="mailto:support@technikolympiad.com" style={{ ...styles.contactItem, textDecoration: 'none', color: '#cbd5e1' }}>
                 <Mail size={14} color="#38bdf8" style={{ flexShrink: 0 }} />
-                <span>support@technikolympaid.com</span>
+                <span>support@technikolympiad.com</span>
               </a>
               <div style={styles.contactItem}>
                 <MapPin size={16} color="#f97316" style={{ flexShrink: 0, marginTop: '2px' }} />

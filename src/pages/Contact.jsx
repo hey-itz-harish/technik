@@ -7,6 +7,7 @@ import {
   Mail,
   MapPin,
   Headset,
+  Calendar,
   Send,
   MessageCircle,
   Users,
@@ -144,7 +145,7 @@ export default function Contact() {
     },
     {
       q: "Whom do I contact for media enquiries?",
-      a: "Press and media representatives can contact our communications team at support@technikolympaid.com or select 'Media Enquiries' in the contact form."
+      a: "Press and media representatives can contact our communications team at support@technikolympiad.com or select 'Media Enquiries' in the contact form."
     }
   ];
 
@@ -238,7 +239,7 @@ export default function Contact() {
                 +91 95004 28800
               </a>
               <p style={styles.cardSubText}>
-                Mon - Sat, 9:00 AM - 6:00 PM (IST)
+                Mon - Fri, 10:00 AM - 5:00 PM (IST)
               </p>
             </div>
 
@@ -266,22 +267,19 @@ export default function Contact() {
                 Technik Olympiad
               </span>
               <p style={styles.cardSubText}>
-                Vijayawada, Andhra Pradesh <br />
-                India - 520007
+                Vijayawada, Andhra Pradesh
               </p>
             </div>
 
-            {/* Card 4: Support for */}
+            {/* Card 4: Visit Us */}
             <div style={styles.topInfoCard}>
               <div style={styles.cardIconCircleBlue}>
-                <Headset size={22} color="#ffffff" />
+                <Calendar size={22} color="#ffffff" />
               </div>
-              <h3 style={styles.cardTitle}>Support for</h3>
-              <div style={styles.supportOptionsList}>
-                <span>Students &nbsp;|&nbsp; Schools</span>
-                <span>Partners &nbsp;|&nbsp; Media</span>
-                <span>General Enquiries</span>
-              </div>
+              <h3 style={styles.cardTitle}>Visit Us</h3>
+              <p style={styles.cardSubText}>
+                By appointment
+              </p>
             </div>
 
           </div>

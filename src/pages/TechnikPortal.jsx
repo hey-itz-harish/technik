@@ -820,7 +820,7 @@ export default function TechnikPortal() {
                 <tr style={styles.thRow}>
                   <th style={styles.th}>ID &amp; Student Name</th>
                   <th style={styles.th}>School &amp; Location</th>
-                  <th style={styles.th}>Grade / Level</th>
+                  <th style={styles.th}>Grade</th>
                   <th style={styles.th}>Achievement Category</th>
                   <th style={styles.th}>Proof Document</th>
                   <th style={styles.th}>Status</th>
@@ -845,7 +845,6 @@ export default function TechnikPortal() {
                       </td>
                       <td style={styles.td}>
                         <span style={styles.gradeBadge}>{item.grade}</span>
-                        <div style={styles.subText}>{item.level}</div>
                       </td>
                       <td style={styles.td}>
                         <div style={styles.categoryText}>{item.category}</div>

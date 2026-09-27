@@ -33,9 +33,9 @@ export default function TopNav() {
       <div style={styles.topUtilityBar} className="top-utility-bar">
         <div style={styles.topUtilityContainer}>
           <div style={styles.topContacts}>
-            <a href="mailto:support@technikolympaid.com" style={styles.topContactItem}>
+            <a href="mailto:support@technikolympiad.com" style={styles.topContactItem}>
               <Mail size={13} color="#38bdf8" />
-              <span>support@technikolympaid.com</span>
+              <span>support@technikolympiad.com</span>
             </a>
             <span style={styles.topDivider}>|</span>
             <a href="tel:+919500428800" style={styles.topContactItem}>
@@ -330,9 +330,9 @@ export default function TopNav() {
                 <Phone size={13} color="#2563eb" />
                 <span>+91 95004 28800</span>
               </a>
-              <a href="mailto:support@technikolympaid.com" style={styles.mobileContactChip}>
+              <a href="mailto:support@technikolympiad.com" style={styles.mobileContactChip}>
                 <Mail size={13} color="#ea580c" />
-                <span>support@technikolympaid.com</span>
+                <span>support@technikolympiad.com</span>
               </a>
             </div>
           </div>

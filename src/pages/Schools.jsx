@@ -47,6 +47,37 @@ const isJuniorGrade = (gradeStr = '', catStr = '') => {
     combined.includes('class v');
 };
 
+// Pride Award Category Dependent Achievement / Talent Options
+const PRIDE_ACADEMIC_INNOVATION_OPTIONS = [
+  'Academics',
+  'Science',
+  'Robotics',
+  'Coding',
+  'AI',
+  'Projects',
+  'Inventions',
+  'Quiz',
+  'Olympiads',
+  'Communication',
+  'Other Knowledge-Based Achievements'
+];
+
+const PRIDE_TALENT_SOCIAL_OPTIONS = [
+  'Sports Achievement',
+  'Dance',
+  'Music',
+  'Drawing / Painting',
+  'Performing Arts',
+  'Literary Talent',
+  'Public Speaking / Debate',
+  'Leadership',
+  'Community Service',
+  'Environmental Initiative',
+  'Social Impact Project',
+  'Cultural Achievement',
+  'Other Exceptional Talent'
+];
+
 export default function Schools() {
   const navigate = useNavigate();
 
@@ -226,8 +257,9 @@ export default function Schools() {
             id: nom.id,
             studentName: nom.studentName,
             class: nom.class,
-            classCategory: nom.classCategory || (isJuniorGrade(nom.class) ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)'),
-            achievementCategory: nom.achievementCategory || 'Technik Pride Award Nomination',
+            classCategory: nom.classCategory || 'Technik Pride Award',
+            achievementCategory: nom.achievementCategory || 'Academic & Innovative Excellence',
+            achievementTitle: nom.achievementTitle || '',
             dateSubmitted: formattedDate,
             nominationStatus: nom.nominationStatus || 'Submitted & Under Review',
             adminStatus: nom.adminStatus || 'Forwarded to Technik Super Admin',
@@ -251,12 +283,10 @@ export default function Schools() {
     fetchPrideNominations();
   }, [fetchPrideNominations]);
 
-  // Quota Computations: 3 Junior (Grades 3-5) + 3 Senior (Grades 6-8) = 6 Total per Year
+  // Quota Computation: Max 2 Nominations per School per Academic Year
   const currentYear = 2026;
   const yearNominations = prideNominations.filter(n => (n.academicYear === currentYear || n.dateSubmitted?.includes(String(currentYear))));
-  const jrPrideCount = yearNominations.filter(n => isJuniorGrade(n.class, n.classCategory)).length;
-  const srPrideCount = yearNominations.filter(n => !isJuniorGrade(n.class, n.classCategory)).length;
-  const totalPrideCount = jrPrideCount + srPrideCount;
+  const totalPrideCount = yearNominations.length;
 
   // Real-time Stepper Completion Validation
   const isCoordStepComplete = Boolean(
@@ -294,22 +324,15 @@ export default function Schools() {
 
   // Add another student row dynamically with quota enforcement
   const handleAddStudent = () => {
-    if (formType === 'pride' || activeTab === 'nominate-pride') {
-      const isJr = selectedLevelFilter === 'junior';
-      const existingInLevel = isJr ? jrPrideCount : srPrideCount;
-      const currentInFormForLevel = studentList.filter(s => isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
-
-      if (existingInLevel + currentInFormForLevel >= 3) {
-        alert(`Annual Quota Limit Reached: Maximum 3 nominations allowed for ${isJr ? 'Junior Level (Grades 3-5)' : 'Senior Level (Grades 6-8)'} per academic year. (You currently have ${existingInLevel} registered).`);
-        return;
-      }
-      if (totalPrideCount + studentList.length >= 6) {
-        alert("Annual Quota Limit Reached: Maximum 6 total nominations allowed per school for the Technik Pride Award in this academic year.");
+    const isPride = formType === 'pride' || activeTab === 'nominate-pride';
+    if (isPride) {
+      if (totalPrideCount + studentList.length >= 2) {
+        alert(`Annual Quota Limit Reached: Maximum 2 nominations allowed per school for the Technik Pride Award in this academic year. (You currently have ${totalPrideCount} registered).`);
         return;
       }
     }
 
-    const defaultGrade = selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7';
+    const defaultGrade = isPride ? 'Grade 4' : (selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7');
     setStudentList([
       ...studentList,
       {
@@ -317,8 +340,8 @@ export default function Schools() {
         name: '',
         studentClass: defaultGrade,
         gender: 'Select Gender',
-        category: formType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad',
-        achievementTitle: '',
+        category: isPride ? 'Academic & Innovative Excellence' : 'Robotics Olympiad',
+        achievementTitle: isPride ? 'Academics' : '',
         description: '',
         fileName: '',
         filePath: '',
@@ -404,19 +427,9 @@ export default function Schools() {
 
     // Quota validation on submit
     if (currentType === 'pride') {
-      const incomingJr = validStudents.filter(s => isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
-      const incomingSr = validStudents.filter(s => !isJuniorGrade(s.studentClass, selectedLevelFilter)).length;
-
-      if (jrPrideCount + incomingJr > 3) {
-        setSubmitError(`Annual Quota Exceeded: Junior Level allows max 3 nominations. You have ${jrPrideCount} registered and submitted ${incomingJr} more.`);
-        return;
-      }
-      if (srPrideCount + incomingSr > 3) {
-        setSubmitError(`Annual Quota Exceeded: Senior Level allows max 3 nominations. You have ${srPrideCount} registered and submitted ${incomingSr} more.`);
-        return;
-      }
-      if (totalPrideCount + validStudents.length > 6) {
-        setSubmitError(`Annual Quota Exceeded: Maximum 6 nominations allowed per year.`);
+      const remainingQuota = Math.max(0, 2 - totalPrideCount);
+      if (validStudents.length > remainingQuota) {
+        setSubmitError(`Annual Quota Limit Reached: Maximum 2 nominations allowed per academic year. You have ${totalPrideCount} registered and can nominate at most ${remainingQuota} more.`);
         return;
       }
     }
@@ -431,10 +444,10 @@ export default function Schools() {
           nominations: validStudents.map(s => ({
             studentName: s.name,
             class: s.studentClass,
-            classCategory: selectedLevelFilter === 'junior' ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)',
+            classCategory: 'Technik Pride Award',
             gender: s.gender,
-            achievementCategory: s.category || 'Technik Pride Award',
-            achievementTitle: s.achievementTitle,
+            achievementCategory: s.category || 'Academic & Innovative Excellence',
+            achievementTitle: s.achievementTitle || (s.category === 'Talent & Social Excellence' ? 'Sports Achievement' : 'Academics'),
             briefDescription: s.description,
             supportingDocument: s.filePath || s.fileName || ''
           }))
@@ -468,10 +481,10 @@ export default function Schools() {
         {
           id: Date.now(),
           name: '',
-          studentClass: selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7',
+          studentClass: currentType === 'pride' ? 'Grade 4' : (selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7'),
           gender: 'Select Gender',
-          category: currentType === 'pride' ? 'Technik Pride Award' : 'Robotics Olympiad',
-          achievementTitle: '',
+          category: currentType === 'pride' ? 'Academic & Innovative Excellence' : 'Robotics Olympiad',
+          achievementTitle: currentType === 'pride' ? 'Academics' : '',
           description: '',
           fileName: '',
           filePath: '',
@@ -660,7 +673,19 @@ export default function Schools() {
                 ...styles.tabNavBtn,
                 ...(activeTab === 'nominate-pride' ? styles.tabNavBtnActiveGold : {})
               }}
-              onClick={() => { setActiveTab('nominate-pride'); setFormType('pride'); setFormSubmitted(false); setSubmitError(''); }}
+              onClick={() => { 
+                setActiveTab('nominate-pride'); 
+                setFormType('pride'); 
+                setFormSubmitted(false); 
+                setSubmitError('');
+                if (studentList.length === 1 && !studentList[0].name) {
+                  setStudentList([{
+                    ...studentList[0],
+                    category: 'Academic & Innovative Excellence',
+                    achievementTitle: 'Academics'
+                  }]);
+                }
+              }}
             >
               <Trophy size={16} />
               <span>+ Nominate Student</span>
@@ -916,7 +941,7 @@ export default function Schools() {
                     <thead>
                       <tr style={styles.tableHeaderRow}>
                         <th style={styles.thCell}>STUDENT NAME</th>
-                        <th style={styles.thCell}>CLASS / LEVEL</th>
+                        <th style={styles.thCell}>CLASS</th>
                         <th style={styles.thCell}>NOMINATED CATEGORY</th>
                         <th style={styles.thCell}>DATE SUBMITTED</th>
                         <th style={styles.thCell}>NOMINATION STATUS</th>
@@ -942,12 +967,17 @@ export default function Schools() {
                               </div>
                             </td>
                             <td style={styles.tdCell}>
-                              {st.class} ({isJuniorGrade(st.class, st.classCategory) ? 'Jr Level' : 'Sr Level'})
+                              {st.class}
                             </td>
                             <td style={styles.tdCell}>
-                              <span style={{ fontSize: '0.84rem', fontWeight: 700, color: '#b45309' }}>
-                                Technik Pride Award Nomination
+                              <span style={{ fontSize: '0.84rem', fontWeight: 700, color: '#b45309', display: 'block' }}>
+                                {st.achievementCategory || 'Academic & Innovative Excellence'}
                               </span>
+                              {st.achievementTitle && (
+                                <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
+                                  {st.achievementTitle}
+                                </span>
+                              )}
                             </td>
                             <td style={styles.tdCell}>{st.dateSubmitted}</td>
                             <td style={styles.tdCell}>
@@ -1078,7 +1108,7 @@ export default function Schools() {
                 </div>
               </div>
 
-              {/* ANNUAL QUOTA NOTICE BANNER: 3 JUNIOR + 3 SENIOR = 6 TOTAL */}
+              {/* ANNUAL QUOTA NOTICE BANNER: MAX 2 STUDENTS PER SCHOOL */}
               <div style={{
                 background: 'linear-gradient(135deg, #fffbe6 0%, #fef3c7 100%)',
                 border: '1px solid #fde047',
@@ -1108,10 +1138,10 @@ export default function Schools() {
                   </div>
                   <div>
                     <h4 style={{ margin: 0, fontSize: '0.98rem', fontWeight: 800, color: '#92400e' }}>
-                      Annual Quota: Max 3 Junior &amp; 3 Senior Students per Year (Total 6)
+                      Annual Quota: Limit to 2 Students per School ({currentYear})
                     </h4>
                     <p style={{ margin: '3px 0 0 0', fontSize: '0.86rem', color: '#b45309', lineHeight: 1.4 }}>
-                      Each school can nominate a maximum of <strong>3 students for Junior Level (Grades 3-5)</strong> and <strong>3 students for Senior Level (Grades 6-8)</strong> per academic year.
+                      Each school can nominate a maximum of <strong>2 students</strong> for the Technik Pride Award per academic year.
                     </p>
                   </div>
                 </div>
@@ -1131,23 +1161,7 @@ export default function Schools() {
                     boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
                   }}>
                     <Award size={15} color="#d97706" />
-                    <span>Jr Level: <strong>{jrPrideCount} / 3 Used</strong></span>
-                  </div>
-                  <div style={{
-                    background: '#ffffff',
-                    border: '1.5px solid #f59e0b',
-                    padding: '0.45rem 0.85rem',
-                    borderRadius: '30px',
-                    fontSize: '0.82rem',
-                    fontWeight: 800,
-                    color: '#b45309',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '6px',
-                    boxShadow: '0 2px 8px rgba(217, 119, 6, 0.12)'
-                  }}>
-                    <Award size={15} color="#d97706" />
-                    <span>Sr Level: <strong>{srPrideCount} / 3 Used</strong></span>
+                    <span>Pride Award: <strong>{totalPrideCount} / 2 Used</strong></span>
                   </div>
                 </div>
               </div>
@@ -1285,54 +1299,13 @@ export default function Schools() {
 
                 {/* SECTION 2: STUDENT NOMINATION */}
                 <div style={styles.formCardSection}>
-                  <div style={styles.sectionHeaderRowBetween}>
-                    <div style={styles.sectionHeaderRow}>
-                      <div style={{ ...styles.sectionHeaderIconCircle, background: '#fef3c7' }}>
-                        <Trophy size={22} color="#d97706" />
-                      </div>
-                      <div>
-                        <h3 style={styles.sectionHeaderTitle}>Student Nomination Details</h3>
-                        <p style={styles.sectionHeaderSub}>Nominate students from Grade 3 to 8 for the Technik Pride Award.</p>
-                      </div>
+                  <div style={styles.sectionHeaderRow}>
+                    <div style={{ ...styles.sectionHeaderIconCircle, background: '#fef3c7' }}>
+                      <Trophy size={22} color="#d97706" />
                     </div>
-
-                    <div style={styles.levelGroupSelector}>
-                      <span style={styles.levelSelectorLabel}>Class Category:</span>
-                      <button 
-                        type="button"
-                        style={{
-                          ...styles.levelBtn,
-                          ...(selectedLevelFilter === 'junior' ? styles.levelBtnActiveGreen : {})
-                        }}
-                        onClick={() => {
-                          setSelectedLevelFilter('junior');
-                          studentList.forEach(s => {
-                            if (!['Grade 3', 'Grade 4', 'Grade 5'].includes(s.studentClass)) {
-                              handleStudentChange(s.id, 'studentClass', 'Grade 4');
-                            }
-                          });
-                        }}
-                      >
-                        Grade 3 to 5 (Jr Level)
-                      </button>
-
-                      <button 
-                        type="button"
-                        style={{
-                          ...styles.levelBtn,
-                          ...(selectedLevelFilter === 'senior' ? styles.levelBtnActiveBlue : {})
-                        }}
-                        onClick={() => {
-                          setSelectedLevelFilter('senior');
-                          studentList.forEach(s => {
-                            if (!['Grade 6', 'Grade 7', 'Grade 8'].includes(s.studentClass)) {
-                              handleStudentChange(s.id, 'studentClass', 'Grade 7');
-                            }
-                          });
-                        }}
-                      >
-                        Grade 6 to 8 (Senior Level)
-                      </button>
+                    <div>
+                      <h3 style={styles.sectionHeaderTitle}>Student Nomination Details</h3>
+                      <p style={styles.sectionHeaderSub}>Nominate outstanding students for the Technik Pride Award (Limit 2 students per school).</p>
                     </div>
                   </div>
 
@@ -1345,7 +1318,7 @@ export default function Schools() {
                           <h4 style={styles.studentEntryTitleGold}>Student {index + 1}</h4>
                           {studentList.length > 1 && (
                             <button 
-                              type="button"
+                              type="button" 
                               onClick={() => handleRemoveStudent(student.id)}
                               style={styles.removeStudentBtn}
                             >
@@ -1383,19 +1356,21 @@ export default function Schools() {
                               value={student.studentClass}
                               onChange={(e) => handleStudentChange(student.id, 'studentClass', e.target.value)}
                             >
-                              {selectedLevelFilter === 'junior' ? (
-                                <>
-                                  <option value="Grade 3">Grade 3 (Class III)</option>
-                                  <option value="Grade 4">Grade 4 (Class IV)</option>
-                                  <option value="Grade 5">Grade 5 (Class V)</option>
-                                </>
-                              ) : (
-                                <>
-                                  <option value="Grade 6">Grade 6 (Class VI)</option>
-                                  <option value="Grade 7">Grade 7 (Class VII)</option>
-                                  <option value="Grade 8">Grade 8 (Class VIII)</option>
-                                </>
-                              )}
+                              <option value="Play School">Play School</option>
+                              <option value="LKG">LKG</option>
+                              <option value="UKG">UKG</option>
+                              <option value="Grade 1">Grade 1 (Class I)</option>
+                              <option value="Grade 2">Grade 2 (Class II)</option>
+                              <option value="Grade 3">Grade 3 (Class III)</option>
+                              <option value="Grade 4">Grade 4 (Class IV)</option>
+                              <option value="Grade 5">Grade 5 (Class V)</option>
+                              <option value="Grade 6">Grade 6 (Class VI)</option>
+                              <option value="Grade 7">Grade 7 (Class VII)</option>
+                              <option value="Grade 8">Grade 8 (Class VIII)</option>
+                              <option value="Grade 9">Grade 9 (Class IX)</option>
+                              <option value="Grade 10">Grade 10 (Class X)</option>
+                              <option value="Grade 11">Grade 11 (Class XI)</option>
+                              <option value="Grade 12">Grade 12 (Class XII)</option>
                             </select>
                           </div>
 
@@ -1423,36 +1398,41 @@ export default function Schools() {
                           </div>
 
                           <div style={styles.fieldCol}>
-                            <label style={styles.fieldLabel}>Achievement Category <span style={styles.reqStar}>*</span></label>
+                            <label style={styles.fieldLabel}>Pride Award Category <span style={styles.reqStar}>*</span></label>
                             <select 
                               style={styles.selectInput}
-                              value={student.category}
-                              onChange={(e) => handleStudentChange(student.id, 'category', e.target.value)}
+                              value={student.category || 'Academic & Innovative Excellence'}
+                              onChange={(e) => {
+                                const newCat = e.target.value;
+                                const defaultTalent = newCat === 'Talent & Social Excellence' ? 'Sports Achievement' : 'Academics';
+                                handleStudentChange(student.id, 'category', newCat);
+                                handleStudentChange(student.id, 'achievementTitle', defaultTalent);
+                              }}
                             >
-                              <option value="Technik Pride Award">Technik Pride Award - Academic &amp; Innovation</option>
-                              <option value="Robotics Pride Award">Robotics &amp; STEM Innovation</option>
-                              <option value="Coding Pride Award">Coding &amp; Algorithmic Excellence</option>
-                              <option value="Leadership Pride Award">Young Leadership &amp; Social Impact</option>
+                              <option value="Academic & Innovative Excellence">1. Academic &amp; Innovative Excellence</option>
+                              <option value="Talent & Social Excellence">2. Talent &amp; Social Excellence</option>
                             </select>
                           </div>
                         </div>
 
                         <div style={styles.grid3Col}>
                           <div style={styles.fieldCol}>
-                            <label style={styles.fieldLabel}>Achievement / Talent Title <span style={styles.reqStar}>*</span></label>
-                            <input 
-                              type="text" 
-                              placeholder="Enter achievement title"
+                            <label style={styles.fieldLabel}>Achievement / Talent List <span style={styles.reqStar}>*</span></label>
+                            <select
                               style={{
-                                ...styles.textInput,
+                                ...styles.selectInput,
                                 ...(formErrors[`student_ach_${student.id}`] ? styles.inputError : {})
                               }}
-                              value={student.achievementTitle}
+                              value={student.achievementTitle || (student.category === 'Talent & Social Excellence' ? 'Sports Achievement' : 'Academics')}
                               onChange={(e) => {
                                 handleStudentChange(student.id, 'achievementTitle', e.target.value);
                                 clearFormError(`student_ach_${student.id}`);
                               }}
-                            />
+                            >
+                              {(student.category === 'Talent & Social Excellence' ? PRIDE_TALENT_SOCIAL_OPTIONS : PRIDE_ACADEMIC_INNOVATION_OPTIONS).map(opt => (
+                                <option key={opt} value={opt}>{opt}</option>
+                              ))}
+                            </select>
                             {formErrors[`student_ach_${student.id}`] && (
                               <span style={styles.fieldErrorText}>{formErrors[`student_ach_${student.id}`]}</span>
                             )}
@@ -1461,7 +1441,7 @@ export default function Schools() {
                           <div style={styles.fieldCol}>
                             <label style={styles.fieldLabel}>Brief Description <span style={styles.reqStar}>*</span></label>
                             <textarea 
-                              placeholder="Describe the achievement (Max 300 characters)"
+                              placeholder="Describe the achievement / talent (Max 300 characters)"
                               style={{
                                 ...styles.textAreaInput,
                                 ...(formErrors[`student_desc_${student.id}`] ? styles.inputError : {})
@@ -1512,16 +1492,10 @@ export default function Schools() {
                     <button 
                       type="button" 
                       onClick={handleAddStudent}
-                      disabled={
-                        (selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3) ||
-                        (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3) ||
-                        (totalPrideCount + studentList.length >= 6)
-                      }
+                      disabled={totalPrideCount + studentList.length >= 2}
                       style={{
                         ...styles.addAnotherBtnGold,
-                        ...((selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3) ||
-                            (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3) ||
-                            (totalPrideCount + studentList.length >= 6) ? {
+                        ...(totalPrideCount + studentList.length >= 2 ? {
                           opacity: 0.6,
                           cursor: 'not-allowed',
                           background: '#f1f5f9',
@@ -1532,10 +1506,8 @@ export default function Schools() {
                     >
                       <PlusCircle size={18} />
                       <span>
-                        {(selectedLevelFilter === 'junior' && jrPrideCount + studentList.filter(s => isJuniorGrade(s.studentClass)).length >= 3)
-                          ? 'MAX QUOTA REACHED FOR JUNIOR LEVEL (3/3 STUDENTS)'
-                          : (selectedLevelFilter === 'senior' && srPrideCount + studentList.filter(s => !isJuniorGrade(s.studentClass)).length >= 3)
-                          ? 'MAX QUOTA REACHED FOR SENIOR LEVEL (3/3 STUDENTS)'
+                        {totalPrideCount + studentList.length >= 2
+                          ? 'MAX QUOTA REACHED (2/2 STUDENTS)'
                           : '+ ADD ANOTHER STUDENT'
                         }
                       </span>
