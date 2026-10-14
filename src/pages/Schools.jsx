@@ -20,8 +20,12 @@ import {
   Clock,
   Check,
   AlertCircle,
-  Loader2
+  Loader2,
+  Star,
+  UserCheck,
+  Compass
 } from 'lucide-react';
+import SkillCompassModal from '../components/SkillCompassModal';
 import {
   getSchoolProfileApi,
   getSchoolStudentsApi,
@@ -163,6 +167,8 @@ export default function Schools() {
   const [loadingPride, setLoadingPride] = useState(false);
   const [submittedRoster, setSubmittedRoster] = useState([]);
   const [prideNominations, setPrideNominations] = useState([]);
+  // Additional Data & Skill Compass Modal State
+  const [selectedStudentForModal, setSelectedStudentForModal] = useState(null);
 
   // Fetch School Profile
   useEffect(() => {
@@ -828,22 +834,62 @@ export default function Schools() {
                             <td style={styles.tdCell}>
                               <span style={{
                                 ...styles.rosterStatusTag,
-                                background: st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.1)' : 'rgba(249, 115, 22, 0.1)',
-                                color: st.status.includes('Verified') ? '#16a34a' : '#ea580c',
-                                border: `1px solid ${st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.2)' : 'rgba(249, 115, 22, 0.2)'}`
+                                background: (st.status.toLowerCase().includes('selected')) ? 'rgba(37, 99, 235, 0.1)' :
+                                            (st.status.toLowerCase().includes('participant')) ? 'rgba(100, 116, 139, 0.1)' :
+                                            st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.1)' : 'rgba(249, 115, 22, 0.1)',
+                                color: (st.status.toLowerCase().includes('selected')) ? '#2563eb' :
+                                       (st.status.toLowerCase().includes('participant')) ? '#475569' :
+                                       st.status.includes('Verified') ? '#16a34a' : '#ea580c',
+                                border: `1px solid ${
+                                  (st.status.toLowerCase().includes('selected')) ? 'rgba(37, 99, 235, 0.25)' :
+                                  (st.status.toLowerCase().includes('participant')) ? 'rgba(100, 116, 139, 0.25)' :
+                                  st.status.includes('Verified') ? 'rgba(22, 163, 74, 0.2)' : 'rgba(249, 115, 22, 0.2)'
+                                }`
                               }}>
-                                <CheckCircle2 size={13} style={{ marginRight: '4px' }} />
+                                {(st.status.toLowerCase().includes('selected')) ? (
+                                  <Star size={13} fill="#2563eb" style={{ marginRight: '4px' }} />
+                                ) : (
+                                  <CheckCircle2 size={13} style={{ marginRight: '4px' }} />
+                                )}
                                 {st.status}
                               </span>
                             </td>
                             <td style={styles.tdCell}>
-                              <button 
-                                type="button" 
-                                style={styles.tableActionBtn}
-                                onClick={() => alert(`Downloading Admit Card & Examination Pass for ${st.name}`)}
-                              >
-                                <Download size={13} /> Admit Card
-                              </button>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', flexWrap: 'wrap' }}>
+                                <button 
+                                  type="button" 
+                                  style={styles.tableActionBtn}
+                                  onClick={() => alert(`Downloading Admit Card & Examination Pass for ${st.name}`)}
+                                >
+                                  <Download size={13} /> Admit Card
+                                </button>
+                                <button
+                                  type="button"
+                                  style={{
+                                    ...styles.tableActionBtn,
+                                    background: '#eff6ff',
+                                    color: '#1d4ed8',
+                                    borderColor: '#bfdbfe',
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.35rem',
+                                    fontWeight: 700
+                                  }}
+                                  onClick={() => setSelectedStudentForModal({
+                                    id: st.id,
+                                    studentName: st.name,
+                                    class: st.grade,
+                                    category: st.track,
+                                    achievementCategory: st.track,
+                                    achievementTitle: st.track,
+                                    nominationStatus: st.status,
+                                    schoolName: schoolProfile.schoolName
+                                  })}
+                                  title="Add further student data, file data & access Skill Compass"
+                                >
+                                  <Compass size={13} color="#2563eb" /> Skill Compass
+                                </button>
+                              </div>
                             </td>
                           </tr>
                         ))
@@ -946,24 +992,87 @@ export default function Schools() {
                         <th style={styles.thCell}>DATE SUBMITTED</th>
                         <th style={styles.thCell}>NOMINATION STATUS</th>
                         <th style={styles.thCell}>ADMIN STATUS</th>
+                        <th style={{ ...styles.thCell, textAlign: 'center' }}>FURTHER DATA & COMPASS</th>
                       </tr>
                     </thead>
                     <tbody>
                       {filteredPride.length === 0 ? (
                         <tr>
-                          <td colSpan="6" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                          <td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
                             No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
                           </td>
                         </tr>
                       ) : (
-                        filteredPride.map((st, i) => (
+                        filteredPride.map((st, i) => {
+                          const isApproved = 
+                            st.nominationStatus === 'Approved' ||
+                            st.nominationStatus?.toLowerCase() === 'selected for pride award' ||
+                            st.nominationStatus === 'Award Issued' ||
+                            st.adminStatus?.toLowerCase().includes('approved');
+
+                          return (
                           <tr key={st.id || i} style={styles.tableBodyRow}>
                             <td style={styles.tdCellBold}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
-                                <div style={{ ...styles.avatarCircle, background: '#f59e0b', color: '#ffffff' }}>
+                              <div 
+                                style={{ 
+                                  display: 'flex', 
+                                  alignItems: 'center', 
+                                  gap: '0.65rem',
+                                  cursor: 'pointer'
+                                }}
+                                onClick={() => {
+                                  if (isApproved) {
+                                    setSelectedStudentForModal({
+                                      ...st,
+                                      schoolName: schoolProfile.schoolName
+                                    });
+                                  } else {
+                                    alert(`Student nomination for "${st.studentName}" is currently under review by Technik Admin. Additional data (text & file) and Skill Compass will unlock once approved.`);
+                                  }
+                                }}
+                                title={isApproved ? "Click to view details, add further data & unlock Skill Compass Report" : "Awaiting Technik Admin Approval"}
+                              >
+                                <div style={{ 
+                                  ...styles.avatarCircle, 
+                                  background: isApproved ? 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)' : '#f59e0b', 
+                                  color: '#ffffff',
+                                  boxShadow: isApproved ? '0 2px 6px rgba(2, 132, 199, 0.35)' : 'none'
+                                }}>
                                   {st.studentName.charAt(0)}
                                 </div>
-                                <span style={{ fontWeight: 700, color: '#0f172a' }}>{st.studentName}</span>
+                                <div>
+                                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                                    <span style={{ 
+                                      fontWeight: 700, 
+                                      color: isApproved ? '#0369a1' : '#0f172a',
+                                      textDecoration: isApproved ? 'underline' : 'none',
+                                      textUnderlineOffset: '3px'
+                                    }}>
+                                      {st.studentName}
+                                    </span>
+                                    {isApproved && (
+                                      <span style={{
+                                        fontSize: '0.68rem',
+                                        background: '#e0f2fe',
+                                        color: '#0369a1',
+                                        fontWeight: 800,
+                                        padding: '0.1rem 0.4rem',
+                                        borderRadius: '4px'
+                                      }}>
+                                        EDIT / COMPASS
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span style={{ 
+                                    display: 'block', 
+                                    fontSize: '0.72rem', 
+                                    color: isApproved ? '#0284c7' : '#94a3b8',
+                                    fontWeight: 500,
+                                    marginTop: '2px'
+                                  }}>
+                                    {isApproved ? 'Click to add project files, text & view compass' : 'Submitted nomination'}
+                                  </span>
+                                </div>
                               </div>
                             </td>
                             <td style={styles.tdCell}>
@@ -981,28 +1090,138 @@ export default function Schools() {
                             </td>
                             <td style={styles.tdCell}>{st.dateSubmitted}</td>
                             <td style={styles.tdCell}>
-                              <span style={{
-                                display: 'inline-flex',
-                                alignItems: 'center',
-                                padding: '0.3rem 0.75rem',
-                                borderRadius: '20px',
-                                fontSize: '0.78rem',
-                                fontWeight: 700,
-                                background: '#fef3c7',
-                                color: '#d97706',
-                                border: '1px solid #fde047'
-                              }}>
-                                <Clock size={13} style={{ marginRight: '5px' }} />
-                                {st.nominationStatus || 'Submitted & Under Review'}
-                              </span>
+                              {(st.nominationStatus?.toLowerCase() === 'selected for pride award') ? (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: '#eff6ff',
+                                  color: '#2563eb',
+                                  border: '1px solid #bfdbfe'
+                                }}>
+                                  <Star size={13} fill="#2563eb" style={{ marginRight: '5px' }} />
+                                  Selected for Pride Award
+                                </span>
+                              ) : (st.nominationStatus?.toLowerCase() === 'participant') ? (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: '#f1f5f9',
+                                  color: '#475569',
+                                  border: '1px solid #cbd5e1'
+                                }}>
+                                  <UserCheck size={13} style={{ marginRight: '5px' }} />
+                                  Participant
+                                </span>
+                              ) : st.nominationStatus === 'Approved' ? (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: '#ecfdf5',
+                                  color: '#059669',
+                                  border: '1px solid #a7f3d0'
+                                }}>
+                                  <CheckCircle2 size={13} style={{ marginRight: '5px' }} />
+                                  Approved
+                                </span>
+                              ) : st.nominationStatus === 'Award Issued' ? (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: '#fff7ed',
+                                  color: '#ea580c',
+                                  border: '1px solid #fed7aa'
+                                }}>
+                                  <Award size={13} style={{ marginRight: '5px' }} />
+                                  Award Issued
+                                </span>
+                              ) : (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  padding: '0.3rem 0.75rem',
+                                  borderRadius: '20px',
+                                  fontSize: '0.78rem',
+                                  fontWeight: 700,
+                                  background: '#fef3c7',
+                                  color: '#d97706',
+                                  border: '1px solid #fde047'
+                                }}>
+                                  <Clock size={13} style={{ marginRight: '5px' }} />
+                                  {st.nominationStatus || 'Submitted & Under Review'}
+                                </span>
+                              )}
                             </td>
                             <td style={styles.tdCell}>
                               <span style={{ fontSize: '0.82rem', color: '#0284c7', fontWeight: 600 }}>
                                 {st.adminStatus || 'Forwarded to Technik Super Admin'}
                               </span>
                             </td>
+                            <td style={{ ...styles.tdCell, textAlign: 'center' }}>
+                              {isApproved ? (
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedStudentForModal({
+                                    ...st,
+                                    schoolName: schoolProfile.schoolName
+                                  })}
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '0.45rem',
+                                    padding: '0.45rem 0.85rem',
+                                    borderRadius: '8px',
+                                    fontSize: '0.8rem',
+                                    fontWeight: 700,
+                                    background: 'linear-gradient(135deg, #0284c7 0%, #0369a1 100%)',
+                                    color: '#ffffff',
+                                    border: 'none',
+                                    cursor: 'pointer',
+                                    boxShadow: '0 2px 6px rgba(2, 132, 199, 0.28)',
+                                    transition: 'transform 0.15s ease',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                  onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-1px)'}
+                                  onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
+                                  title="Add further text & file data, pay via Razorpay and unlock Skill Compass"
+                                >
+                                  <Compass size={14} />
+                                  <span>+ Add Data / Compass</span>
+                                </button>
+                              ) : (
+                                <span style={{
+                                  display: 'inline-flex',
+                                  alignItems: 'center',
+                                  gap: '0.35rem',
+                                  padding: '0.35rem 0.65rem',
+                                  borderRadius: '6px',
+                                  fontSize: '0.74rem',
+                                  fontWeight: 600,
+                                  background: '#f1f5f9',
+                                  color: '#94a3b8'
+                                }}>
+                                  <Clock size={12} /> Pending Approval
+                                </span>
+                              )}
+                            </td>
                           </tr>
-                        ))
+                          );
+                        })
                       )}
                     </tbody>
                   </table>
@@ -2048,6 +2267,18 @@ export default function Schools() {
 
           </div>
         </section>
+      )}
+
+      {/* Technik Skill Compass & Student Further Data Modal */}
+      {selectedStudentForModal && (
+        <SkillCompassModal
+          student={selectedStudentForModal}
+          onClose={() => setSelectedStudentForModal(null)}
+          onUpdated={() => {
+            fetchPrideNominations();
+            fetchStudents();
+          }}
+        />
       )}
 
     </div>

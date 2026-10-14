@@ -62,6 +62,7 @@ export default function Footer() {
             <h4 style={styles.colTitle}>QUICK LINKS</h4>
             <div style={styles.linkList}>
               <Link to="/about" style={styles.linkItem}>About Us</Link>
+              <Link to="/academic-assessment" style={styles.linkItem}>Academic Assessment</Link>
               <Link to="/catalog" style={styles.linkItem}>Olympiads</Link>
               <Link to="/awards" style={styles.linkItem}>Technik Awards</Link>
               <Link to="/results" style={styles.linkItem}>Results</Link>

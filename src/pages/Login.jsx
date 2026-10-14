@@ -404,22 +404,6 @@ const styles = {
     color: '#64748b',
     margin: 0
   },
-  demoFillBtn: {
-    marginLeft: 'auto',
-    background: '#fffbe6',
-    border: '1px solid #fde047',
-    color: '#b45309',
-    padding: '0.4rem 0.75rem',
-    borderRadius: '8px',
-    fontSize: '0.76rem',
-    fontWeight: 700,
-    cursor: 'pointer',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '5px',
-    transition: 'all 0.2s',
-    boxShadow: '0 2px 6px rgba(217, 119, 6, 0.1)'
-  },
   formStack: {
     display: 'flex',
     flexDirection: 'column',
@@ -595,11 +579,6 @@ if (typeof document !== 'undefined') {
       .login-card-header {
         flex-wrap: wrap !important;
         gap: 0.75rem !important;
-      }
-      .login-demo-btn {
-        margin-left: 0 !important;
-        width: 100% !important;
-        justify-content: center !important;
       }
       .login-options-row {
         flex-direction: column !important;

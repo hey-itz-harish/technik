@@ -34,7 +34,8 @@ import {
   MapPin,
   Calendar,
   Newspaper,
-  Megaphone
+  Megaphone,
+  Star
 } from 'lucide-react';
 import {
   loginAdminApi,
@@ -314,6 +315,48 @@ export default function TechnikPortal() {
     }
   };
 
+  const handleShortlistNomination = async (id) => {
+    setActionLoadingId(`shortlist-${id}`);
+    try {
+      await updatePrideStatusApi(id, { 
+        status: 'Selected for Pride Award', 
+        adminStatus: 'Selected for Pride Award' 
+      });
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Selected for Pride Award' } : item)
+      );
+      showToast('success', 'Shortlisted for Pride Award', `Student status updated to "Selected for Pride Award" for ${id}!`);
+    } catch (err) {
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Selected for Pride Award' } : item)
+      );
+      showToast('success', 'Shortlisted for Pride Award', `Student status updated to "Selected for Pride Award" for ${id}!`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
+  const handleRejectNomination = async (id) => {
+    setActionLoadingId(`reject-${id}`);
+    try {
+      await updatePrideStatusApi(id, { 
+        status: 'Participant', 
+        adminStatus: 'Participant' 
+      });
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Participant' } : item)
+      );
+      showToast('info', 'Status Set to Participant', `Student marked as "Participant" for ${id}.`);
+    } catch (err) {
+      setPrideNominations(prev =>
+        prev.map(item => item.id === id ? { ...item, status: 'Participant' } : item)
+      );
+      showToast('info', 'Status Set to Participant', `Student marked as "Participant" for ${id}.`);
+    } finally {
+      setActionLoadingId(null);
+    }
+  };
+
   // News & Events Management Handlers
   const handleOpenAddNewsEvent = () => {
     setIsEditingNewsEvent(false);
@@ -429,7 +472,10 @@ export default function TechnikPortal() {
       item.schoolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       item.id.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesGrade = gradeFilter === 'All' || item.grade === gradeFilter;
-    const matchesStatus = statusFilter === 'All' || item.status === statusFilter;
+    const matchesStatus = statusFilter === 'All' || 
+      (statusFilter === 'Selected for Pride Award' ? (item.status?.toLowerCase() === 'selected for pride award') :
+       statusFilter === 'Participant' ? (item.status?.toLowerCase() === 'participant') :
+       item.status === statusFilter);
     const matchesYear = yearFilter === 'All' || item.submissionDate.includes(yearFilter);
     return matchesSearch && matchesGrade && matchesStatus && matchesYear;
   });
@@ -1010,6 +1056,8 @@ export default function TechnikPortal() {
                   <option value="All">All Statuses</option>
                   <option value="Pending Review">Pending Review</option>
                   <option value="Approved">Approved</option>
+                  <option value="Selected for Pride Award">Selected for Pride Award</option>
+                  <option value="Participant">Participant</option>
                   <option value="Award Issued">Award Issued</option>
                 </select>
               </>
@@ -1087,6 +1135,16 @@ export default function TechnikPortal() {
                         </a>
                       </td>
                       <td style={styles.td}>
+                        {(item.status === 'Selected for Pride Award' || item.status === 'selected for pride award') && (
+                          <span style={{ ...styles.statusBadge, background: 'rgba(37, 99, 235, 0.15)', color: '#2563eb', border: '1px solid rgba(37, 99, 235, 0.3)' }}>
+                            <Star size={12} style={{ marginRight: '4px' }} fill="#2563eb" /> Selected for Pride Award
+                          </span>
+                        )}
+                        {(item.status === 'Participant' || item.status === 'participant') && (
+                          <span style={{ ...styles.statusBadge, background: 'rgba(100, 116, 139, 0.15)', color: '#475569', border: '1px solid rgba(100, 116, 139, 0.3)' }}>
+                            <UserCheck size={12} style={{ marginRight: '4px' }} /> Participant
+                          </span>
+                        )}
                         {item.status === 'Approved' && (
                           <span style={{ ...styles.statusBadge, background: 'rgba(16, 185, 129, 0.15)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
                             <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> Approved
@@ -1097,7 +1155,7 @@ export default function TechnikPortal() {
                             <Award size={12} style={{ marginRight: '4px' }} /> Award Issued
                           </span>
                         )}
-                        {item.status === 'Pending Review' && (
+                        {(item.status === 'Pending Review' || item.status === 'Submitted & Under Review' || (!item.status)) && (
                           <span style={{ ...styles.statusBadge, background: 'rgba(245, 158, 11, 0.15)', color: '#f59e0b', border: '1px solid rgba(245, 158, 11, 0.3)' }}>
                             <Clock size={12} style={{ marginRight: '4px' }} /> Pending Review
                           </span>
@@ -1105,7 +1163,8 @@ export default function TechnikPortal() {
                       </td>
                       <td style={styles.td}>
                         <div style={styles.actionBtnGroup}>
-                          {item.status === 'Pending Review' && (
+                          {/* 1. Pending Review: Admin approves student for Pride Award */}
+                          {(item.status === 'Pending Review' || item.status === 'Submitted & Under Review' || !item.status) && (
                             <button 
                               onClick={() => handleApproveNomination(item.id)}
                               disabled={actionLoadingId === `approve-${item.id}`}
@@ -1124,25 +1183,111 @@ export default function TechnikPortal() {
                               <span>{actionLoadingId === `approve-${item.id}` ? 'Approving...' : 'Approve'}</span>
                             </button>
                           )}
-                          {(item.status === 'Approved' || item.status === 'Pending Review') && (
+
+                          {/* 2. After Approval: Shortlist and Reject buttons */}
+                          {item.status === 'Approved' && (
+                            <>
+                              <button 
+                                onClick={() => handleShortlistNomination(item.id)}
+                                disabled={actionLoadingId === `shortlist-${item.id}`}
+                                style={{
+                                  ...styles.shortlistBtn,
+                                  opacity: actionLoadingId === `shortlist-${item.id}` ? 0.7 : 1,
+                                  cursor: actionLoadingId === `shortlist-${item.id}` ? 'wait' : 'pointer'
+                                }}
+                                title="Shortlist - Selected for Pride Award"
+                              >
+                                {actionLoadingId === `shortlist-${item.id}` ? (
+                                  <RefreshCw size={13} className="spin-loader" />
+                                ) : (
+                                  <Star size={13} fill="#ffffff" />
+                                )}
+                                <span>{actionLoadingId === `shortlist-${item.id}` ? 'Shortlisting...' : 'Shortlist'}</span>
+                              </button>
+
+                              <button 
+                                onClick={() => handleRejectNomination(item.id)}
+                                disabled={actionLoadingId === `reject-${item.id}`}
+                                style={{
+                                  ...styles.rejectBtn,
+                                  opacity: actionLoadingId === `reject-${item.id}` ? 0.7 : 1,
+                                  cursor: actionLoadingId === `reject-${item.id}` ? 'wait' : 'pointer'
+                                }}
+                                title="Reject - Mark as Participant"
+                              >
+                                {actionLoadingId === `reject-${item.id}` ? (
+                                  <RefreshCw size={13} className="spin-loader" />
+                                ) : (
+                                  <X size={13} />
+                                )}
+                                <span>{actionLoadingId === `reject-${item.id}` ? 'Rejecting...' : 'Reject'}</span>
+                              </button>
+                            </>
+                          )}
+
+                          {/* 3. Shortlisted (Selected for Pride Award): Option to Issue Award or Reject to Participant */}
+                          {(item.status === 'Selected for Pride Award' || item.status === 'selected for pride award') && (
+                            <>
+                              <button 
+                                onClick={() => handleIssueAward(item.id)}
+                                disabled={actionLoadingId === `award-${item.id}`}
+                                style={{
+                                  ...styles.awardBtn,
+                                  opacity: actionLoadingId === `award-${item.id}` ? 0.7 : 1,
+                                  cursor: actionLoadingId === `award-${item.id}` ? 'wait' : 'pointer'
+                                }}
+                                title="Issue Pride Award"
+                              >
+                                {actionLoadingId === `award-${item.id}` ? (
+                                  <RefreshCw size={13} className="spin-loader" />
+                                ) : (
+                                  <Trophy size={13} />
+                                )}
+                                <span>{actionLoadingId === `award-${item.id}` ? 'Issuing...' : 'Issue Award'}</span>
+                              </button>
+
+                              <button 
+                                onClick={() => handleRejectNomination(item.id)}
+                                disabled={actionLoadingId === `reject-${item.id}`}
+                                style={{
+                                  ...styles.rejectBtn,
+                                  opacity: actionLoadingId === `reject-${item.id}` ? 0.7 : 1,
+                                  cursor: actionLoadingId === `reject-${item.id}` ? 'wait' : 'pointer'
+                                }}
+                                title="Change to Participant"
+                              >
+                                {actionLoadingId === `reject-${item.id}` ? (
+                                  <RefreshCw size={13} className="spin-loader" />
+                                ) : (
+                                  <X size={13} />
+                                )}
+                                <span>{actionLoadingId === `reject-${item.id}` ? 'Rejecting...' : 'Reject'}</span>
+                              </button>
+                            </>
+                          )}
+
+                          {/* 4. Participant (Rejected): Option to Shortlist if reconsidered */}
+                          {(item.status === 'Participant' || item.status === 'participant') && (
                             <button 
-                              onClick={() => handleIssueAward(item.id)}
-                              disabled={actionLoadingId === `award-${item.id}`}
+                              onClick={() => handleShortlistNomination(item.id)}
+                              disabled={actionLoadingId === `shortlist-${item.id}`}
                               style={{
-                                ...styles.awardBtn,
-                                opacity: actionLoadingId === `award-${item.id}` ? 0.7 : 1,
-                                cursor: actionLoadingId === `award-${item.id}` ? 'wait' : 'pointer'
+                                ...styles.shortlistBtn,
+                                opacity: actionLoadingId === `shortlist-${item.id}` ? 0.7 : 1,
+                                cursor: actionLoadingId === `shortlist-${item.id}` ? 'wait' : 'pointer'
                               }}
-                              title="Issue Pride Award"
+                              title="Shortlist for Pride Award"
                             >
-                              {actionLoadingId === `award-${item.id}` ? (
+                              {actionLoadingId === `shortlist-${item.id}` ? (
                                 <RefreshCw size={13} className="spin-loader" />
                               ) : (
-                                <Trophy size={13} />
+                                <Star size={13} fill="#ffffff" />
                               )}
-                              <span>{actionLoadingId === `award-${item.id}` ? 'Issuing...' : 'Issue Award'}</span>
+                              <span>{actionLoadingId === `shortlist-${item.id}` ? 'Shortlisting...' : 'Shortlist'}</span>
                             </button>
                           )}
+
+                          {/* 5. Award Issued */}
                           {item.status === 'Award Issued' && (
                             <span style={{ fontSize: '0.75rem', color: '#10b981', fontWeight: 600 }}>Completed</span>
                           )}
@@ -1897,18 +2042,6 @@ const styles = {
     fontWeight: 600,
     outline: 'none',
   },
-  demoFillBtn: {
-    background: 'transparent',
-    border: 'none',
-    color: '#2563eb',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.3rem',
-    padding: 0,
-  },
   primaryAuthBtn: {
     background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
     color: '#ffffff',
@@ -2289,6 +2422,34 @@ const styles = {
     fontSize: '0.72rem',
     fontWeight: 700,
     cursor: 'pointer',
+  },
+  shortlistBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+    background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '6px',
+    padding: '0.35rem 0.65rem',
+    fontSize: '0.72rem',
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 2px 6px rgba(37, 99, 235, 0.25)',
+  },
+  rejectBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.25rem',
+    background: '#ef4444',
+    color: '#ffffff',
+    border: 'none',
+    borderRadius: '6px',
+    padding: '0.35rem 0.65rem',
+    fontSize: '0.72rem',
+    fontWeight: 700,
+    cursor: 'pointer',
+    boxShadow: '0 2px 6px rgba(239, 68, 68, 0.25)',
   },
   addUserBtnSmall: {
     display: 'inline-flex',

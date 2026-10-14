@@ -699,7 +699,7 @@ const styles = {
   },
 
   heroHandwrittenScript: {
-    fontFamily: '"Georgia", cursive, serif',
+    fontFamily: 'var(--font-cursive)',
     fontStyle: 'italic',
     textAlign: 'right',
     lineHeight: '1.2',
@@ -855,7 +855,7 @@ const styles = {
     flex: '1 1 auto',
   },
   kalamQuoteText: {
-    fontFamily: '"Georgia", serif',
+    fontFamily: 'var(--font-heading)',
     fontStyle: 'italic',
     fontSize: '0.92rem',
     color: '#1e293b',
@@ -892,7 +892,7 @@ const styles = {
     fontSize: '0.8rem',
     color: '#fef08a',
     fontWeight: 600,
-    fontFamily: '"Georgia", serif',
+    fontFamily: 'var(--font-heading)',
     fontStyle: 'italic',
   },
   kalamNameTitle: {
@@ -1132,7 +1132,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-end',
-    fontFamily: '"Georgia", serif',
+    fontFamily: 'var(--font-cursive)',
     fontStyle: 'italic',
     textAlign: 'right',
     paddingRight: '0.35rem',

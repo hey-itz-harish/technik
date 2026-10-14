@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Award, Calendar, FileDown, Lock, ShieldCheck, Sparkles, BookOpen, Compass, Plus, Zap } from 'lucide-react';
 
-export default function Dashboard({ registrations, onUpdateStage, onLoadDemoData }) {
+export default function Dashboard({ registrations, onUpdateStage }) {
   const [activeRegId, setActiveRegId] = useState(registrations.length > 0 ? registrations[0].id : null);
   
   React.useEffect(() => {
@@ -79,10 +79,6 @@ export default function Dashboard({ registrations, onUpdateStage, onLoadDemoData
                 <BookOpen size={16} />
                 Browse Catalog
               </Link>
-              <button onClick={onLoadDemoData} className="btn btn-ghost" style={{ borderColor: 'var(--gold)', color: 'var(--gold)' }}>
-                <Sparkles size={16} />
-                Load Demo Data
-              </button>
             </div>
           </div>
         ) : (

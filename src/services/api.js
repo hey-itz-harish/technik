@@ -4,7 +4,7 @@ const isLocalhost = typeof window !== 'undefined' &&
 
 const defaultBaseUrl = isLocalhost 
   ? 'http://localhost:8080' 
-  : 'https://technik-server-production.up.railway.app';
+  : 'https://technik-server.onrender.com';
 
 const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || defaultBaseUrl).trim();
 export const API_BASE_URL = rawBaseUrl.replace(/\/+$/, '');
@@ -202,7 +202,7 @@ export function getAuthHeaders(customHeaders = {}) {
   if (csrfToken) {
     headers['X-CSRF-Token'] = csrfToken;
   }
-  const accessToken = sessionStorage.getItem('technik_access_token');
+  const accessToken = sessionStorage.getItem('technik_admin_access_token') || sessionStorage.getItem('technik_access_token');
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
@@ -478,5 +478,74 @@ export async function deleteNewsEventApi(id) {
   });
   return parseJsonOrThrow(response);
 }
+
+/**
+ * Student Portfolio & Skill Compass APIs
+ */
+export async function getStudentPortfolioApi(studentId) {
+  const response = await fetch(`${API_BASE_URL}/api/student/${studentId}/portfolio`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+    credentials: 'include'
+  });
+  return parseJsonOrThrow(response);
+}
+
+export async function saveStudentPortfolioApi(studentId, payload) {
+  const response = await fetch(`${API_BASE_URL}/api/student/${studentId}/portfolio`, {
+    method: 'POST',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
+    body: JSON.stringify(payload)
+  });
+  return parseJsonOrThrow(response);
+}
+
+/**
+ * Razorpay Payment Gateway APIs
+ */
+export async function createRazorpayOrderApi({ studentId, amount = 499 }) {
+  const response = await fetch(`${API_BASE_URL}/api/payment/razorpay/create-order`, {
+    method: 'POST',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
+    body: JSON.stringify({ studentId, amount })
+  });
+  return parseJsonOrThrow(response);
+}
+
+export async function verifyRazorpayPaymentApi({ studentId, razorpayOrderId, razorpayPaymentId, razorpaySignature }) {
+  const response = await fetch(`${API_BASE_URL}/api/payment/razorpay/verify`, {
+    method: 'POST',
+    headers: getAuthHeaders({ 'Content-Type': 'application/json' }),
+    credentials: 'include',
+    body: JSON.stringify({
+      studentId,
+      razorpayOrderId,
+      razorpayPaymentId,
+      razorpaySignature
+    })
+  });
+  return parseJsonOrThrow(response);
+}
+
+/**
+ * Helper to dynamically load Razorpay Checkout script
+ */
+export function loadRazorpayScript() {
+  return new Promise((resolve) => {
+    if (typeof window !== 'undefined' && window.Razorpay) {
+      resolve(true);
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    script.onload = () => resolve(true);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
+}
+
 
 

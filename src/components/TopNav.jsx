@@ -16,7 +16,8 @@ import {
   Home as HomeIcon,
   Info,
   ArrowRight,
-  Building2
+  Building2,
+  Sparkles
 } from 'lucide-react';
 
 export default function TopNav() {
@@ -85,8 +86,7 @@ export default function TopNav() {
       {/* Main Navbar */}
       <nav style={styles.nav}>
         <div style={styles.navContainer} className="main-nav-container">
-          {/* Logo */}
-          <Link to="/" style={styles.logo} onClick={() => setIsOpen(false)}>
+          <Link to="/" style={styles.logo} className="main-logo-link" onClick={() => setIsOpen(false)}>
             <div style={styles.logoGearBox}>
               <img
                 src={logoImg}
@@ -108,11 +108,12 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: isActive('/') ? '#f97316' : '#0f172a',
+                color: isActive('/') ? '#ea580c' : '#334155',
                 fontWeight: isActive('/') ? 700 : 600,
               }}
             >
-              HOME
+              <HomeIcon size={14} className="nav-link-icon" color={isActive('/') ? '#ea580c' : '#64748b'} />
+              <span>Home</span>
             </Link>
 
             <Link
@@ -120,11 +121,12 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/about') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: isActive('/about') ? '#f97316' : '#0f172a',
+                color: isActive('/about') ? '#ea580c' : '#334155',
                 fontWeight: isActive('/about') ? 700 : 600,
               }}
             >
-              ABOUT US
+              <Info size={14} className="nav-link-icon" color={isActive('/about') ? '#ea580c' : '#64748b'} />
+              <span>About Us</span>
             </Link>
 
             <Link
@@ -132,11 +134,12 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/awards') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: isActive('/awards') ? '#f97316' : '#0f172a',
+                color: isActive('/awards') ? '#ea580c' : '#334155',
                 fontWeight: isActive('/awards') ? 700 : 600,
               }}
             >
-              TECHNIK PRIDE AWARD
+              <Award size={14} className="nav-link-icon" color={isActive('/awards') ? '#ea580c' : '#64748b'} />
+              <span>Technik Pride Award</span>
             </Link>
 
             <Link
@@ -144,11 +147,25 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/catalog') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: isActive('/catalog') ? '#f97316' : '#0f172a',
+                color: isActive('/catalog') ? '#ea580c' : '#334155',
                 fontWeight: isActive('/catalog') ? 700 : 600,
               }}
             >
-              TECHNIK OLYMPIAD
+              <BookOpen size={14} className="nav-link-icon" color={isActive('/catalog') ? '#ea580c' : '#64748b'} />
+              <span>Technik Olympiad</span>
+            </Link>
+
+            <Link
+              to="/academic-assessment"
+              className={`nav-item-link ${isActive('/academic-assessment') ? 'active-link' : ''}`}
+              style={{
+                ...styles.navLink,
+                color: isActive('/academic-assessment') ? '#ea580c' : '#334155',
+                fontWeight: isActive('/academic-assessment') ? 700 : 600,
+              }}
+            >
+              <GraduationCap size={14} className="nav-link-icon" color={isActive('/academic-assessment') ? '#ea580c' : '#64748b'} />
+              <span>Academic Assessment</span>
             </Link>
 
             <Link
@@ -156,11 +173,12 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/for-schools') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: isActive('/for-schools') ? '#f97316' : '#0f172a',
+                color: isActive('/for-schools') ? '#ea580c' : '#334155',
                 fontWeight: isActive('/for-schools') ? 700 : 600,
               }}
             >
-              FOR SCHOOLS
+              <Building2 size={14} className="nav-link-icon" color={isActive('/for-schools') ? '#ea580c' : '#64748b'} />
+              <span>For Schools</span>
             </Link>
 
             <Link
@@ -168,19 +186,25 @@ export default function TopNav() {
               className={`nav-item-link ${isActive('/results') || isActive('/verification') ? 'active-link' : ''}`}
               style={{
                 ...styles.navLink,
-                color: (isActive('/results') || isActive('/verification')) ? '#f97316' : '#0f172a',
+                color: (isActive('/results') || isActive('/verification')) ? '#ea580c' : '#334155',
                 fontWeight: (isActive('/results') || isActive('/verification')) ? 700 : 600,
               }}
             >
-              RESULT
+              <FileCheck2 size={14} className="nav-link-icon" color={(isActive('/results') || isActive('/verification')) ? '#ea580c' : '#64748b'} />
+              <span>Result</span>
             </Link>
 
             <Link
               to="/contact"
               className={`nav-item-link ${isActive('/contact') ? 'active-link' : ''}`}
-              style={styles.navLink}
+              style={{
+                ...styles.navLink,
+                color: isActive('/contact') ? '#ea580c' : '#334155',
+                fontWeight: isActive('/contact') ? 700 : 600,
+              }}
             >
-              CONTACT US
+              <Headset size={14} className="nav-link-icon" color={isActive('/contact') ? '#ea580c' : '#64748b'} />
+              <span>Contact Us</span>
             </Link>
 
             <Link
@@ -188,7 +212,8 @@ export default function TopNav() {
               className="pulse-register-btn"
               style={styles.registerBtn}
             >
-              REGISTER NOW
+              <Sparkles size={14} />
+              <span>Register Now</span>
             </Link>
           </div>
 
@@ -270,6 +295,20 @@ export default function TopNav() {
               >
                 <BookOpen size={18} color={isActive('/catalog') ? '#f97316' : '#64748b'} />
                 <span>TECHNIK OLYMPIAD</span>
+              </Link>
+
+              <Link 
+                to="/academic-assessment" 
+                style={{
+                  ...styles.mobileNavLink,
+                  color: isActive('/academic-assessment') ? '#f97316' : '#0f172a',
+                  background: isActive('/academic-assessment') ? '#fff7ed' : 'transparent',
+                  fontWeight: isActive('/academic-assessment') ? 800 : 600,
+                }} 
+                onClick={() => setIsOpen(false)}
+              >
+                <FileCheck2 size={18} color={isActive('/academic-assessment') ? '#f97316' : '#64748b'} />
+                <span>ACADEMIC ASSESSMENT</span>
               </Link>
 
               <Link
@@ -429,9 +468,9 @@ const styles = {
     justifyContent: 'space-between',
     alignItems: 'center',
     width: '100%',
-    maxWidth: '1400px',
+    maxWidth: '1480px',
     margin: '0 auto',
-    padding: '0 1.5rem',
+    padding: '0 1.25rem',
   },
   logo: {
     display: 'flex',
@@ -439,6 +478,7 @@ const styles = {
     gap: '0.65rem',
     textDecoration: 'none',
     flexShrink: 0,
+    marginRight: '0.85rem',
   },
   logoGearBox: {
     display: 'flex',
@@ -467,9 +507,10 @@ const styles = {
   desktopNav: {
     display: 'none',
     alignItems: 'center',
-    gap: '0.45rem',
+    gap: '0.15rem',
     height: '100%',
     flexShrink: 0,
+    marginLeft: 'auto',
   },
   dropdownWrapper: {
     position: 'relative',
@@ -478,15 +519,17 @@ const styles = {
   navLink: {
     display: 'inline-flex',
     alignItems: 'center',
-    gap: '0.15rem',
-    fontSize: '0.78rem',
-    fontFamily: 'var(--font-heading)',
+    gap: '0.25rem',
+    fontSize: '0.72rem',
+    fontFamily: 'var(--font-sans, "Inter", sans-serif)',
     fontWeight: 600,
-    color: '#0f172a',
+    color: '#334155',
     textDecoration: 'none',
-    padding: '0.4rem 0.25rem',
+    padding: '0.35rem 0.38rem',
+    borderRadius: '8px',
     whiteSpace: 'nowrap',
     letterSpacing: '0.01em',
+    transition: 'all 0.2s ease',
   },
   dropdownMenu: {
     position: 'absolute',
@@ -510,19 +553,22 @@ const styles = {
     borderBottom: '1px solid rgba(255,255,255,0.05)',
   },
   registerBtn: {
-    background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
-    color: '#0f172a',
-    fontWeight: 800,
-    fontSize: '0.78rem',
-    fontFamily: 'var(--font-heading)',
-    padding: '0.55rem 1.1rem',
-    borderRadius: '6px',
+    background: 'linear-gradient(135deg, #f59e0b 0%, #ea580c 100%)',
+    color: '#ffffff',
+    fontWeight: 700,
+    fontSize: '0.72rem',
+    fontFamily: 'var(--font-sans, "Inter", sans-serif)',
+    padding: '0.42rem 0.85rem',
+    borderRadius: '24px',
     textDecoration: 'none',
-    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.3)',
+    boxShadow: '0 4px 14px rgba(234, 88, 12, 0.35)',
     whiteSpace: 'nowrap',
     flexShrink: 0,
-    marginLeft: '0.25rem',
-    letterSpacing: '0.03em',
+    marginLeft: '0.35rem',
+    letterSpacing: '0.02em',
+    display: 'inline-flex',
+    alignItems: 'center',
+    gap: '0.3rem',
   },
   mobileMenuButton: {
     background: 'transparent',
@@ -639,10 +685,13 @@ const styles = {
 // Add responsive CSS styling and animations
 if (typeof document !== 'undefined') {
   const topNavStyleId = 'topnav-responsive-styles';
-  if (!document.getElementById(topNavStyleId)) {
-    const styleSheet = document.createElement("style");
+  let styleSheet = document.getElementById(topNavStyleId);
+  if (!styleSheet) {
+    styleSheet = document.createElement("style");
     styleSheet.id = topNavStyleId;
-    styleSheet.innerText = `
+    document.head.appendChild(styleSheet);
+  }
+  styleSheet.innerText = `
       @keyframes drawerSlideDown {
         from {
           opacity: 0;
@@ -675,31 +724,41 @@ if (typeof document !== 'undefined') {
 
       .nav-item-link {
         position: relative;
-        transition: color 0.25s ease;
-      }
-
-      .nav-item-link::after {
-        content: '';
-        position: absolute;
-        bottom: 2px;
-        left: 0;
-        width: 100%;
-        height: 2px;
-        background: linear-gradient(90deg, #f97316 0%, #fbbf24 100%);
-        border-radius: 2px;
-        transform: scaleX(0);
-        transform-origin: right;
-        transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-      }
-
-      .nav-item-link:hover::after,
-      .nav-item-link.active-link::after {
-        transform: scaleX(1);
-        transform-origin: left;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        border: 1px solid transparent;
       }
 
       .nav-item-link:hover {
-        color: #f97316 !important;
+        color: #ea580c !important;
+        background-color: #ffffff;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.07);
+        border: 1px solid rgba(0, 0, 0, 0.04);
+      }
+
+      .nav-item-link:hover .nav-link-icon {
+        color: #ea580c !important;
+        transform: translateY(-1px);
+      }
+
+      .nav-item-link.active-link {
+        color: #ea580c !important;
+        background-color: #ffffff !important;
+        box-shadow: 0 4px 14px rgba(234, 88, 12, 0.2), 0 1px 4px rgba(0, 0, 0, 0.06) !important;
+        border: 1px solid rgba(234, 88, 12, 0.22) !important;
+      }
+
+      .nav-item-link.active-link .nav-link-icon {
+        color: #ea580c !important;
+      }
+
+      .nav-item-link:active {
+        transform: scale(0.97);
+        box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25) !important;
+      }
+
+      .nav-link-icon {
+        transition: transform 0.2s ease, color 0.2s ease;
+        flex-shrink: 0;
       }
 
       .dropdown-wrapper .chevron-icon {
@@ -758,19 +817,32 @@ if (typeof document !== 'undefined') {
           display: flex !important;
         }
       }
-      @media (min-width: 992px) and (max-width: 1240px) {
-        .desktop-nav-menu {
-          gap: 0.2rem !important;
+      @media (min-width: 992px) and (max-width: 1360px) {
+        .main-logo-link {
+          margin-right: 0.85rem !important;
         }
-        .desktop-nav-menu a {
+        .desktop-nav-menu {
+          gap: 0.15rem !important;
+        }
+        .desktop-nav-menu .nav-item-link {
           font-size: 0.72rem !important;
-          padding: 0.35rem 0.15rem !important;
+          padding: 0.35rem 0.38rem !important;
+          gap: 0.22rem !important;
+        }
+        .desktop-nav-menu .nav-link-icon {
+          width: 12px !important;
+          height: 12px !important;
         }
         .main-nav-container {
-          padding: 0 0.85rem !important;
+          padding: 0 0.75rem !important;
         }
         .brand-title-text {
-          font-size: 1.05rem !important;
+          font-size: 1rem !important;
+        }
+        .pulse-register-btn {
+          font-size: 0.72rem !important;
+          padding: 0.44rem 0.85rem !important;
+          margin-left: 0.35rem !important;
         }
       }
       @media (max-width: 991px) {
@@ -794,6 +866,4 @@ if (typeof document !== 'undefined') {
         }
       }
     `;
-    document.head.appendChild(styleSheet);
-  }
 }

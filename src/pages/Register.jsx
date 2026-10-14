@@ -9,7 +9,6 @@ import {
   ArrowLeft, 
   CheckCircle,
   Check,
-  Sparkles, 
   Loader2, 
   AlertCircle,
   Eye,
@@ -76,34 +75,6 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
 
   const isStep3Complete = Boolean(declarationConfirmed);
 
-  // Auto-Fill Demo Data Helper
-  const handleFillDemoData = () => {
-    setSchoolDetails({
-      schoolName: "St. Xavier's International School",
-      board: 'CBSE',
-      state: 'Andhra Pradesh',
-      district: 'NTR District',
-      city: 'Vijayawada',
-      address: 'Plot 42, Executive Campus, Ring Road, Vijayawada - 520008',
-      email: 'principal@stxaviers.edu.in',
-      mobile: '+91 95004 28800',
-      principalName: 'Dr. Ramesh Verma'
-    });
-
-    setCoordinatorDetails({
-      name: 'Mrs. Anitha Sharma',
-      designation: 'STEM & Science HOD',
-      mobile: '+91 95004 28800',
-      email: 'stem.coordinator@stxaviers.edu.in'
-    });
-
-    setPassword('Technik@2026');
-    setConfirmPassword('Technik@2026');
-
-    setDeclarationConfirmed(true);
-    setDeclarationError(false);
-    setFieldErrors({});
-  };
 
   // Modal State
   const [showModal, setShowModal] = useState(false);
@@ -337,15 +308,6 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <h2 style={styles.cardTitle}>School Details</h2>
                     <p style={styles.cardSub}>Provide your school information</p>
                   </div>
-                  <button
-                    type="button"
-                    onClick={handleFillDemoData}
-                    style={styles.demoFillBtn}
-                    className="register-demo-btn"
-                    title="Auto-fill sample school & coordinator details"
-                  >
-                    <Sparkles size={14} color="#ea580c" /> Auto-Fill Demo Details
-                  </button>
                 </div>
 
                 <div style={styles.formGrid3} className="register-form-grid">
@@ -1082,22 +1044,6 @@ const styles = {
     fontSize: '0.82rem',
     color: '#64748b',
   },
-  demoFillBtn: {
-    background: '#fff7ed',
-    border: '1px solid #fed7aa',
-    color: '#c2410c',
-    padding: '0.45rem 0.95rem',
-    borderRadius: '8px',
-    fontSize: '0.8rem',
-    fontWeight: 700,
-    fontFamily: 'var(--font-heading)',
-    cursor: 'pointer',
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    transition: 'all 0.2s ease',
-    boxShadow: '0 2px 6px rgba(234, 88, 12, 0.08)',
-  },
 
   /* Form Grids */
   formGrid3: {
@@ -1398,10 +1344,6 @@ if (typeof document !== 'undefined') {
         flex-wrap: wrap !important;
         gap: 0.75rem !important;
         margin-bottom: 1.15rem !important;
-      }
-      .register-demo-btn {
-        width: 100% !important;
-        justify-content: center !important;
       }
       .register-form-grid,
       div[style*="gridTemplateColumns"] {

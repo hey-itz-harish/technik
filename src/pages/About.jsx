@@ -81,15 +81,13 @@ export default function About() {
             </div>
           </div>
 
-          {/* Right Bottom Taglines Block */}
-          <div style={styles.heroRightBottom} className="about-hero-right">
-            <div style={styles.heroTaglinePill}>
-              <span style={styles.heroTaglineSparkle}>✦</span>
-              <span style={styles.heroTaglineText}>A Brighter Tomorrow Begins Here!</span>
-            </div>
-            <div style={styles.heroTaglinePillGold}>
-              <span style={styles.heroTaglineSparkle}>✦</span>
-              <span style={styles.heroTaglineTextGold}>Nurturing Potential • Creating Change</span>
+          {/* Right Calligraphic Accent Block - Styled only in yellow in 2 lines */}
+          <div style={styles.heroCalligraphyWrapper} className="about-hero-calligraphy">
+            <div style={styles.calligraphyGoldLine}>A Brighter Tomorrow</div>
+            <div style={styles.calligraphyGoldLine}>Begins Here!</div>
+            <div style={styles.calligraphyLineBar} className="calligraphy-line-bar" />
+            <div style={styles.calligraphySubLine}>
+              Nurturing Potential • Creating Change
             </div>
           </div>
         </div>
@@ -579,50 +577,44 @@ const styles = {
     fontFamily: 'var(--font-heading)',
   },
 
-  /* Taglines Bar */
-  heroTaglinesBar: {
+  /* Calligraphic Accent Block - Styled only in yellow in 2 lines */
+  heroCalligraphyWrapper: {
     display: 'flex',
-    flexWrap: 'wrap',
-    gap: '0.6rem',
+    flexDirection: 'column',
     alignItems: 'center',
+    textAlign: 'center',
+    padding: '0.5rem 1rem',
+    userSelect: 'none',
   },
-  heroTaglinePill: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    padding: '0.35rem 0.85rem',
-    background: 'rgba(251, 191, 36, 0.12)',
-    border: '1px solid rgba(251, 191, 36, 0.4)',
-    borderRadius: '30px',
-    backdropFilter: 'blur(8px)',
-  },
-  heroTaglineSparkle: {
-    color: '#fbbf24',
-    fontSize: '0.85rem',
-  },
-  heroTaglineText: {
-    fontSize: '0.82rem',
+  calligraphyGoldLine: {
+    fontFamily: '"Caveat", cursive',
+    fontSize: 'clamp(2.1rem, 3.2vw, 2.75rem)',
     fontWeight: 700,
+    fontStyle: 'italic',
     color: '#fbbf24',
-    fontStyle: 'italic',
-    fontFamily: '"Georgia", serif',
+    lineHeight: 1.15,
+    textShadow: '0 2px 14px rgba(251, 191, 36, 0.45), 0 2px 10px rgba(0, 0, 0, 0.75)',
+    letterSpacing: '0.01em',
+    display: 'block',
+    whiteSpace: 'nowrap',
   },
-  heroTaglinePillGold: {
-    display: 'inline-flex',
-    alignItems: 'center',
-    gap: '0.4rem',
-    padding: '0.35rem 0.85rem',
-    background: 'rgba(249, 115, 22, 0.15)',
-    border: '1px solid rgba(249, 115, 22, 0.45)',
-    borderRadius: '30px',
-    backdropFilter: 'blur(8px)',
+  calligraphyLineBar: {
+    width: '65px',
+    height: '3.5px',
+    backgroundColor: '#fbbf24',
+    borderRadius: '2px',
+    margin: '0.65rem auto 0.55rem auto',
+    boxShadow: '0 2px 8px rgba(251, 191, 36, 0.5)',
   },
-  heroTaglineTextGold: {
-    fontSize: '0.82rem',
+  calligraphySubLine: {
+    fontFamily: '"Caveat", cursive',
+    fontSize: 'clamp(1.15rem, 1.8vw, 1.35rem)',
     fontWeight: 700,
-    color: '#ffedd5',
     fontStyle: 'italic',
-    fontFamily: '"Georgia", serif',
+    color: '#fef08a',
+    textShadow: '0 2px 8px rgba(0, 0, 0, 0.75)',
+    whiteSpace: 'nowrap',
+    letterSpacing: '0.02em',
   },
 
   /* 2. ABOUT TECHNIK SECTION */
@@ -870,7 +862,7 @@ const styles = {
     bottom: '1.25rem',
     left: '1.25rem',
     textAlign: 'left',
-    fontFamily: '"Georgia", cursive, serif',
+    fontFamily: 'var(--font-cursive)',
     fontStyle: 'italic',
   },
   vmScriptWhite: {

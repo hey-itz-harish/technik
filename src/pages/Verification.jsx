@@ -794,14 +794,14 @@ const styles = {
   quoteMark: {
     fontSize: '1.05rem',
     color: '#fbbf24',
-    fontFamily: 'Georgia, serif',
+    fontFamily: 'var(--font-heading)',
   },
   scriptText: {
-    fontSize: '0.82rem',
+    fontSize: '0.95rem',
     fontStyle: 'italic',
     fontWeight: 600,
     color: '#ffffff',
-    fontFamily: '"Georgia", cursive, serif',
+    fontFamily: 'var(--font-cursive)',
   },
 
   /* 2. CHECK YOUR RESULT FORM CARD SECTION */
@@ -1258,7 +1258,7 @@ const styles = {
     fontWeight: 700,
     color: '#0f172a',
     fontStyle: 'italic',
-    fontFamily: 'Georgia, serif',
+    fontFamily: 'var(--font-heading)',
     borderBottom: '1px solid #0f172a',
   },
 
@@ -1482,7 +1482,7 @@ const styles = {
     gap: '1.5rem',
   },
   ctaLeftScript: {
-    fontFamily: '"Georgia", cursive, serif',
+    fontFamily: 'var(--font-cursive)',
     fontStyle: 'italic',
   },
   ctaScriptWhite: {

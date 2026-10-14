@@ -690,11 +690,11 @@ const styles = {
     textAlign: 'right',
   },
   scriptTaglineText: {
-    fontSize: '1.15rem',
+    fontSize: '1.35rem',
     fontStyle: 'italic',
     fontWeight: 700,
     color: '#fbbf24',
-    fontFamily: '"Georgia", cursive, serif',
+    fontFamily: 'var(--font-cursive)',
     textShadow: '0 2px 8px rgba(0,0,0,0.8)',
   },
 

@@ -23,6 +23,7 @@ import FAQ from './pages/FAQ';
 import PrivacyPolicy from './pages/PrivacyPolicy';
 import TermsConditions from './pages/TermsConditions';
 import RefundPolicy from './pages/RefundPolicy';
+import AcademicAssessment from './pages/AcademicAssessment';
 import NotFound from './pages/NotFound';
 
 function ScrollToTop() {
@@ -57,6 +58,8 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
         location.pathname.startsWith('/activation-pending') ||
         location.pathname.startsWith('/activate') ||
         location.pathname.startsWith('/mfa-setup') ||
+        location.pathname.startsWith('/academic-assessment') ||
+        location.pathname.startsWith('/assessment') ||
         location.search.includes('token=') ||
         window.location.href.includes('token=');
 
@@ -90,6 +93,8 @@ function AppContent({ registrations, selectedTrack, setSelectedTrack, handleRegi
           <Route path="/for-schools" element={<ForSchools />} />
           <Route path="/admin" element={<TechnikPortal />} />
           <Route path="/technik-portal" element={<TechnikPortal />} />
+          <Route path="/academic-assessment" element={<AcademicAssessment />} />
+          <Route path="/assessment" element={<AcademicAssessment />} />
           <Route path="/catalog" element={<Catalog onSelectTrack={setSelectedTrack} />} />
           <Route path="/skill-compass" element={<SkillCompass />} />
           <Route 
