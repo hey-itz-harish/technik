@@ -191,9 +191,26 @@ export default function AcademicAssessment() {
             {/* Right Banner with Cursive Script and Students Photo */}
             <div style={styles.heroRight} className="hero-right-responsive">
               <div style={styles.cursiveBanner}>
-                <span style={styles.cursiveText} className="cursive-gold-script">
-                  From First Steps to Future Goals
-                </span>
+                <div style={styles.cursiveTextWrapper}>
+                  <span style={styles.cursiveText} className="cursive-gold-script">
+                    From First Steps to Future Goals
+                  </span>
+                  <svg
+                    width="100%"
+                    height="12"
+                    viewBox="0 0 300 12"
+                    style={styles.cursiveCurveUnderline}
+                    preserveAspectRatio="none"
+                  >
+                    <path
+                      d="M 4 4 Q 150 14 296 4"
+                      stroke="#f5c05c"
+                      strokeWidth="2.8"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                  </svg>
+                </div>
               </div>
 
               <div style={styles.heroImageCard} className="hero-image-glow">
@@ -1291,13 +1308,27 @@ const styles = {
     textAlign: 'center',
     marginBottom: '0.65rem',
   },
+  cursiveTextWrapper: {
+    display: 'inline-block',
+    position: 'relative',
+    textAlign: 'center',
+  },
   cursiveText: {
     fontFamily: '"Caveat", cursive',
-    fontSize: '2.35rem',
+    fontSize: 'clamp(1.35rem, 2.2vw, 1.7rem)',
     fontWeight: 700,
     color: '#f5c05c',
     letterSpacing: '0.02em',
-    textShadow: '0 2px 10px rgba(245, 192, 92, 0.25)',
+    textShadow: '0 2px 10px rgba(245, 192, 92, 0.3)',
+    display: 'block',
+    lineHeight: 1.15,
+  },
+  cursiveCurveUnderline: {
+    display: 'block',
+    width: '100%',
+    height: '12px',
+    marginTop: '2px',
+    filter: 'drop-shadow(0 2px 6px rgba(245, 192, 92, 0.35))',
   },
   heroImageCard: {
     position: 'relative',
@@ -1484,7 +1515,7 @@ const styles = {
   },
   cursiveTextAbout: {
     fontFamily: '"Caveat", cursive',
-    fontSize: '2.15rem',
+    fontSize: 'clamp(1.3rem, 2vw, 1.6rem)',
     fontWeight: 700,
     color: '#d97706',
     letterSpacing: '0.01em',
@@ -2387,20 +2418,45 @@ if (typeof document !== 'undefined') {
         animation: modalPopUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
 
-      @media (max-width: 1024px) {
+      @media (min-width: 1024px) {
+        .hero-grid-responsive {
+          grid-template-columns: 1.15fr 0.85fr !important;
+          gap: 2rem !important;
+        }
+        .skill-compass-grid-responsive {
+          grid-template-columns: 1fr 1fr !important;
+          gap: 2.5rem !important;
+        }
         .stages-cards-grid {
           grid-template-columns: repeat(3, 1fr) !important;
         }
-        .skill-compass-grid-responsive {
-          grid-template-columns: 1fr !important;
-          gap: 3rem !important;
+        .about-grid-responsive {
+          grid-template-columns: 1fr 1fr !important;
         }
-        .hero-grid-responsive {
+        .partnership-banner-responsive {
+          grid-template-columns: 1.2fr 0.8fr !important;
+        }
+      }
+      @media (min-width: 1260px) {
+        .stages-cards-grid {
+          grid-template-columns: repeat(6, 1fr) !important;
+        }
+      }
+
+      @media (max-width: 1023px) {
+        .stages-cards-grid {
+          grid-template-columns: repeat(2, 1fr) !important;
+        }
+        .skill-compass-grid-responsive {
           grid-template-columns: 1fr !important;
           gap: 2.5rem !important;
         }
+        .hero-grid-responsive {
+          grid-template-columns: 1fr !important;
+          gap: 2rem !important;
+        }
         .hero-title-responsive {
-          font-size: 2.6rem !important;
+          font-size: 2.4rem !important;
         }
         .about-grid-responsive {
           grid-template-columns: 1fr !important;

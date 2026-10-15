@@ -547,7 +547,9 @@ const styles = {
     alignItems: 'center',
     justifyContent: 'space-between',
     gap: '1.5rem',
-    flexWrap: 'wrap',
+    maxWidth: '1240px',
+    margin: '0 auto',
+    width: '100%',
   },
   heroLeft: {
     flex: '1 1 520px',
@@ -1168,7 +1170,22 @@ const styles = {
 // Add responsive CSS styling
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
-  @media (max-width: 991px) {
+  /* Desktop Tier (>= 1024px) */
+  @media (min-width: 1024px) {
+    .awards-hero-container {
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: nowrap !important;
+    }
+    .awards-three-col-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1.25rem !important;
+    }
+  }
+
+  /* Tablet & below (<= 1023px) */
+  @media (max-width: 1023px) {
     .awards-hero-container {
       flex-direction: column !important;
       align-items: center !important;

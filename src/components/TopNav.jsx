@@ -139,7 +139,7 @@ export default function TopNav() {
               }}
             >
               <Award size={14} className="nav-link-icon" color={isActive('/awards') ? '#ea580c' : '#64748b'} />
-              <span>Technik Pride Award</span>
+              <span><span className="desktop-word-prefix">Technik </span>Pride Award</span>
             </Link>
 
             <Link
@@ -152,7 +152,7 @@ export default function TopNav() {
               }}
             >
               <BookOpen size={14} className="nav-link-icon" color={isActive('/catalog') ? '#ea580c' : '#64748b'} />
-              <span>Technik Olympiad</span>
+              <span><span className="desktop-word-prefix">Technik </span>Olympiad</span>
             </Link>
 
             <Link
@@ -165,7 +165,7 @@ export default function TopNav() {
               }}
             >
               <GraduationCap size={14} className="nav-link-icon" color={isActive('/academic-assessment') ? '#ea580c' : '#64748b'} />
-              <span>Academic Assessment</span>
+              <span><span className="desktop-word-prefix">Academic </span>Assessment</span>
             </Link>
 
             <Link
@@ -218,9 +218,9 @@ export default function TopNav() {
           </div>
 
           {/* Mobile Toggle */}
-          <button 
-            style={styles.mobileMenuButton} 
-            onClick={() => setIsOpen(!isOpen)} 
+          <button
+            style={styles.mobileMenuButton}
+            onClick={() => setIsOpen(!isOpen)}
             id="mobile-nav-toggle"
             aria-label={isOpen ? "Close menu" : "Open menu"}
           >
@@ -241,70 +241,70 @@ export default function TopNav() {
             </div>
 
             <div style={styles.mobileLinks}>
-              <Link 
-                to="/" 
+              <Link
+                to="/"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/') ? '#f97316' : '#0f172a',
                   background: isActive('/') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <HomeIcon size={18} color={isActive('/') ? '#f97316' : '#64748b'} />
                 <span>HOME</span>
               </Link>
-              
-              <Link 
-                to="/about" 
+
+              <Link
+                to="/about"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/about') ? '#f97316' : '#0f172a',
                   background: isActive('/about') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/about') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <Info size={18} color={isActive('/about') ? '#f97316' : '#64748b'} />
                 <span>ABOUT US</span>
               </Link>
 
-              <Link 
-                to="/awards" 
+              <Link
+                to="/awards"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/awards') ? '#f97316' : '#0f172a',
                   background: isActive('/awards') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/awards') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <Award size={18} color={isActive('/awards') ? '#f97316' : '#64748b'} />
                 <span>TECHNIK PRIDE AWARD</span>
               </Link>
 
-              <Link 
-                to="/catalog" 
+              <Link
+                to="/catalog"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/catalog') ? '#f97316' : '#0f172a',
                   background: isActive('/catalog') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/catalog') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <BookOpen size={18} color={isActive('/catalog') ? '#f97316' : '#64748b'} />
                 <span>TECHNIK OLYMPIAD</span>
               </Link>
 
-              <Link 
-                to="/academic-assessment" 
+              <Link
+                to="/academic-assessment"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/academic-assessment') ? '#f97316' : '#0f172a',
                   background: isActive('/academic-assessment') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/academic-assessment') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <FileCheck2 size={18} color={isActive('/academic-assessment') ? '#f97316' : '#64748b'} />
@@ -339,14 +339,14 @@ export default function TopNav() {
                 <span>RESULT</span>
               </Link>
 
-              <Link 
-                to="/contact" 
+              <Link
+                to="/contact"
                 style={{
                   ...styles.mobileNavLink,
                   color: isActive('/contact') ? '#f97316' : '#0f172a',
                   background: isActive('/contact') ? '#fff7ed' : 'transparent',
                   fontWeight: isActive('/contact') ? 800 : 600,
-                }} 
+                }}
                 onClick={() => setIsOpen(false)}
               >
                 <Headset size={18} color={isActive('/contact') ? '#f97316' : '#64748b'} />
@@ -809,7 +809,18 @@ if (typeof document !== 'undefined') {
         box-shadow: 0 8px 25px rgba(245, 158, 11, 0.85) !important;
       }
 
-      @media (min-width: 992px) {
+      @media (max-width: 1379px) {
+        .desktop-word-prefix {
+          display: none !important;
+        }
+      }
+      @media (min-width: 1380px) {
+        .desktop-word-prefix {
+          display: inline !important;
+        }
+      }
+
+      @media (min-width: 1024px) {
         #mobile-nav-toggle {
           display: none !important;
         }
@@ -817,35 +828,57 @@ if (typeof document !== 'undefined') {
           display: flex !important;
         }
       }
-      @media (min-width: 992px) and (max-width: 1360px) {
+      @media (min-width: 1024px) and (max-width: 1379px) {
         .main-logo-link {
-          margin-right: 0.85rem !important;
+          margin-right: 0.5rem !important;
+          gap: 0.45rem !important;
+        }
+        .main-logo-link img {
+          width: 38px !important;
+          height: 38px !important;
+        }
+        .brand-title-text {
+          font-size: 0.98rem !important;
+          white-space: nowrap !important;
+        }
+        .main-nav-container {
+          padding: 0 0.85rem !important;
+          max-width: 100% !important;
         }
         .desktop-nav-menu {
           gap: 0.15rem !important;
         }
         .desktop-nav-menu .nav-item-link {
           font-size: 0.72rem !important;
-          padding: 0.35rem 0.38rem !important;
-          gap: 0.22rem !important;
+          padding: 0.35rem 0.35rem !important;
+          gap: 0.2rem !important;
+          letter-spacing: 0 !important;
         }
         .desktop-nav-menu .nav-link-icon {
           width: 12px !important;
           height: 12px !important;
         }
-        .main-nav-container {
-          padding: 0 0.75rem !important;
-        }
-        .brand-title-text {
-          font-size: 1rem !important;
-        }
         .pulse-register-btn {
           font-size: 0.72rem !important;
-          padding: 0.44rem 0.85rem !important;
-          margin-left: 0.35rem !important;
+          padding: 0.4rem 0.8rem !important;
+          margin-left: 0.25rem !important;
         }
       }
-      @media (max-width: 991px) {
+      @media (min-width: 1380px) {
+        .desktop-nav-menu {
+          gap: 0.25rem !important;
+        }
+        .desktop-nav-menu .nav-item-link {
+          font-size: 0.78rem !important;
+          padding: 0.38rem 0.5rem !important;
+          gap: 0.25rem !important;
+        }
+        .pulse-register-btn {
+          font-size: 0.78rem !important;
+          padding: 0.45rem 0.95rem !important;
+        }
+      }
+      @media (max-width: 1023px) {
         .desktop-nav-menu {
           display: none !important;
         }

@@ -1331,7 +1331,22 @@ if (typeof document !== 'undefined') {
     .step-check-anim {
       animation: stepCheckPop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     }
-    @media (max-width: 768px) {
+    @media (min-width: 1024px) {
+      .register-form-grid {
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 1.25rem !important;
+      }
+    }
+    @media (min-width: 641px) and (max-width: 1023px) {
+      .register-form-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 1.1rem !important;
+      }
+      .register-col-span-2 {
+        grid-column: 1 / -1 !important;
+      }
+    }
+    @media (max-width: 640px) {
       .register-main-container {
         padding: 0 0.85rem !important;
         margin-top: 1.25rem !important;

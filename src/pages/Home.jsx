@@ -2204,7 +2204,34 @@ styleSheet.innerText = `
   }
 
   /* RESPONSIVE BREAKPOINTS */
-  @media (max-width: 991px) {
+  @media (min-width: 1024px) {
+    .home-hero-container {
+      grid-template-columns: 1.15fr 0.85fr !important;
+      gap: 1.75rem !important;
+    }
+    .home-stats-grid {
+      grid-template-columns: repeat(4, 1fr) !important;
+      gap: 1rem !important;
+    }
+    .home-action-cards-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1.25rem !important;
+    }
+    .home-initiatives-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 1.5rem !important;
+    }
+    .home-events-news-grid {
+      grid-template-columns: repeat(3, 1fr) !important;
+      gap: 1.25rem !important;
+    }
+    .home-trust-features-grid {
+      grid-template-columns: repeat(5, 1fr) !important;
+      gap: 1rem !important;
+    }
+  }
+
+  @media (max-width: 1023px) {
     .desktop-hero-actions {
       display: none !important;
     }

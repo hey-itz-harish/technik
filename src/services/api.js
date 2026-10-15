@@ -1,9 +1,9 @@
 // Determine API Base URL dynamically with fallback for production
-const isLocalhost = typeof window !== 'undefined' && 
+const isLocalhost = typeof window !== 'undefined' &&
   (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
 
-const defaultBaseUrl = isLocalhost 
-  ? 'http://localhost:8080' 
+const defaultBaseUrl = isLocalhost
+  ? 'http://localhost:8080'
   : 'https://technik-server.onrender.com';
 
 const rawBaseUrl = (import.meta.env.VITE_API_BASE_URL || import.meta.env.API_BASE_URL || defaultBaseUrl).trim();

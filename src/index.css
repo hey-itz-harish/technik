@@ -42,7 +42,7 @@
   /* Slate 500 */
 
   /* Layout */
-  --max-width: 1200px;
+  --max-width: 1240px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
@@ -127,7 +127,9 @@ a {
 .container {
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 1.5rem;
+  padding: 0 1.25rem;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 /* Typography Utility Classes matching Technik Academic Assessment */
@@ -633,31 +635,38 @@ a {
   animation: float3DAnimation 3.5s ease-in-out infinite;
 }
 
-/* Universal Mobile Responsiveness & Polish */
+/* Universal Mobile & Laptop Responsiveness Polish */
 html, body {
   overflow-x: hidden;
   max-width: 100vw;
+  width: 100%;
 }
 
 img, svg, video, canvas {
   max-width: 100%;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .container {
     padding: 0 1rem !important;
   }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 0.85rem !important;
+  }
 
   h1 {
-    font-size: clamp(1.8rem, 6vw, 2.4rem);
+    font-size: clamp(1.8rem, 6vw, 2.3rem);
   }
 
   h2 {
-    font-size: clamp(1.4rem, 5vw, 1.85rem);
+    font-size: clamp(1.4rem, 5vw, 1.8rem);
   }
 
   h3 {
-    font-size: clamp(1.15rem, 4vw, 1.4rem);
+    font-size: clamp(1.15rem, 4vw, 1.35rem);
   }
 
   .btn {

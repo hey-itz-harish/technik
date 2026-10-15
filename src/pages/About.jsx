@@ -498,7 +498,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: '2rem',
     width: '100%',
-    maxWidth: '1400px',
+    maxWidth: '1240px',
     margin: '0 auto',
     padding: '0 1.5rem',
   },
@@ -964,23 +964,47 @@ const styles = {
 // Add responsive CSS styling
 const styleSheet = document.createElement("style");
 styleSheet.innerText = `
-  /* Tablet & below (<= 991px) */
-  @media (max-width: 991px) {
+  /* Desktop / Laptop Tier (>= 1024px) */
+  @media (min-width: 1024px) {
+    .about-hero-container {
+      flex-direction: row !important;
+      align-items: center !important;
+      justify-content: space-between !important;
+      flex-wrap: nowrap !important;
+    }
+    .about-technik-grid {
+      grid-template-columns: 1fr 1fr !important;
+      gap: 2rem !important;
+    }
+    .about-vm-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 1.5rem !important;
+    }
+  }
+
+  /* Tablet & below (<= 1023px) */
+  @media (max-width: 1023px) {
     .about-hero-container {
       flex-direction: column !important;
-      align-items: flex-start !important;
+      align-items: center !important;
+      text-align: center !important;
       gap: 1.75rem !important;
       padding: 0 1.25rem !important;
     }
     .about-hero-left {
       margin-left: 0 !important;
       max-width: 100% !important;
+      align-items: center !important;
+      text-align: center !important;
+    }
+    .about-hero-calligraphy {
+      margin-top: 0.75rem !important;
     }
     .about-hero-title {
       font-size: clamp(2rem, 6vw, 2.4rem) !important;
     }
     .about-hero-right {
-      align-items: flex-start !important;
+      align-items: center !important;
       width: 100% !important;
       padding-bottom: 0 !important;
     }

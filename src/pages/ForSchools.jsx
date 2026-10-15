@@ -608,7 +608,23 @@ if (typeof document !== 'undefined') {
       box-shadow: 0 10px 28px rgba(245, 158, 11, 0.55);
     }
 
-    @media (max-width: 991px) {
+    @media (min-width: 1024px) {
+      .for-schools-hero-grid {
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+      }
+      .for-schools-opportunity-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 2rem !important;
+      }
+      .for-schools-why-grid {
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 1.5rem !important;
+      }
+    }
+
+    @media (max-width: 1023px) {
       .for-schools-hero-grid {
         flex-direction: column !important;
         align-items: flex-start !important;
