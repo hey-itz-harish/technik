@@ -196,13 +196,15 @@ export async function getMfaStatusApi({ email, type = 'school' }) {
 /**
  * Helper to build auth headers with both Bearer JWT access token and X-CSRF-Token.
  */
-export function getAuthHeaders(customHeaders = {}) {
+export function getAuthHeaders(customHeaders = {}, forAdmin = false) {
   const headers = { ...customHeaders };
   const csrfToken = getCsrfToken();
   if (csrfToken) {
     headers['X-CSRF-Token'] = csrfToken;
   }
-  const accessToken = sessionStorage.getItem('technik_admin_access_token') || sessionStorage.getItem('technik_access_token');
+  const adminToken = sessionStorage.getItem('technik_admin_access_token');
+  const schoolToken = sessionStorage.getItem('technik_access_token');
+  const accessToken = forAdmin ? (adminToken || schoolToken) : (schoolToken || adminToken);
   if (accessToken) {
     headers['Authorization'] = `Bearer ${accessToken}`;
   }
@@ -237,21 +239,41 @@ export async function verifyCodeApi({ email, code, mode = 'mail', type = 'school
 }
 
 /**
- * Gets currently authenticated user / school profile.
+ * Gets currently authenticated school profile via the dedicated GET /api/school/details endpoint.
+ * Accepts optional schoolId, or reads from sessionStorage.
  */
-export async function getSchoolProfileApi() {
-  const response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+export async function getSchoolProfileApi(schoolId = '') {
+  const effectiveSchoolId = schoolId || sessionStorage.getItem('technik_school_id') || '';
+  const params = new URLSearchParams();
+  if (effectiveSchoolId) {
+    params.append('schoolId', effectiveSchoolId);
+  }
+
+  const queryStr = params.toString() ? `?${params.toString()}` : '';
+  let response = await fetch(`${API_BASE_URL}/api/school/details${queryStr}`, {
     method: 'GET',
-    headers: getAuthHeaders(),
+    headers: getAuthHeaders({}, false),
     credentials: 'include'
   });
 
-  const data = await parseJsonOrThrow(response);
-  if (data && data.id) {
-    sessionStorage.setItem('technik_school_id', data.id);
+  // Fallback to /api/auth/me if /api/school/details returns 404 (e.g. before server restart)
+  if (response.status === 404) {
+    response = await fetch(`${API_BASE_URL}/api/auth/me`, {
+      method: 'GET',
+      headers: getAuthHeaders({}, false),
+      credentials: 'include'
+    });
   }
-  return data;
+
+  const data = await parseJsonOrThrow(response);
+  const resolvedSchool = (data && data.school) || data;
+  if (resolvedSchool && resolvedSchool.id) {
+    sessionStorage.setItem('technik_school_id', resolvedSchool.id);
+  }
+  return resolvedSchool;
 }
+
+export const getSchoolDetailsApi = getSchoolProfileApi;
 
 /**
  * Fetches enrolled students list from StudentDetails with optional filters.

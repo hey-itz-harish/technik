@@ -91,6 +91,9 @@ export default function CodeVerification() {
       if (res && res.csrfToken) {
         sessionStorage.setItem('technik_csrf_token', res.csrfToken);
       }
+      if (res && res.token) {
+        sessionStorage.setItem('technik_access_token', res.token);
+      }
       if (res && res.school && res.school.id) {
         sessionStorage.setItem('technik_school_id', res.school.id);
       }

@@ -1,6 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { registerSchoolApi } from '../services/api';
+import SearchableSelect from '../components/SearchableSelect';
 import { 
   Building2, 
   User, 
@@ -14,6 +15,147 @@ import {
   Eye,
   EyeOff
 } from 'lucide-react';
+
+const STATE_DISTRICT_MAP = {
+  'Tamil Nadu': [
+    'Ariyalur',
+    'Chengalpattu',
+    'Chennai',
+    'Coimbatore',
+    'Cuddalore',
+    'Dharmapuri',
+    'Dindigul',
+    'Erode',
+    'Kallakurichi',
+    'Kanchipuram',
+    'Kanyakumari',
+    'Karur',
+    'Krishnagiri',
+    'Madurai',
+    'Mayiladuthurai',
+    'Nagapattinam',
+    'Namakkal',
+    'Nilgiris',
+    'Perambalur',
+    'Pudukkottai',
+    'Ramanathapuram',
+    'Ranipet',
+    'Salem',
+    'Sivaganga',
+    'Tenkasi',
+    'Thanjavur',
+    'Theni',
+    'Thoothukudi',
+    'Tiruchirappalli',
+    'Tirunelveli',
+    'Tirupathur',
+    'Tiruppur',
+    'Tiruvallur',
+    'Tiruvannamalai',
+    'Tiruvarur',
+    'Vellore',
+    'Viluppuram',
+    'Virudhunagar',
+    'Other'
+  ],
+  'Andhra Pradesh': [
+    'Alluri Sitharama Raju',
+    'Anakapalli',
+    'Ananthapuramu',
+    'Annamayya',
+    'Bapatla',
+    'Chittoor',
+    'Dr. B.R. Ambedkar Konaseema',
+    'East Godavari',
+    'Eluru',
+    'Guntur',
+    'Kakinada',
+    'Krishna / Vijayawada',
+    'Kurnool',
+    'Nandyal',
+    'NTR District',
+    'Palnadu',
+    'Parvathipuram Manyam',
+    'Prakasam',
+    'Sri Potti Sriramulu Nellore',
+    'Sri Sathya Sai',
+    'Srikakulam',
+    'Tirupati',
+    'Visakhapatnam',
+    'Vizianagaram',
+    'West Godavari',
+    'YSR (Kadapa)',
+    'Other'
+  ],
+  'Karnataka': [
+    'Bagalkot',
+    'Ballari',
+    'Belagavi',
+    'Bengaluru Rural',
+    'Bengaluru Urban',
+    'Bidar',
+    'Chamarajanagar',
+    'Chikkaballapur',
+    'Chikkamagaluru',
+    'Chitradurga',
+    'Dakshina Kannada',
+    'Davanagere',
+    'Dharwad',
+    'Gadag',
+    'Hassan',
+    'Haveri',
+    'Kalaburagi',
+    'Kodagu',
+    'Kolar',
+    'Koppal',
+    'Mandya',
+    'Mysuru',
+    'Raichur',
+    'Ramanagara',
+    'Shivamogga',
+    'Tumakuru',
+    'Udupi',
+    'Uttara Kannada',
+    'Vijayapura',
+    'Vijayanagara',
+    'Yadgir',
+    'Other'
+  ]
+};
+
+const BOARD_OPTIONS = [
+  'CBSE',
+  'ICSE',
+  'State Board',
+  'IB',
+  'IGCSE',
+  'Other'
+];
+
+const STATE_OPTIONS = [
+  'Tamil Nadu',
+  'Karnataka',
+  'Andhra Pradesh'
+];
+
+const FIELD_CONFIG = {
+  schoolName: { label: 'School Name', id: 'input-school-name' },
+  board: { label: 'Board', id: 'school-board-select' },
+  state: { label: 'State', id: 'school-state-select' },
+  district: { label: 'District', id: 'school-district-select' },
+  city: { label: 'City', id: 'input-city' },
+  address: { label: 'School Address', id: 'input-address' },
+  schoolEmail: { label: 'School Email', id: 'input-school-email' },
+  schoolMobile: { label: 'School Mobile', id: 'input-school-mobile' },
+  principalName: { label: 'Principal Name', id: 'input-principal-name' },
+  password: { label: 'Account Password', id: 'input-password' },
+  confirmPassword: { label: 'Confirm Password', id: 'input-confirm-password' },
+  coordName: { label: 'Coordinator Name', id: 'input-coord-name' },
+  coordDesignation: { label: 'Coordinator Designation', id: 'input-coord-designation' },
+  coordMobile: { label: 'Coordinator Mobile', id: 'input-coord-mobile' },
+  coordEmail: { label: 'Coordinator Email', id: 'input-coord-email' },
+  declaration: { label: 'School Declaration', id: 'declaration-chk' }
+};
 
 export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   const navigate = useNavigate();
@@ -83,6 +225,9 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   // Error Popup State
   const [errorMessage, setErrorMessage] = useState('');
 
+  // Submit attempt state
+  const [submitAttempted, setSubmitAttempted] = useState(false);
+
   // Field-level Validation Errors State
   const [fieldErrors, setFieldErrors] = useState({});
 
@@ -95,53 +240,112 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
     });
   };
 
+  const handleFocusField = (fieldId) => {
+    if (!fieldId) return;
+    const el = document.getElementById(fieldId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.focus();
+    }
+  };
+
+  // Compute active mistakes (real-time format errors + all errors if submit attempted)
+  const activeMistakes = React.useMemo(() => {
+    const list = [];
+    
+    // Check real-time format mistakes (wrongly typed)
+    if (schoolDetails.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(schoolDetails.email.trim())) {
+      list.push({ key: 'schoolEmail', label: FIELD_CONFIG.schoolEmail.label, id: FIELD_CONFIG.schoolEmail.id, message: 'Invalid email address format (e.g. name@school.edu)' });
+    }
+    const cleanSchoolMob = schoolDetails.mobile.trim().replace(/[\s+-]/g, '');
+    if (schoolDetails.mobile.trim() && (cleanSchoolMob.length !== 10 || isNaN(cleanSchoolMob))) {
+      list.push({ key: 'schoolMobile', label: FIELD_CONFIG.schoolMobile.label, id: FIELD_CONFIG.schoolMobile.id, message: 'Mobile number must be exactly 10 digits' });
+    }
+    if (password && password.length < 6) {
+      list.push({ key: 'password', label: FIELD_CONFIG.password.label, id: FIELD_CONFIG.password.id, message: 'Password must be at least 6 characters long' });
+    }
+    if (confirmPassword && password && confirmPassword !== password) {
+      list.push({ key: 'confirmPassword', label: FIELD_CONFIG.confirmPassword.label, id: FIELD_CONFIG.confirmPassword.id, message: 'Passwords do not match' });
+    }
+    if (coordinatorDetails.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coordinatorDetails.email.trim())) {
+      list.push({ key: 'coordEmail', label: FIELD_CONFIG.coordEmail.label, id: FIELD_CONFIG.coordEmail.id, message: 'Invalid coordinator email address format' });
+    }
+    const cleanCoordMob = coordinatorDetails.mobile.trim().replace(/[\s+-]/g, '');
+    if (coordinatorDetails.mobile.trim() && (cleanCoordMob.length !== 10 || isNaN(cleanCoordMob))) {
+      list.push({ key: 'coordMobile', label: FIELD_CONFIG.coordMobile.label, id: FIELD_CONFIG.coordMobile.id, message: 'Coordinator mobile number must be exactly 10 digits' });
+    }
+
+    // Include any additional fieldErrors from submit validation that aren't already in list
+    Object.entries(fieldErrors).forEach(([key, msg]) => {
+      if (!list.some(m => m.key === key)) {
+        list.push({
+          key,
+          label: FIELD_CONFIG[key]?.label || key,
+          id: FIELD_CONFIG[key]?.id,
+          message: msg
+        });
+      }
+    });
+
+    return list;
+  }, [schoolDetails, coordinatorDetails, password, confirmPassword, declarationConfirmed, fieldErrors]);
+
+  const hasMistakes = activeMistakes.length > 0;
+
   const validateSchoolForm = () => {
     const errs = {};
 
     // School Details
-    if (!schoolDetails.schoolName.trim()) errs.schoolName = "This field cannot be left empty";
-    if (!schoolDetails.board) errs.board = "This field cannot be left empty";
-    if (!schoolDetails.state) errs.state = "This field cannot be left empty";
-    if (!schoolDetails.district) errs.district = "This field cannot be left empty";
-    if (!schoolDetails.city.trim()) errs.city = "This field cannot be left empty";
-    if (!schoolDetails.address.trim()) errs.address = "This field cannot be left empty";
+    if (!schoolDetails.schoolName.trim()) errs.schoolName = "School name cannot be left empty";
+    if (!schoolDetails.board) errs.board = "Please select a Board (CBSE, ICSE, etc.)";
+    if (!schoolDetails.state) errs.state = "Please select a State";
+    if (!schoolDetails.district) errs.district = "Please select a District";
+    if (!schoolDetails.city.trim()) errs.city = "City cannot be left empty";
+    if (!schoolDetails.address.trim()) errs.address = "Complete school address cannot be left empty";
     if (!schoolDetails.email.trim()) {
-      errs.schoolEmail = "This field cannot be left empty";
+      errs.schoolEmail = "School email cannot be left empty";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(schoolDetails.email.trim())) {
-      errs.schoolEmail = "Please enter a valid email address";
+      errs.schoolEmail = "Invalid email address format (e.g. name@school.edu)";
     }
-    if (!schoolDetails.mobile.trim()) errs.schoolMobile = "This field cannot be left empty";
-    if (!schoolDetails.principalName.trim()) errs.principalName = "This field cannot be left empty";
+    const cleanSchoolMob = schoolDetails.mobile.trim().replace(/[\s+-]/g, '');
+    if (!schoolDetails.mobile.trim()) {
+      errs.schoolMobile = "School mobile number cannot be left empty";
+    } else if (cleanSchoolMob.length !== 10 || isNaN(cleanSchoolMob)) {
+      errs.schoolMobile = "Mobile number must be exactly 10 digits";
+    }
+    if (!schoolDetails.principalName.trim()) errs.principalName = "Principal name cannot be left empty";
 
     // Passwords
     if (!password) {
-      errs.password = "This field cannot be left empty";
+      errs.password = "Password cannot be left empty";
     } else if (password.length < 6) {
       errs.password = "Password must be at least 6 characters long";
     }
     if (!confirmPassword) {
-      errs.confirmPassword = "This field cannot be left empty";
+      errs.confirmPassword = "Confirm password cannot be left empty";
     } else if (confirmPassword !== password) {
       errs.confirmPassword = "Passwords do not match";
     }
 
     // Coordinator Details
-    if (!coordinatorDetails.name.trim()) errs.coordName = "This field cannot be left empty";
-    if (!coordinatorDetails.designation.trim()) errs.coordDesignation = "This field cannot be left empty";
-    if (!coordinatorDetails.mobile.trim()) errs.coordMobile = "This field cannot be left empty";
+    if (!coordinatorDetails.name.trim()) errs.coordName = "Coordinator name cannot be left empty";
+    if (!coordinatorDetails.designation.trim()) errs.coordDesignation = "Coordinator designation cannot be left empty";
+    const cleanCoordMob = coordinatorDetails.mobile.trim().replace(/[\s+-]/g, '');
+    if (!coordinatorDetails.mobile.trim()) {
+      errs.coordMobile = "Coordinator mobile number cannot be left empty";
+    } else if (cleanCoordMob.length !== 10 || isNaN(cleanCoordMob)) {
+      errs.coordMobile = "Coordinator mobile number must be exactly 10 digits";
+    }
     if (!coordinatorDetails.email.trim()) {
-      errs.coordEmail = "This field cannot be left empty";
+      errs.coordEmail = "Coordinator email cannot be left empty";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(coordinatorDetails.email.trim())) {
-      errs.coordEmail = "Please enter a valid email address";
+      errs.coordEmail = "Invalid coordinator email address format";
     }
 
     // Declaration
     if (!declarationConfirmed) {
       errs.declaration = "Please accept the declaration to proceed";
       setDeclarationError(true);
-      if (declarationRef.current) {
-        declarationRef.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }
     } else {
       setDeclarationError(false);
     }
@@ -153,8 +357,15 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
   // Submit School Registration Form
   const handleSchoolRegisterSubmit = async (e) => {
     e.preventDefault();
+    setSubmitAttempted(true);
 
     if (!validateSchoolForm()) {
+      setTimeout(() => {
+        const mistakeBox = document.getElementById('registration-mistakes-summary');
+        if (mistakeBox) {
+          mistakeBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+      }, 50);
       return;
     }
 
@@ -314,6 +525,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={{ ...styles.fieldGroup, gridColumn: 'span 2' }} className="register-col-span-2">
                     <label style={styles.label}>School Name <span style={styles.req}>*</span></label>
                     <input
+                      id="input-school-name"
                       type="text"
                       style={{
                         ...styles.input,
@@ -331,83 +543,66 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Board <span style={styles.req}>*</span></label>
-                    <select
-                      style={{
-                        ...styles.select,
-                        ...(fieldErrors.board ? styles.inputError : {})
-                      }}
+                    <SearchableSelect
+                      id="school-board-select"
+                      placeholder="Select Board"
+                      searchPlaceholder="Search board..."
+                      options={BOARD_OPTIONS}
                       value={schoolDetails.board}
-                      onChange={(e) => {
-                        setSchoolDetails({ ...schoolDetails, board: e.target.value });
+                      hasError={Boolean(fieldErrors.board)}
+                      onChange={(val) => {
+                        setSchoolDetails(prev => ({ ...prev, board: val }));
                         clearFieldError('board');
                       }}
-                    >
-                      <option value="">Select Board</option>
-                      <option value="CBSE">CBSE</option>
-                      <option value="ICSE">ICSE</option>
-                      <option value="State Board">State Board</option>
-                      <option value="IB">IB</option>
-                      <option value="IGCSE">IGCSE</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    />
                     {fieldErrors.board && <span style={styles.fieldError}>{fieldErrors.board}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>State <span style={styles.req}>*</span></label>
-                    <select
-                      style={{
-                        ...styles.select,
-                        ...(fieldErrors.state ? styles.inputError : {})
-                      }}
+                    <SearchableSelect
+                      id="school-state-select"
+                      placeholder="Select State"
+                      searchPlaceholder="Search state..."
+                      options={STATE_OPTIONS}
                       value={schoolDetails.state}
-                      onChange={(e) => {
-                        setSchoolDetails({ ...schoolDetails, state: e.target.value });
+                      hasError={Boolean(fieldErrors.state)}
+                      onChange={(val) => {
+                        setSchoolDetails(prev => ({
+                          ...prev,
+                          state: val,
+                          district: ''
+                        }));
                         clearFieldError('state');
+                        clearFieldError('district');
                       }}
-                    >
-                      <option value="">Select State</option>
-                      <option value="Andhra Pradesh">Andhra Pradesh</option>
-                      <option value="Telangana">Telangana</option>
-                      <option value="Maharashtra">Maharashtra</option>
-                      <option value="Tamil Nadu">Tamil Nadu</option>
-                      <option value="Karnataka">Karnataka</option>
-                      <option value="Delhi">Delhi</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    />
                     {fieldErrors.state && <span style={styles.fieldError}>{fieldErrors.state}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>District <span style={styles.req}>*</span></label>
-                    <select
-                      style={{
-                        ...styles.select,
-                        ...(fieldErrors.district ? styles.inputError : {})
-                      }}
+                    <SearchableSelect
+                      id="school-district-select"
+                      placeholder="Select District"
+                      disabledPlaceholder="Select State First"
+                      searchPlaceholder="Search district..."
+                      options={schoolDetails.state ? (STATE_DISTRICT_MAP[schoolDetails.state] || []) : []}
                       value={schoolDetails.district}
-                      onChange={(e) => {
-                        setSchoolDetails({ ...schoolDetails, district: e.target.value });
+                      disabled={!schoolDetails.state}
+                      hasError={Boolean(fieldErrors.district)}
+                      onChange={(val) => {
+                        setSchoolDetails(prev => ({ ...prev, district: val }));
                         clearFieldError('district');
                       }}
-                    >
-                      <option value="">Select District</option>
-                      <option value="Krishna / Vijayawada">Krishna / Vijayawada</option>
-                      <option value="NTR District">NTR District</option>
-                      <option value="Visakhapatnam">Visakhapatnam</option>
-                      <option value="Guntur">Guntur</option>
-                      <option value="Hyderabad">Hyderabad</option>
-                      <option value="Mumbai City">Mumbai City</option>
-                      <option value="Chennai">Chennai</option>
-                      <option value="Bengaluru Urban">Bengaluru Urban</option>
-                      <option value="Other">Other</option>
-                    </select>
+                    />
                     {fieldErrors.district && <span style={styles.fieldError}>{fieldErrors.district}</span>}
                   </div>
 
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>City <span style={styles.req}>*</span></label>
                     <input
+                      id="input-city"
                       type="text"
                       style={{
                         ...styles.input,
@@ -426,6 +621,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={{ ...styles.fieldGroup, gridColumn: '1 / -1' }} className="register-col-span-all">
                     <label style={styles.label}>School Address <span style={styles.req}>*</span></label>
                     <input
+                      id="input-address"
                       type="text"
                       style={{
                         ...styles.input,
@@ -444,6 +640,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>School Email <span style={styles.req}>*</span></label>
                     <input
+                      id="input-school-email"
                       type="email"
                       style={{
                         ...styles.input,
@@ -452,8 +649,13 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       placeholder="Enter school email"
                       value={schoolDetails.email}
                       onChange={(e) => {
-                        setSchoolDetails({ ...schoolDetails, email: e.target.value });
-                        clearFieldError('schoolEmail');
+                        const val = e.target.value;
+                        setSchoolDetails({ ...schoolDetails, email: val });
+                        if (val.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())) {
+                          setFieldErrors(prev => ({ ...prev, schoolEmail: 'Invalid email address format (e.g. name@school.edu)' }));
+                        } else {
+                          clearFieldError('schoolEmail');
+                        }
                       }}
                     />
                     {fieldErrors.schoolEmail && <span style={styles.fieldError}>{fieldErrors.schoolEmail}</span>}
@@ -462,16 +664,23 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>School Mobile <span style={styles.req}>*</span></label>
                     <input
+                      id="input-school-mobile"
                       type="tel"
                       style={{
                         ...styles.input,
                         ...(fieldErrors.schoolMobile ? styles.inputError : {})
                       }}
-                      placeholder="Enter school mobile number"
+                      placeholder="Enter 10-digit school mobile number"
                       value={schoolDetails.mobile}
                       onChange={(e) => {
-                        setSchoolDetails({ ...schoolDetails, mobile: e.target.value });
-                        clearFieldError('schoolMobile');
+                        const val = e.target.value;
+                        setSchoolDetails({ ...schoolDetails, mobile: val });
+                        const clean = val.trim().replace(/[\s+-]/g, '');
+                        if (val.trim() && (clean.length !== 10 || isNaN(clean))) {
+                          setFieldErrors(prev => ({ ...prev, schoolMobile: 'Mobile number must be exactly 10 digits' }));
+                        } else {
+                          clearFieldError('schoolMobile');
+                        }
                       }}
                     />
                     {fieldErrors.schoolMobile && <span style={styles.fieldError}>{fieldErrors.schoolMobile}</span>}
@@ -480,6 +689,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Principal Name <span style={styles.req}>*</span></label>
                     <input
+                      id="input-principal-name"
                       type="text"
                       style={{
                         ...styles.input,
@@ -499,6 +709,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <label style={styles.label}>Account Password <span style={styles.req}>*</span></label>
                     <div style={styles.passwordInputWrapper}>
                       <input
+                        id="input-password"
                         type={showPassword ? 'text' : 'password'}
                         style={{
                           ...styles.passwordInput,
@@ -507,8 +718,18 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                         placeholder="Create a password (min. 6 characters)"
                         value={password}
                         onChange={(e) => {
-                          setPassword(e.target.value);
-                          clearFieldError('password');
+                          const val = e.target.value;
+                          setPassword(val);
+                          if (val && val.length < 6) {
+                            setFieldErrors(prev => ({ ...prev, password: 'Password must be at least 6 characters long' }));
+                          } else {
+                            clearFieldError('password');
+                          }
+                          if (confirmPassword && val !== confirmPassword) {
+                            setFieldErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }));
+                          } else if (confirmPassword && val === confirmPassword) {
+                            clearFieldError('confirmPassword');
+                          }
                         }}
                       />
                       <button
@@ -528,6 +749,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                     <label style={styles.label}>Confirm Password <span style={styles.req}>*</span></label>
                     <div style={styles.passwordInputWrapper}>
                       <input
+                        id="input-confirm-password"
                         type={showConfirmPassword ? 'text' : 'password'}
                         style={{
                           ...styles.passwordInput,
@@ -536,8 +758,13 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                         placeholder="Re-enter your password"
                         value={confirmPassword}
                         onChange={(e) => {
-                          setConfirmPassword(e.target.value);
-                          clearFieldError('confirmPassword');
+                          const val = e.target.value;
+                          setConfirmPassword(val);
+                          if (val && val !== password) {
+                            setFieldErrors(prev => ({ ...prev, confirmPassword: 'Passwords do not match' }));
+                          } else {
+                            clearFieldError('confirmPassword');
+                          }
                         }}
                       />
                       <button
@@ -572,6 +799,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Coordinator Name <span style={styles.req}>*</span></label>
                     <input
+                      id="input-coord-name"
                       type="text"
                       style={{
                         ...styles.input,
@@ -590,6 +818,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Designation <span style={styles.req}>*</span></label>
                     <input
+                      id="input-coord-designation"
                       type="text"
                       style={{
                         ...styles.input,
@@ -608,16 +837,23 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Mobile Number <span style={styles.req}>*</span></label>
                     <input
+                      id="input-coord-mobile"
                       type="tel"
                       style={{
                         ...styles.input,
                         ...(fieldErrors.coordMobile ? styles.inputError : {})
                       }}
-                      placeholder="Enter mobile number"
+                      placeholder="Enter 10-digit mobile number"
                       value={coordinatorDetails.mobile}
                       onChange={(e) => {
-                        setCoordinatorDetails({ ...coordinatorDetails, mobile: e.target.value });
-                        clearFieldError('coordMobile');
+                        const val = e.target.value;
+                        setCoordinatorDetails({ ...coordinatorDetails, mobile: val });
+                        const clean = val.trim().replace(/[\s+-]/g, '');
+                        if (val.trim() && (clean.length !== 10 || isNaN(clean))) {
+                          setFieldErrors(prev => ({ ...prev, coordMobile: 'Coordinator mobile number must be exactly 10 digits' }));
+                        } else {
+                          clearFieldError('coordMobile');
+                        }
                       }}
                     />
                     {fieldErrors.coordMobile && <span style={styles.fieldError}>{fieldErrors.coordMobile}</span>}
@@ -626,6 +862,7 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                   <div style={styles.fieldGroup}>
                     <label style={styles.label}>Email ID <span style={styles.req}>*</span></label>
                     <input
+                      id="input-coord-email"
                       type="email"
                       style={{
                         ...styles.input,
@@ -634,8 +871,13 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                       placeholder="Enter email address"
                       value={coordinatorDetails.email}
                       onChange={(e) => {
-                        setCoordinatorDetails({ ...coordinatorDetails, email: e.target.value });
-                        clearFieldError('coordEmail');
+                        const val = e.target.value;
+                        setCoordinatorDetails({ ...coordinatorDetails, email: val });
+                        if (val.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim())) {
+                          setFieldErrors(prev => ({ ...prev, coordEmail: 'Invalid coordinator email address format' }));
+                        } else {
+                          clearFieldError('coordEmail');
+                        }
                       }}
                     />
                     {fieldErrors.coordEmail && <span style={styles.fieldError}>{fieldErrors.coordEmail}</span>}
@@ -703,6 +945,99 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
                 </div>
               </div>
 
+              {/* MISTAKES SUMMARY BOX (SHOWN RIGHT BELOW DECLARATION FORM) */}
+              {hasMistakes && (
+                <div 
+                  id="registration-mistakes-summary"
+                  style={{
+                    background: '#fff5f5',
+                    border: '1.5px solid #fca5a5',
+                    borderLeft: '5px solid #ef4444',
+                    borderRadius: '12px',
+                    padding: '1.15rem 1.4rem',
+                    marginTop: '1.25rem',
+                    marginBottom: '0.75rem',
+                    boxShadow: '0 4px 16px rgba(239, 68, 68, 0.08)',
+                    animation: 'fadeInSelect 0.2s ease-out'
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.75rem', flexWrap: 'wrap', gap: '0.5rem' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.65rem' }}>
+                      <div style={{
+                        width: '30px',
+                        height: '30px',
+                        borderRadius: '50%',
+                        background: '#fee2e2',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        flexShrink: 0
+                      }}>
+                        <AlertCircle size={18} color="#dc2626" strokeWidth={2.5} />
+                      </div>
+                      <h4 style={{
+                        margin: 0,
+                        fontSize: '0.98rem',
+                        fontWeight: 800,
+                        color: '#991b1b',
+                        fontFamily: 'var(--font-heading)'
+                      }}>
+                        Please correct the following mistake{activeMistakes.length > 1 ? 's' : ''} to proceed:
+                      </h4>
+                    </div>
+                    <span style={{
+                      background: '#fee2e2',
+                      color: '#b91c1c',
+                      fontSize: '0.78rem',
+                      fontWeight: 700,
+                      padding: '0.2rem 0.65rem',
+                      borderRadius: '20px',
+                      border: '1px solid #fca5a5'
+                    }}>
+                      {activeMistakes.length} {activeMistakes.length === 1 ? 'Mistake' : 'Mistakes'} Found
+                    </span>
+                  </div>
+
+                  <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: activeMistakes.length > 3 ? 'repeat(auto-fit, minmax(280px, 1fr))' : '1fr',
+                    gap: '0.5rem',
+                    paddingLeft: '0.2rem'
+                  }}>
+                    {activeMistakes.map((mistake) => (
+                      <div 
+                        key={mistake.key} 
+                        onClick={() => handleFocusField(mistake.id)}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '0.55rem',
+                          fontSize: '0.86rem',
+                          color: '#7f1d1d',
+                          cursor: mistake.id ? 'pointer' : 'default',
+                          padding: '0.35rem 0.55rem',
+                          borderRadius: '6px',
+                          transition: 'background 0.15s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          if (mistake.id) e.currentTarget.style.background = '#fee2e2';
+                        }}
+                        onMouseLeave={(e) => {
+                          if (mistake.id) e.currentTarget.style.background = 'transparent';
+                        }}
+                        title={mistake.id ? 'Click to jump to this field' : undefined}
+                      >
+                        <span style={{ color: '#ef4444', fontWeight: 900, marginTop: '-1px' }}>•</span>
+                        <span>
+                          <strong style={{ color: '#991b1b' }}>{mistake.label}:</strong> {mistake.message}
+                          {mistake.id && <span style={{ marginLeft: '0.4rem', fontSize: '0.75rem', color: '#dc2626', textDecoration: 'underline', fontWeight: 600 }}>Fix ↗</span>}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               {/* FOOTER ACTIONS BAR */}
               <div style={styles.actionsBar} className="register-actions-bar">
                 <button
@@ -716,10 +1051,23 @@ export default function Register({ onRegisterSuccess, clearSelectedTrack }) {
 
                 <button
                   type="submit"
-                  style={styles.reviewSubmitBtn}
-                  className="register-submit-btn"
+                  id="register-submit-btn"
+                  style={{
+                    ...styles.reviewSubmitBtn,
+                    ...(hasMistakes ? styles.reviewSubmitBtnDisabled : {})
+                  }}
+                  className={hasMistakes ? "register-submit-btn-disabled" : "register-submit-btn"}
+                  title={hasMistakes ? "Please correct highlighted mistakes before submitting" : undefined}
                 >
-                  Review & Submit <ArrowRight size={18} />
+                  {hasMistakes ? (
+                    <>
+                      Review & Submit <AlertCircle size={18} color="#b91c1c" />
+                    </>
+                  ) : (
+                    <>
+                      Review & Submit <ArrowRight size={18} />
+                    </>
+                  )}
                 </button>
               </div>
 
@@ -1224,6 +1572,18 @@ const styles = {
     alignItems: 'center',
     gap: '0.65rem',
     boxShadow: '0 6px 20px rgba(4, 16, 38, 0.25)',
+  },
+  reviewSubmitBtnDisabled: {
+    background: '#fee2e2',
+    border: '1.5px solid #f87171',
+    color: '#b91c1c',
+    boxShadow: '0 4px 14px rgba(239, 68, 68, 0.18)',
+    cursor: 'not-allowed',
+    opacity: 0.95,
+  },
+  cardBoxError: {
+    borderColor: '#fca5a5',
+    boxShadow: '0 0 0 3px rgba(239, 68, 68, 0.1)',
   },
 
   /* Modal */

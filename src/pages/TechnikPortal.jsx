@@ -38,6 +38,7 @@ import {
   Star
 } from 'lucide-react';
 import {
+  API_BASE_URL,
   loginAdminApi,
   verifyAdminOtpApi,
   getAdminPrideNominationsApi,
@@ -1129,10 +1130,21 @@ export default function TechnikPortal() {
                         <div style={styles.achievementDesc} title={item.achievementTitle}>{item.achievementTitle}</div>
                       </td>
                       <td style={styles.td}>
-                        <a href={`#${item.proofFile}`} onClick={(e) => { e.preventDefault(); showToast('info', 'Supporting Document', `Viewing proof document: ${item.proofFile}`); }} style={styles.fileLink}>
-                          <FileText size={13} style={{ marginRight: '4px' }} />
-                          {item.proofFile}
-                        </a>
+                        {item.proofFile ? (
+                          <a 
+                            href={item.proofFile.startsWith('http') ? item.proofFile : `${API_BASE_URL}${item.proofFile}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            style={styles.fileLink}
+                            title="Click to view/download uploaded proof"
+                          >
+                            <FileText size={13} style={{ marginRight: '4px' }} />
+                            <span>{item.proofFile.split('/').pop()}</span>
+                            <ExternalLink size={11} style={{ marginLeft: '4px' }} />
+                          </a>
+                        ) : (
+                          <span style={{ color: '#94a3b8', fontSize: '0.8rem' }}>No file</span>
+                        )}
                       </td>
                       <td style={styles.td}>
                         {(item.status === 'Selected for Pride Award' || item.status === 'selected for pride award') && (

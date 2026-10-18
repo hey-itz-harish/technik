@@ -742,3 +742,29 @@ img, svg, video, canvas {
   transform: scale(0.97);
   box-shadow: 0 2px 6px rgba(234, 88, 12, 0.25) !important;
 }
+
+@keyframes fadeInSelect {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.register-submit-btn-disabled {
+  background: #fee2e2 !important;
+  color: #b91c1c !important;
+  border: 1.5px solid #f87171 !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.15) !important;
+  cursor: not-allowed !important;
+}
+
+.register-submit-btn-disabled:hover {
+  background: #fecaca !important;
+  color: #991b1b !important;
+  transform: none !important;
+}
+

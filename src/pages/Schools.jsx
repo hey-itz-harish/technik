@@ -23,10 +23,13 @@ import {
   Loader2,
   Star,
   UserCheck,
-  Compass
+  Compass,
+  FileText,
+  ExternalLink
 } from 'lucide-react';
 import SkillCompassModal from '../components/SkillCompassModal';
 import {
+  API_BASE_URL,
   getSchoolProfileApi,
   getSchoolStudentsApi,
   getPrideNominationsApi,
@@ -97,6 +100,9 @@ export default function Schools() {
     sessionStorage.removeItem('technik_school_authenticated');
     sessionStorage.removeItem('technik_school_auth_pending');
     sessionStorage.removeItem('technik_csrf_token');
+    sessionStorage.removeItem('technik_school_id');
+    sessionStorage.removeItem('technik_school_details');
+    sessionStorage.removeItem('technik_access_token');
     navigate('/login');
   };
 
@@ -104,7 +110,6 @@ export default function Schools() {
   const [activeTab, setActiveTab] = useState('roster'); 
 
   // Form Mode & Filter States
-  const [selectedLevelFilter, setSelectedLevelFilter] = useState('junior'); // 'junior' | 'senior'
   const [formType, setFormType] = useState('olympiad'); // 'olympiad' | 'pride'
 
   // Roster Filter State
@@ -116,26 +121,54 @@ export default function Schools() {
   const [prideSearch, setPrideSearch] = useState('');
   const [prideYearFilter, setPrideYearFilter] = useState('All');
 
-  // School Profile Data
-  const [schoolProfile, setSchoolProfile] = useState({
-    id: '',
-    schoolCode: 'SCH-2026-TXI',
-    schoolName: 'St. Xavier International School',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
-    principalName: 'Dr. R. Sundaram',
-    coordinatorName: 'Prof. S. Meenakshi',
-    coordinatorDesignation: 'STEM & Olympiad Coordinator',
-    coordinatorMobile: '+91 95004 28800',
-    coordinatorEmail: 'coordinator@stxaviers.edu.in'
+  const [loadingProfile, setLoadingProfile] = useState(true);
+
+  // School Profile Data - dynamically populated from GET API
+  const [schoolProfile, setSchoolProfile] = useState(() => {
+    try {
+      const cached = sessionStorage.getItem('technik_school_details');
+      if (cached) {
+        return JSON.parse(cached);
+      }
+    } catch {
+      // Fallback
+    }
+    return {
+      id: sessionStorage.getItem('technik_school_id') || '',
+      schoolCode: '',
+      schoolName: '',
+      city: '',
+      state: '',
+      principalName: '',
+      coordinatorName: '',
+      coordinatorDesignation: '',
+      coordinatorMobile: '',
+      coordinatorEmail: ''
+    };
   });
 
-  // Coordinator Details State for Forms
-  const [coordinator, setCoordinator] = useState({
-    name: 'Prof. S. Meenakshi',
-    designation: 'STEM & Olympiad Coordinator',
-    mobile: '+91 95004 28800',
-    email: 'coordinator@stxaviers.edu.in'
+  // Coordinator Details State for Forms - dynamically populated from GET API
+  const [coordinator, setCoordinator] = useState(() => {
+    try {
+      const cached = sessionStorage.getItem('technik_school_details');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        return {
+          name: parsed.coordinatorName || '',
+          designation: parsed.coordinatorDesignation || 'STEM & Olympiad Coordinator',
+          mobile: parsed.coordinatorMobile || '',
+          email: parsed.coordinatorEmail || ''
+        };
+      }
+    } catch {
+      // Fallback
+    }
+    return {
+      name: '',
+      designation: '',
+      mobile: '',
+      email: ''
+    };
   });
 
   // Dynamic Student Nomination / Registration List State
@@ -170,30 +203,39 @@ export default function Schools() {
   // Additional Data & Skill Compass Modal State
   const [selectedStudentForModal, setSelectedStudentForModal] = useState(null);
 
-  // Fetch School Profile
+  // Fetch School Profile using dedicated GET API
   useEffect(() => {
     let isMounted = true;
     async function loadProfile() {
+      setLoadingProfile(true);
       try {
-        const data = await getSchoolProfileApi();
+        const activeSchoolId = sessionStorage.getItem('technik_school_id') || '';
+        const data = await getSchoolProfileApi(activeSchoolId);
         if (data && isMounted) {
-          const resolvedSchoolId = data.id || sessionStorage.getItem('technik_school_id') || '';
-          if (data.id) {
-            sessionStorage.setItem('technik_school_id', data.id);
+          const resolvedSchoolId = data.id || activeSchoolId || '';
+          if (resolvedSchoolId) {
+            sessionStorage.setItem('technik_school_id', resolvedSchoolId);
           }
-          setSchoolProfile(prev => ({
-            ...prev,
-            id: resolvedSchoolId || prev.id,
-            schoolCode: data.schoolCode || prev.schoolCode,
-            schoolName: data.schoolName || prev.schoolName,
-            city: data.city || prev.city,
-            state: data.state || prev.state,
-            principalName: data.principalName || prev.principalName,
-            coordinatorName: data.coordinatorName || prev.coordinatorName,
-            coordinatorDesignation: data.coordinatorDesignation || prev.coordinatorDesignation,
-            coordinatorMobile: data.coordinatorMobile || prev.coordinatorMobile,
-            coordinatorEmail: data.coordinatorEmail || prev.coordinatorEmail
-          }));
+          const loadedProfile = {
+            id: resolvedSchoolId,
+            schoolCode: data.schoolCode || '',
+            schoolName: data.schoolName || '',
+            city: data.city || '',
+            state: data.state || '',
+            principalName: data.principalName || '',
+            coordinatorName: data.coordinatorName || '',
+            coordinatorDesignation: data.coordinatorDesignation || 'STEM & Olympiad Coordinator',
+            coordinatorMobile: data.coordinatorMobile || '',
+            coordinatorEmail: data.coordinatorEmail || data.email || ''
+          };
+
+          setSchoolProfile(loadedProfile);
+          try {
+            sessionStorage.setItem('technik_school_details', JSON.stringify(loadedProfile));
+          } catch {
+            // ignore
+          }
+
           if (data.coordinatorName) {
             setCoordinator({
               name: data.coordinatorName,
@@ -204,7 +246,9 @@ export default function Schools() {
           }
         }
       } catch (err) {
-        // Handled silently
+        console.warn('Could not load live school profile from GET API:', err);
+      } finally {
+        if (isMounted) setLoadingProfile(false);
       }
     }
     loadProfile();
@@ -263,13 +307,13 @@ export default function Schools() {
             id: nom.id,
             studentName: nom.studentName,
             class: nom.class,
-            classCategory: nom.classCategory || 'Technik Pride Award',
             achievementCategory: nom.achievementCategory || 'Academic & Innovative Excellence',
             achievementTitle: nom.achievementTitle || '',
             dateSubmitted: formattedDate,
             nominationStatus: nom.nominationStatus || 'Submitted & Under Review',
             adminStatus: nom.adminStatus || 'Forwarded to Technik Super Admin',
-            academicYear: nom.academicYear || d.getFullYear()
+            academicYear: nom.academicYear || d.getFullYear(),
+            supportingDocument: nom.supportingDocument || ''
           };
         });
         setPrideNominations(mapped);
@@ -338,9 +382,9 @@ export default function Schools() {
       }
     }
 
-    const defaultGrade = isPride ? 'Grade 4' : (selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7');
-    setStudentList([
-      ...studentList,
+    const defaultGrade = 'Grade 4';
+    setStudentList(prev => [
+      ...prev,
       {
         id: Date.now(),
         name: '',
@@ -358,13 +402,15 @@ export default function Schools() {
 
   // Remove student row
   const handleRemoveStudent = (id) => {
-    if (studentList.length === 1) return;
-    setStudentList(studentList.filter(s => s.id !== id));
+    setStudentList(prev => {
+      if (prev.length <= 1) return prev;
+      return prev.filter(s => s.id !== id);
+    });
   };
 
   // Update student field
   const handleStudentChange = (id, field, value) => {
-    setStudentList(studentList.map(s => s.id === id ? { ...s, [field]: value } : s));
+    setStudentList(prev => prev.map(s => s.id === id ? { ...s, [field]: value } : s));
   };
 
   // Handle file upload to backend server
@@ -450,7 +496,6 @@ export default function Schools() {
           nominations: validStudents.map(s => ({
             studentName: s.name,
             class: s.studentClass,
-            classCategory: 'Technik Pride Award',
             gender: s.gender,
             achievementCategory: s.category || 'Academic & Innovative Excellence',
             achievementTitle: s.achievementTitle || (s.category === 'Talent & Social Excellence' ? 'Sports Achievement' : 'Academics'),
@@ -469,7 +514,6 @@ export default function Schools() {
           students: validStudents.map(s => ({
             studentName: s.name,
             class: s.studentClass,
-            classCategory: selectedLevelFilter === 'junior' ? 'Grade 3 to 5 (Jr Level)' : 'Grade 6 to 8 (Senior Level)',
             gender: s.gender,
             olympiadTrack: s.category || 'Robotics Olympiad'
           }))
@@ -487,7 +531,7 @@ export default function Schools() {
         {
           id: Date.now(),
           name: '',
-          studentClass: currentType === 'pride' ? 'Grade 4' : (selectedLevelFilter === 'junior' ? 'Grade 4' : 'Grade 7'),
+          studentClass: 'Grade 4',
           gender: 'Select Gender',
           category: currentType === 'pride' ? 'Academic & Innovative Excellence' : 'Robotics Olympiad',
           achievementTitle: currentType === 'pride' ? 'Academics' : '',
@@ -599,11 +643,19 @@ export default function Schools() {
                 <div>
                   <div style={styles.portalBadgeRow}>
                     <span className="badge badge-gold">VERIFIED INSTITUTIONAL PARTNER</span>
-                    <span style={styles.schoolCodePill}>CODE: {schoolProfile.schoolCode}</span>
+                    {schoolProfile.schoolCode && (
+                      <span style={styles.schoolCodePill}>CODE: {schoolProfile.schoolCode}</span>
+                    )}
                   </div>
-                  <h1 style={styles.schoolPortalName}>{schoolProfile.schoolName}</h1>
+                  <h1 style={styles.schoolPortalName}>
+                    {loadingProfile && !schoolProfile.schoolName ? 'Loading School Details...' : (schoolProfile.schoolName || 'School Dashboard')}
+                  </h1>
                   <p style={styles.schoolPortalSub}>
-                    {schoolProfile.city}, {schoolProfile.state} &nbsp;|&nbsp; Principal: {schoolProfile.principalName} &nbsp;|&nbsp; Coordinator: {coordinator.name}
+                    {[
+                      schoolProfile.city && schoolProfile.state ? `${schoolProfile.city}, ${schoolProfile.state}` : (schoolProfile.city || schoolProfile.state),
+                      schoolProfile.principalName ? `Principal: ${schoolProfile.principalName}` : null,
+                      coordinator.name ? `Coordinator: ${coordinator.name}` : null
+                    ].filter(Boolean).join(' | ')}
                   </p>
                 </div>
               </div>
@@ -726,7 +778,7 @@ export default function Schools() {
               <div style={styles.rosterHeaderRow}>
                 <div>
                   <h2 style={styles.rosterTitle}>Enrolled Students &amp; Achievers List</h2>
-                  <p style={styles.rosterSub}>Manage, search, and export registered students from {schoolProfile.schoolName}.</p>
+                  <p style={styles.rosterSub}>Manage, search, and export registered students from {schoolProfile.schoolName || 'your school'}.</p>
                 </div>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
                   <button 
@@ -795,7 +847,7 @@ export default function Schools() {
                     <thead>
                       <tr style={styles.tableHeaderRow}>
                         <th style={styles.thCell}>STUDENT NAME</th>
-                        <th style={styles.thCell}>CLASS / LEVEL</th>
+                        <th style={styles.thCell}>CLASS</th>
                         <th style={styles.thCell}>CATEGORY / TRACK</th>
                         <th style={styles.thCell}>ENROLLED DATE</th>
                         <th style={styles.thCell}>STATUS</th>
@@ -989,6 +1041,7 @@ export default function Schools() {
                         <th style={styles.thCell}>STUDENT NAME</th>
                         <th style={styles.thCell}>CLASS</th>
                         <th style={styles.thCell}>NOMINATED CATEGORY</th>
+                        <th style={styles.thCell}>DOCUMENT</th>
                         <th style={styles.thCell}>DATE SUBMITTED</th>
                         <th style={styles.thCell}>NOMINATION STATUS</th>
                         <th style={styles.thCell}>ADMIN STATUS</th>
@@ -998,7 +1051,7 @@ export default function Schools() {
                     <tbody>
                       {filteredPride.length === 0 ? (
                         <tr>
-                          <td colSpan="7" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
+                          <td colSpan="8" style={{ padding: '3rem', textAlign: 'center', color: '#64748b' }}>
                             No students nominated for Pride Award yet. Click "+ Nominate Student" above to get started.
                           </td>
                         </tr>
@@ -1086,6 +1139,36 @@ export default function Schools() {
                                 <span style={{ fontSize: '0.78rem', color: '#64748b' }}>
                                   {st.achievementTitle}
                                 </span>
+                              )}
+                            </td>
+                            <td style={styles.tdCell}>
+                              {st.supportingDocument ? (
+                                <a 
+                                  href={st.supportingDocument.startsWith('http') ? st.supportingDocument : `${API_BASE_URL}${st.supportingDocument}`}
+                                  target="_blank" 
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    display: 'inline-flex',
+                                    alignItems: 'center',
+                                    gap: '5px',
+                                    background: '#f0f9ff',
+                                    color: '#0284c7',
+                                    border: '1px solid #bae6fd',
+                                    padding: '0.25rem 0.6rem',
+                                    borderRadius: '6px',
+                                    fontSize: '0.78rem',
+                                    fontWeight: 700,
+                                    textDecoration: 'none',
+                                    whiteSpace: 'nowrap'
+                                  }}
+                                  title="View / Download Supporting Document"
+                                >
+                                  <FileText size={13} />
+                                  <span>View Doc</span>
+                                  <ExternalLink size={10} />
+                                </a>
+                              ) : (
+                                <span style={{ color: '#94a3b8', fontSize: '0.78rem' }}>None</span>
                               )}
                             </td>
                             <td style={styles.tdCell}>{st.dateSubmitted}</td>
@@ -1620,12 +1703,17 @@ export default function Schools() {
                             <label style={styles.fieldLabel}>Pride Award Category <span style={styles.reqStar}>*</span></label>
                             <select 
                               style={styles.selectInput}
-                              value={student.category || 'Academic & Innovative Excellence'}
+                              value={student.category === 'Talent & Social Excellence' ? 'Talent & Social Excellence' : 'Academic & Innovative Excellence'}
                               onChange={(e) => {
                                 const newCat = e.target.value;
                                 const defaultTalent = newCat === 'Talent & Social Excellence' ? 'Sports Achievement' : 'Academics';
-                                handleStudentChange(student.id, 'category', newCat);
-                                handleStudentChange(student.id, 'achievementTitle', defaultTalent);
+                                setStudentList(prev => prev.map(s => s.id === student.id ? {
+                                  ...s,
+                                  category: newCat,
+                                  achievementTitle: defaultTalent
+                                } : s));
+                                clearFormError(`student_cat_${student.id}`);
+                                clearFormError(`student_ach_${student.id}`);
                               }}
                             >
                               <option value="Academic & Innovative Excellence">1. Academic &amp; Innovative Excellence</option>
@@ -2039,45 +2127,6 @@ export default function Schools() {
                         <p style={styles.sectionHeaderSub}>Add details of the students registering for Olympiad tracks.</p>
                       </div>
                     </div>
-
-                    <div style={styles.levelGroupSelector}>
-                      <span style={styles.levelSelectorLabel}>Class Category:</span>
-                      <button 
-                        type="button"
-                        style={{
-                          ...styles.levelBtn,
-                          ...(selectedLevelFilter === 'junior' ? styles.levelBtnActiveGreen : {})
-                        }}
-                        onClick={() => {
-                          setSelectedLevelFilter('junior');
-                          studentList.forEach(s => {
-                            if (!['Grade 3', 'Grade 4', 'Grade 5'].includes(s.studentClass)) {
-                              handleStudentChange(s.id, 'studentClass', 'Grade 4');
-                            }
-                          });
-                        }}
-                      >
-                        Grade 3 to 5 (Jr Level)
-                      </button>
-
-                      <button 
-                        type="button"
-                        style={{
-                          ...styles.levelBtn,
-                          ...(selectedLevelFilter === 'senior' ? styles.levelBtnActiveBlue : {})
-                        }}
-                        onClick={() => {
-                          setSelectedLevelFilter('senior');
-                          studentList.forEach(s => {
-                            if (!['Grade 6', 'Grade 7', 'Grade 8'].includes(s.studentClass)) {
-                              handleStudentChange(s.id, 'studentClass', 'Grade 7');
-                            }
-                          });
-                        }}
-                      >
-                        Grade 6 to 8 (Senior Level)
-                      </button>
-                    </div>
                   </div>
 
                   {/* DYNAMIC STUDENT CARDS LIST */}
@@ -2127,19 +2176,12 @@ export default function Schools() {
                               value={student.studentClass}
                               onChange={(e) => handleStudentChange(student.id, 'studentClass', e.target.value)}
                             >
-                              {selectedLevelFilter === 'junior' ? (
-                                <>
-                                  <option value="Grade 3">Grade 3 (Class III)</option>
-                                  <option value="Grade 4">Grade 4 (Class IV)</option>
-                                  <option value="Grade 5">Grade 5 (Class V)</option>
-                                </>
-                              ) : (
-                                <>
-                                  <option value="Grade 6">Grade 6 (Class VI)</option>
-                                  <option value="Grade 7">Grade 7 (Class VII)</option>
-                                  <option value="Grade 8">Grade 8 (Class VIII)</option>
-                                </>
-                              )}
+                              <option value="Grade 3">Grade 3 (Class III)</option>
+                              <option value="Grade 4">Grade 4 (Class IV)</option>
+                              <option value="Grade 5">Grade 5 (Class V)</option>
+                              <option value="Grade 6">Grade 6 (Class VI)</option>
+                              <option value="Grade 7">Grade 7 (Class VII)</option>
+                              <option value="Grade 8">Grade 8 (Class VIII)</option>
                             </select>
                           </div>
 
@@ -2808,44 +2850,6 @@ const styles = {
   sectionHeaderSub: {
     fontSize: '0.82rem',
     color: '#64748b',
-  },
-
-  /* LEVEL SELECTOR BUTTONS */
-  levelGroupSelector: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    background: '#f8fafc',
-    padding: '0.35rem',
-    borderRadius: '8px',
-    border: '1px solid #e2e8f0',
-  },
-  levelSelectorLabel: {
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    color: '#64748b',
-    paddingLeft: '0.35rem',
-  },
-  levelBtn: {
-    background: 'transparent',
-    border: 'none',
-    padding: '0.35rem 0.75rem',
-    borderRadius: '6px',
-    fontSize: '0.78rem',
-    fontWeight: 700,
-    color: '#64748b',
-    cursor: 'pointer',
-    transition: 'all 0.2s ease',
-  },
-  levelBtnActiveGreen: {
-    background: '#16a34a',
-    color: '#ffffff',
-    boxShadow: '0 2px 8px rgba(22, 163, 74, 0.25)',
-  },
-  levelBtnActiveBlue: {
-    background: '#2563eb',
-    color: '#ffffff',
-    boxShadow: '0 2px 8px rgba(37, 99, 235, 0.25)',
   },
 
   /* FORM INPUT GRIDS */
